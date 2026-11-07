@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TSUMIKI">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#e9b949">
+<title>TSUMIKI — わが家のお金と知識の積み木</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23e9b949%22/%3E%3Crect x=%2210%22 y=%2258%22 width=%2238%22 height=%2230%22 rx=%225%22 fill=%22%231b2436%22/%3E%3Crect x=%2252%22 y=%2258%22 width=%2238%22 height=%2230%22 rx=%225%22 fill=%22%232b4c7e%22/%3E%3Crect x=%2231%22 y=%2222%22 width=%2238%22 height=%2232%22 rx=%225%22 fill=%22%23fff%22/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f8f8f6; --surface:#ffffff; --surface2:#f2f2ef; --border:#e4e3de; --border-soft:#efeeea;
+  --text:#1b2436; --text-dim:#56606e; --text-muted:#98a0ac;
+  --hdr-bg:#1b2436; --hdr-text:#3a2a07;
+  --accent:#2b4c7e; --accent-soft:#7f9cc6; --accent-bg:#eef2f9;
+  --gold:#c99a2e; --gold-bg:#fcf5e3;
+  --green:#2f9e63; --green-bg:#eef8f1; --red:#cf4d47; --red-bg:#fbf2f1;
+  --blue:#3d78b0; --blue-bg:#eef4fa; --amber:#c08a1e; --amber-bg:#fdf6e8;
+  /* 分野色 */
+  --f-nisa:#2f8f5b; --f-nisa-bg:#edf7f1;
+  --f-fund:#3d78b0; --f-fund-bg:#eef4fa;
+  --f-stock:#7a4fa0; --f-stock-bg:#f4effa;
+  --f-tax:#b5452f; --f-tax-bg:#fbefec;
+  --f-edu:#c2561b; --f-edu-bg:#fcf1ea;
+  --f-house:#0b8fa8; --f-house-bg:#e8f6f9;
+  --f-life:#8a6a2a; --f-life-bg:#f8f3e8;
+  --r:7px;
+}
+html{ background:var(--bg); }
+body{ background:var(--bg); color:var(--text); font-family:'Noto Sans JP','DM Sans',system-ui,sans-serif; font-size:14px; line-height:1.75; height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+button,input,select,textarea{ font-family:inherit; }
+.num{ font-family:'DM Sans','Noto Sans JP',sans-serif; font-variant-numeric:tabular-nums; }
+
+/* ══════════ HEADER ══════════ */
+#hdr{ flex-shrink:0; background:linear-gradient(90deg,#e9b949 0%,#f3d27f 42%,#f9e9bd 78%,#fdf8ea 100%); padding-top:env(safe-area-inset-top); position:relative; }
+#hdr::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:linear-gradient(90deg,var(--accent) 0 70%,var(--gold) 70% 100%); }
+.hdr-main{ display:flex; align-items:center; justify-content:space-between; padding:14px 0 14px 22px; gap:12px; }
+.hdr-title-block{ display:flex; align-items:center; gap:12px; min-width:0; cursor:pointer; }
+.logo{ width:34px; height:34px; flex-shrink:0; }
+.hdr-tt{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+.hdr-title{ font-family:'DM Sans',sans-serif; font-weight:300; font-size:23px; letter-spacing:.4em; color:var(--hdr-text); line-height:1; }
+.hdr-sub-inline{ font-family:'DM Sans',sans-serif; font-weight:400; font-size:10px; letter-spacing:.22em; color:var(--hdr-text); line-height:1; opacity:.7; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hdr-actions{ display:flex; align-items:center; gap:8px; flex-shrink:0; padding-right:16px; }
+.hdr-icon-btn{ border:1px solid rgba(58,42,7,.25); color:var(--hdr-text); background:rgba(255,255,255,.4); height:32px; padding:0 12px; border-radius:5px; cursor:pointer; font-size:11px; display:flex; align-items:center; gap:5px; -webkit-tap-highlight-color:transparent; }
+.hdr-icon-btn:hover{ background:rgba(255,255,255,.75); }
+.rank-pill{ font-size:11px; color:var(--hdr-text); border:1px solid rgba(58,42,7,.25); background:rgba(255,255,255,.45); border-radius:20px; padding:4px 11px; white-space:nowrap; cursor:pointer; }
+.hdr-icon-btn .badge{ background:var(--red); color:#fff; border-radius:9px; font-size:10px; padding:0 6px; line-height:16px; font-weight:700; }
+
+/* ══════════ LAYOUT ══════════ */
+#app{ flex:1; display:flex; overflow:hidden; position:relative; }
+#sb{ width:290px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+.sb-scroll{ flex:1; overflow-y:auto; padding:6px 0 24px; }
+.sb-nav{ padding:12px 12px 10px; border-bottom:1px solid var(--border); display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.navbtn{ display:flex; align-items:center; gap:7px; padding:8px 10px; border:1px solid var(--border); border-radius:var(--r); background:var(--surface2); color:var(--text-dim); font-size:12px; cursor:pointer; text-align:left; -webkit-tap-highlight-color:transparent; }
+.navbtn:hover{ border-color:var(--accent-soft); color:var(--accent); }
+.navbtn.on{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.grp-lbl{ padding:14px 20px 4px; font-size:10px; font-weight:700; letter-spacing:.12em; display:flex; align-items:center; gap:6px; color:var(--text-dim); }
+.grp-lbl .gn{ margin-left:auto; color:var(--text-muted); font-weight:500; }
+.ubtn{ display:flex; align-items:center; width:100%; padding:6px 20px; gap:9px; background:none; border:none; cursor:pointer; color:var(--text-dim); font-size:12.5px; text-align:left; -webkit-tap-highlight-color:transparent; border-left:3px solid transparent; }
+.ubtn:hover{ background:var(--surface2); color:var(--text); }
+.ubtn.active{ background:var(--accent-bg); color:var(--accent); border-left-color:var(--accent); font-weight:500; }
+.ubtn .uicon{ font-size:15px; width:20px; text-align:center; flex-shrink:0; }
+.ubtn .utxt{ flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.3; }
+.ubtn .ut-main{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ubtn .ut-sub{ font-size:10px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.umeter{ width:38px; flex-shrink:0; font-size:10px; color:var(--text-muted); text-align:right; font-family:'DM Sans',sans-serif; }
+.umeter.good{ color:var(--green); font-weight:600; }
+#main{ flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); min-width:0; }
+#crumb{ display:none; flex-shrink:0; align-items:center; gap:10px; padding:10px 16px; background:var(--surface); border-bottom:1px solid var(--border); }
+#crumb .back{ color:var(--accent); font-size:13px; cursor:pointer; background:none; border:none; padding:4px 0; }
+#crumb .ct{ font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#content{ flex:1; overflow-y:auto; padding:32px 44px 96px; -webkit-overflow-scrolling:touch; }
+
+/* ══════════ 共通部品 ══════════ */
+h2.pg{ font-size:19px; font-weight:600; margin-bottom:6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.pg-sub{ color:var(--text-muted); font-size:12.5px; margin-bottom:22px; }
+.sec-h{ font-size:11px; font-weight:700; color:var(--accent); margin:28px 0 12px; letter-spacing:.1em; display:flex; align-items:center; gap:8px; }
+.sec-h::before{ content:""; width:16px; height:2px; background:var(--gold); border-radius:2px; }
+.sec-h .r{ margin-left:auto; }
+.wrap{ max-width:820px; }
+.btn{ display:inline-flex; align-items:center; gap:6px; padding:9px 18px; border-radius:var(--r); border:1px solid var(--border); background:var(--surface); color:var(--text-dim); font-size:12.5px; cursor:pointer; white-space:nowrap; -webkit-tap-highlight-color:transparent; }
+.btn:hover{ border-color:var(--accent); color:var(--accent); }
+.btn:disabled{ opacity:.4; cursor:default; }
+.btn.p{ background:var(--hdr-bg); border-color:var(--hdr-bg); color:#fff; font-weight:500; }
+.btn.p:hover{ background:var(--accent); border-color:var(--accent); }
+.btn.g{ background:var(--gold); border-color:var(--gold); color:#fff; font-weight:600; }
+.btn.sm{ padding:6px 12px; font-size:11.5px; }
+.btn.xs{ padding:3px 9px; font-size:11px; }
+.btn.danger:hover{ border-color:var(--red); color:var(--red); }
+.row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.chip{ display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; padding:2px 8px; border-radius:4px; letter-spacing:.03em; white-space:nowrap; }
+.chip.nisa{ background:var(--f-nisa-bg); color:var(--f-nisa); }
+.chip.fund{ background:var(--f-fund-bg); color:var(--f-fund); }
+.chip.stock{ background:var(--f-stock-bg); color:var(--f-stock); }
+.chip.tax{ background:var(--f-tax-bg); color:var(--f-tax); }
+.chip.edu{ background:var(--f-edu-bg); color:var(--f-edu); }
+.chip.house{ background:var(--f-house-bg); color:var(--f-house); }
+.chip.life{ background:var(--f-life-bg); color:var(--f-life); }
+.chip.me{ background:var(--gold-bg); color:#8a6510; }
+.chip.gray{ background:var(--surface2); color:var(--text-muted); }
+.chip.ok{ background:var(--green-bg); color:var(--green); } .chip.ng{ background:var(--red-bg); color:var(--red); } .chip.warn{ background:var(--amber-bg); color:#8a6510; }
+.empty{ background:var(--surface); border:1px dashed var(--border); border-radius:var(--r); padding:22px; color:var(--text-muted); font-size:13px; text-align:center; line-height:1.9; }
+.seg{ display:inline-flex; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; background:var(--surface); flex-wrap:wrap; }
+.seg button{ border:none; background:none; padding:7px 13px; font-size:12px; color:var(--text-dim); cursor:pointer; border-right:1px solid var(--border); }
+.seg button:last-child{ border-right:none; }
+.seg button.on{ background:var(--accent); color:#fff; }
+.card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 18px; margin-bottom:12px; }
+.card h4{ font-size:14px; font-weight:600; margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.muted{ color:var(--text-muted); font-size:12px; }
+.dim{ color:var(--text-dim); }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+
+/* ══════════ フォーム ══════════ */
+.fm{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px 12px; }
+.fm label{ display:flex; flex-direction:column; gap:3px; font-size:11px; color:var(--text-dim); font-weight:600; }
+.fm label.w2{ grid-column:span 2; } .fm label.full{ grid-column:1/-1; }
+.in{ width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; font-size:13.5px; background:var(--surface); color:var(--text); outline:none; }
+.in:focus{ border-color:var(--accent); }
+textarea.in{ min-height:80px; resize:vertical; line-height:1.7; }
+.fm-act{ display:flex; gap:8px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
+
+/* ══════════ HOME ══════════ */
+.hero{ background:var(--hdr-bg); color:#eef1f5; border-radius:12px; padding:20px 22px; margin-bottom:14px; display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:14px; position:relative; overflow:hidden; }
+.hero::after{ content:""; position:absolute; right:-30px; bottom:-30px; width:140px; height:140px; border-radius:50%; background:radial-gradient(circle,rgba(233,185,73,.25),transparent 70%); }
+.kpi .k-l{ font-size:10.5px; opacity:.6; letter-spacing:.06em; }
+.kpi .k-v{ font-family:'DM Sans',sans-serif; font-size:24px; font-weight:300; line-height:1.3; }
+.kpi .k-v small{ font-size:11px; opacity:.6; margin-left:2px; }
+.kpi .k-s{ font-size:10.5px; opacity:.55; }
+.kpi.big .k-v{ font-size:30px; color:#f3d27f; }
+.daily{ background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:var(--r); padding:14px 18px; margin-bottom:12px; cursor:pointer; }
+.daily .dl{ font-size:10.5px; font-weight:700; color:#8a6510; letter-spacing:.1em; }
+.daily .dq{ font-size:14px; margin-top:4px; }
+.promise{ background:var(--accent-bg); border:1px solid #d7e0ee; border-radius:var(--r); padding:12px 16px; margin-bottom:12px; font-size:13.5px; }
+.promise .dl{ font-size:10.5px; font-weight:700; color:var(--accent); letter-spacing:.1em; }
+.mode-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
+.mode-card{ text-align:left; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:15px 17px; cursor:pointer; -webkit-tap-highlight-color:transparent; font-size:14px; color:var(--text); display:flex; flex-direction:column; align-items:flex-start; transition:all .15s; position:relative; }
+.mode-card:hover:not(:disabled){ border-color:var(--accent); box-shadow:0 3px 12px rgba(43,76,126,.08); transform:translateY(-1px); }
+.mode-card:disabled{ opacity:.5; cursor:default; }
+.mode-card.me{ border-color:#eedba6; background:linear-gradient(180deg,#fdf8ea,#fff); }
+.mode-card.due{ border-color:#d7e0ee; background:linear-gradient(180deg,#f4f7fc,#fff); }
+.mode-card .cnt{ position:absolute; top:12px; right:12px; font-size:11px; font-weight:700; color:#fff; background:var(--red); border-radius:10px; padding:0 8px; }
+.mode-ic{ font-size:22px; }
+.mode-name{ font-size:14.5px; font-weight:600; margin:6px 0 3px; }
+.mode-desc{ font-size:11.5px; color:var(--text-muted); line-height:1.6; }
+.ev-list{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r); }
+.ev{ display:flex; gap:12px; align-items:center; padding:10px 14px; border-bottom:1px solid var(--border-soft); font-size:13px; }
+.ev:last-child{ border-bottom:none; }
+.ev .ev-d{ width:58px; flex-shrink:0; text-align:center; line-height:1.2; }
+.ev .ev-d b{ display:block; font-size:16px; font-family:'DM Sans',sans-serif; font-weight:500; }
+.ev .ev-d span{ font-size:10px; color:var(--text-muted); }
+.ev .ev-m{ flex:1; min-width:0; }
+.ev .ev-t{ font-weight:500; }
+.ev .ev-s{ font-size:11.5px; color:var(--text-muted); }
+.ev .ev-c{ font-size:11px; font-weight:700; white-space:nowrap; font-family:'DM Sans','Noto Sans JP',sans-serif; }
+.ev .ev-c.soon{ color:var(--red); } .ev .ev-c.mid{ color:#8a6510; } .ev .ev-c.far{ color:var(--text-muted); }
+.ev.done{ opacity:.45; } .ev.done .ev-t{ text-decoration:line-through; }
+.ev .ck2{ width:22px; height:22px; border-radius:6px; border:1.5px solid var(--border); background:var(--surface); cursor:pointer; flex-shrink:0; font-size:12px; color:#fff; }
+.ev.done .ck2{ background:var(--green); border-color:var(--green); }
+.fbars{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:14px 18px; }
+.fbar{ display:grid; grid-template-columns:150px 1fr 70px; gap:10px; align-items:center; margin:6px 0; font-size:12.5px; }
+.fbar .tr{ height:9px; background:var(--surface2); border-radius:5px; overflow:hidden; }
+.fbar .fl{ height:100%; border-radius:5px; }
+.fbar .v{ text-align:right; font-family:'DM Sans',sans-serif; color:var(--text-dim); font-size:12px; }
+
+/* 積み木タワー（ランク） */
+.tower{ display:flex; flex-direction:column-reverse; align-items:center; gap:3px; min-height:120px; justify-content:flex-start; }
+.tower i{ display:block; height:13px; border-radius:3px; }
+.rankcard{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin-bottom:12px; display:flex; gap:18px; align-items:center; }
+.rankcard .rk-main{ flex:1; min-width:0; }
+.rankcard .rk-l{ font-size:10.5px; letter-spacing:.14em; color:var(--text-muted); font-family:'DM Sans',sans-serif; }
+.rankcard .rk-n{ font-size:17px; font-weight:600; margin:2px 0 8px; }
+.rankcard .rk-bar{ height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; }
+.rankcard .rk-fill{ height:100%; background:linear-gradient(90deg,var(--accent-soft),var(--gold)); border-radius:3px; }
+.rankcard .rk-next{ font-size:11px; color:var(--text-muted); margin-top:6px; }
+
+/* ══════════ 解説 ══════════ */
+.tabs{ display:flex; border-bottom:1px solid var(--border); margin:4px 0 22px; overflow-x:auto; }
+.tab{ padding:11px 16px; font-size:13px; color:var(--text-muted); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; white-space:nowrap; -webkit-tap-highlight-color:transparent; }
+.tab.on{ color:var(--accent); border-bottom-color:var(--accent); font-weight:500; }
+.gram{ max-width:780px; }
+.gram h3{ font-size:12px; font-weight:700; color:var(--accent); margin:30px 0 14px; letter-spacing:.1em; display:flex; align-items:center; gap:8px; }
+.gram h3::before{ content:""; width:16px; height:2px; background:var(--gold); border-radius:2px; }
+.gram h3:first-child{ margin-top:0; }
+.gram p{ color:var(--text-dim); margin-bottom:12px; font-size:14px; line-height:1.9; }
+.gram strong{ color:var(--text); }
+.gram ul,.gram ol{ margin:0 0 14px; padding-left:20px; }
+.gram li{ color:var(--text-dim); margin-bottom:6px; line-height:1.85; }
+.gram table{ width:100%; border-collapse:collapse; margin:12px 0 20px; font-size:13px; background:var(--surface); border:1px solid var(--border); }
+.gram th{ text-align:left; padding:9px 12px; background:var(--surface2); color:var(--text-dim); font-size:11px; font-weight:600; border-bottom:1px solid var(--border); }
+.gram td{ padding:9px 12px; border-bottom:1px solid var(--border-soft); color:var(--text); vertical-align:top; }
+.gram td:first-child{ color:var(--accent); font-weight:500; }
+.tblwrap{ overflow-x:auto; }
+.pbox,.tbox,.mbox{ border-radius:var(--r); padding:12px 16px; margin:14px 0 20px; font-size:13.5px; line-height:1.95; }
+.pbox{ background:var(--amber-bg); border:1px solid #f0e2c0; color:#5e4a1c; }
+.tbox{ background:var(--accent-bg); border:1px solid #d7e0ee; color:var(--text); }
+.mbox{ background:var(--gold-bg); border:1px solid #eedba6; color:var(--text); }
+.pbox::before,.tbox::before,.mbox::before{ display:block; font-size:11.5px; font-weight:700; letter-spacing:.06em; margin-bottom:3px; }
+.pbox::before{ content:"💡 わかりやすく言うと"; color:#8a6510; }
+.tbox::before{ content:"🧩 例えるなら"; color:var(--accent); }
+.mbox::before{ content:"🏠 わが家の場合"; color:#8a6510; }
+.wbox{ background:var(--red-bg); border:1px solid #f0d3d0; border-radius:var(--r); padding:12px 16px; margin:12px 0; font-size:12.5px; color:#8f3430; line-height:1.85; }
+.nbox{ background:var(--blue-bg); border:1px solid #d6e4f0; border-radius:var(--r); padding:12px 16px; margin:12px 0; font-size:12.5px; color:var(--blue); line-height:1.85; }
+.newbox{ background:#f1f8ee; border:1px solid #cfe6c3; border-radius:var(--r); padding:12px 16px; margin:12px 0 18px; font-size:13px; color:#2e5a1d; line-height:1.85; }
+.newbox::before{ content:"🆕 2026年の改正ポイント"; display:block; font-size:11.5px; font-weight:700; margin-bottom:3px; }
+.gl{ text-decoration:underline; text-decoration-style:dotted; text-decoration-color:var(--accent); text-decoration-thickness:1.5px; text-underline-offset:3px; cursor:pointer; }
+.gl:hover{ color:var(--accent); background:var(--accent-bg); }
+.unit-foot{ margin-top:28px; padding-top:18px; border-top:1px solid var(--border); display:flex; gap:10px; flex-wrap:wrap; }
+
+/* ══════════ 問題 ══════════ */
+.qprog{ display:flex; align-items:center; gap:14px; margin-bottom:18px; max-width:760px; }
+.qtrack{ flex:1; height:4px; background:var(--surface2); border-radius:2px; overflow:hidden; }
+.qfill{ height:100%; background:var(--accent); transition:width .3s; }
+.qlbl{ font-size:11px; color:var(--text-muted); white-space:nowrap; font-family:'DM Sans',sans-serif; }
+.qcard{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:22px 24px; margin-bottom:14px; max-width:760px; }
+.qmeta{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+.qmeta .src{ font-size:11px; color:var(--text-muted); }
+.qq{ font-size:15px; font-weight:500; line-height:1.85; margin-bottom:12px; }
+.choices{ display:flex; flex-direction:column; gap:9px; margin-top:10px; }
+.choice{ text-align:left; padding:12px 15px; border:1px solid var(--border); border-radius:var(--r); background:var(--surface); color:var(--text); font-size:14px; cursor:pointer; display:flex; align-items:flex-start; gap:11px; -webkit-tap-highlight-color:transparent; line-height:1.75; }
+.choice:hover:not(:disabled){ border-color:var(--accent-soft); background:var(--accent-bg); }
+.choice:disabled{ cursor:default; }
+.choice .ck{ width:24px; height:24px; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--text-muted); flex-shrink:0; font-family:'DM Sans',sans-serif; margin-top:1px; }
+.choice.ok{ border-color:var(--green); background:var(--green-bg); } .choice.ok .ck{ background:var(--green); border-color:var(--green); color:#fff; }
+.choice.ng{ border-color:var(--red); background:var(--red-bg); } .choice.ng .ck{ background:var(--red); border-color:var(--red); color:#fff; }
+.cwhy{ font-size:12.5px; color:var(--text-dim); margin:-3px 0 4px 36px; line-height:1.8; padding:2px 0 4px 12px; border-left:2px solid var(--border); }
+.cwhy b.o{ color:var(--green); } .cwhy b.x{ color:var(--red); }
+.fb{ border-radius:var(--r); padding:14px 18px; margin-top:14px; font-size:13.5px; line-height:1.85; max-width:760px; animation:fadein .2s ease; }
+.fb.ok{ background:var(--green-bg); border:1px solid rgba(47,158,99,.3); }
+.fb.ng{ background:var(--red-bg); border:1px solid rgba(207,77,71,.3); }
+.fb .fb-h{ font-weight:700; margin-bottom:5px; }
+.fb.ok .fb-h{ color:var(--green); } .fb.ng .fb-h{ color:var(--red); }
+.fb .fb-body{ color:var(--text-dim); }
+.fb .srs{ margin-top:8px; font-size:11.5px; color:var(--text-muted); }
+@keyframes fadein{ from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+.qnav{ display:flex; gap:10px; margin-top:16px; max-width:760px; align-items:center; flex-wrap:wrap; }
+.qnav .spacer{ flex:1; }
+.keepbtn{ border:1px solid var(--border); background:var(--surface); border-radius:var(--r); padding:7px 12px; font-size:12px; cursor:pointer; color:var(--text-dim); }
+.keepbtn.on{ border-color:var(--amber); color:#8a6510; background:var(--amber-bg); }
+.ox-t{ font-size:15.5px; line-height:1.9; font-weight:500; margin-bottom:14px; }
+.ox-btns{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+.ox-b{ padding:16px; font-size:24px; font-weight:700; border:1px solid var(--border); border-radius:10px; background:var(--surface); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.ox-b.o{ color:var(--green); } .ox-b.x{ color:var(--red); }
+.ox-b:hover:not(:disabled){ background:var(--surface2); }
+.ox-b.hit{ outline:3px solid currentColor; }
+.result-badge{ text-align:center; padding:24px 20px; border-radius:var(--r); margin-bottom:18px; max-width:760px; }
+.result-badge.pass{ background:var(--green-bg); border:1px solid rgba(47,158,99,.4); }
+.result-badge.fail{ background:var(--red-bg); border:1px solid rgba(207,77,71,.4); }
+.rb-big{ font-size:34px; font-weight:700; font-family:'DM Sans','Noto Sans JP',sans-serif; }
+.pass .rb-big{ color:var(--green); } .fail .rb-big{ color:var(--red); }
+.rb-sub{ font-size:13px; color:var(--text-dim); margin-top:6px; }
+.rev-item{ background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--border); border-radius:var(--r); padding:10px 14px; margin-bottom:8px; font-size:13px; max-width:760px; }
+.rev-item.ok{ border-left-color:var(--green); } .rev-item.no{ border-left-color:var(--red); }
+.rev-item .rq{ margin:4px 0 2px; }
+.rev-item .rl{ color:var(--text-dim); font-size:12px; }
+.srsbar{ display:flex; gap:4px; align-items:flex-end; height:70px; margin:6px 0; }
+.srsbar div{ flex:1; background:var(--accent-soft); border-radius:4px 4px 0 0; position:relative; min-height:2px; }
+.srsbar-l{ display:flex; gap:4px; font-size:10px; color:var(--text-muted); text-align:center; }
+.srsbar-l span{ flex:1; }
+
+/* ══════════ お金 ══════════ */
+.acc{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:10px; display:grid; grid-template-columns:6px 1fr auto; gap:14px; align-items:center; }
+.acc .sw{ width:6px; align-self:stretch; border-radius:3px; }
+.acc .a-n{ font-weight:600; font-size:14px; }
+.acc .a-s{ font-size:11.5px; color:var(--text-muted); }
+.acc .a-v{ text-align:right; font-family:'DM Sans',sans-serif; }
+.acc .a-v b{ font-size:19px; font-weight:500; display:block; line-height:1.2; }
+.acc .a-v span{ font-size:11px; }
+.pl-p{ color:var(--green); } .pl-m{ color:var(--red); }
+.meter{ height:12px; background:var(--surface2); border-radius:6px; overflow:hidden; display:flex; gap:2px; }
+.meter i{ display:block; height:100%; }
+.meter-l{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:4px; }
+.stack{ display:flex; height:18px; border-radius:5px; overflow:hidden; gap:2px; background:var(--surface); }
+.stack i{ display:block; height:100%; }
+.legend{ display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:10px; font-size:12px; color:var(--text-dim); }
+.legend span{ display:inline-flex; align-items:center; gap:6px; }
+.legend i{ width:10px; height:10px; border-radius:3px; display:inline-block; }
+.chart{ position:relative; }
+.chart svg{ width:100%; height:auto; display:block; }
+.chart .tip{ position:absolute; pointer-events:none; background:var(--hdr-bg); color:#fff; font-size:11.5px; padding:6px 10px; border-radius:6px; white-space:nowrap; transform:translate(-50%,-110%); opacity:0; transition:opacity .1s; }
+.chart .tip.show{ opacity:1; }
+table.tb{ width:100%; border-collapse:collapse; font-size:12.5px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); }
+table.tb th{ text-align:left; padding:8px 10px; background:var(--surface2); color:var(--text-dim); font-size:11px; font-weight:600; white-space:nowrap; }
+table.tb td{ padding:8px 10px; border-top:1px solid var(--border-soft); vertical-align:middle; }
+table.tb td.r,table.tb th.r{ text-align:right; }
+.ckl{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r); }
+.ckl .it{ display:flex; gap:12px; padding:11px 14px; border-bottom:1px solid var(--border-soft); cursor:pointer; align-items:flex-start; -webkit-tap-highlight-color:transparent; }
+.ckl .it:last-child{ border-bottom:none; }
+.ckl .bx{ width:22px; height:22px; border-radius:6px; border:1.5px solid var(--border); flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; }
+.ckl .it.on .bx{ background:var(--green); border-color:var(--green); }
+.ckl .it.on .t{ color:var(--text-muted); text-decoration:line-through; }
+.ckl .t{ font-size:13.5px; font-weight:500; }
+.ckl .s{ font-size:12px; color:var(--text-muted); line-height:1.7; }
+.prog-ring{ display:flex; align-items:center; gap:12px; }
+.stat3{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.stat{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:12px 14px; }
+.stat .l{ font-size:10.5px; color:var(--text-muted); letter-spacing:.04em; }
+.stat .v{ font-size:21px; font-family:'DM Sans','Noto Sans JP',sans-serif; font-weight:400; line-height:1.3; }
+.stat .v small{ font-size:11px; color:var(--text-muted); }
+.stat .s{ font-size:11px; color:var(--text-muted); }
+.stat.hl{ border-color:#eedba6; background:var(--gold-bg); }
+.school{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:12px 14px; margin-bottom:8px; }
+.school .sh{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.school .sn{ font-weight:600; flex:1; min-width:120px; }
+.school .sd{ display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:4px 12px; font-size:12px; color:var(--text-dim); margin-top:6px; }
+.school .sd b{ color:var(--text); font-weight:500; }
+.st-sel{ font-size:11.5px; padding:3px 6px; border-radius:5px; border:1px solid var(--border); background:var(--surface); }
+.gsearch{ width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--r); font-size:14px; background:var(--surface); outline:none; }
+.gl-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:8px; }
+.gl-item{ text-align:left; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:10px 14px; cursor:pointer; font-size:13.5px; color:var(--text); }
+.gl-item:hover{ border-color:var(--accent); }
+.gl-item .gd{ font-size:11.5px; color:var(--text-muted); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-top:2px; line-height:1.6; }
+.imp-msg{ font-size:12.5px; margin-top:10px; white-space:pre-wrap; }
+.imp-msg.err{ color:var(--red); } .imp-msg.ok{ color:var(--green); }
+
+/* ══════════ MODAL / TOAST ══════════ */
+#modal{ position:fixed; inset:0; background:rgba(15,18,28,.55); display:none; align-items:center; justify-content:center; z-index:200; padding:16px; }
+#modal.show{ display:flex; animation:fadein .15s ease; }
+.modal-box{ background:var(--surface); border-radius:14px; max-width:680px; width:100%; max-height:88vh; display:flex; flex-direction:column; box-shadow:0 24px 70px rgba(0,0,0,.32); overflow:hidden; }
+.modal-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 18px; border-bottom:1px solid var(--border); }
+.modal-title{ font-size:14px; font-weight:600; color:var(--accent); }
+.modal-close{ width:30px; height:30px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--text-dim); font-size:15px; cursor:pointer; flex-shrink:0; }
+.modal-body{ padding:18px 20px 22px; overflow-y:auto; }
+#toast{ position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--hdr-bg); color:#fff; padding:11px 20px; border-radius:8px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s; z-index:300; box-shadow:0 6px 24px rgba(0,0,0,.18); max-width:90vw; }
+#toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ══════════ スマホ（iPhone Air） ══════════ */
+#tabbar{ display:none; }
+button,.choice,.ox-b,.gl{ touch-action:manipulation; }
+@media (max-width:640px){
+  body{ font-size:15px; }
+  .hdr-main{ padding:9px 0 9px 14px; }
+  .logo{ width:28px; height:28px; }
+  .hdr-title{ font-size:18px; letter-spacing:.32em; }
+  .hdr-sub-inline{ font-size:8.5px; letter-spacing:.16em; }
+  .hdr-tt{ gap:5px; }
+  .hdr-actions{ padding-right:10px; gap:6px; }
+  .hdr-icon-btn{ height:34px; min-width:38px; justify-content:center; padding:0 9px; }
+  .hdr-icon-btn .t{ display:none; } .rank-pill{ display:none; }
+  #sb{ width:100%; position:absolute; inset:0; z-index:10; border-right:none; }
+  body.in-content #sb{ display:none; }
+  body:not(.in-content) #main{ display:none; }
+  #crumb{ display:flex; padding:8px 16px; } #crumb .ct{ font-size:14px; }
+  #crumb.nob .back{ display:none; } #crumb.hide{ display:none; }
+  #content{ padding:18px 14px calc(84px + env(safe-area-inset-bottom)); }
+  .sb-scroll{ padding-bottom:calc(84px + env(safe-area-inset-bottom)); }
+  .sb-nav{ display:none; }
+  .ubtn{ padding:10px 18px; font-size:14px; } .ubtn .ut-sub{ font-size:11px; }
+  .grp-lbl{ padding:18px 18px 6px; font-size:11px; }
+  h2.pg{ font-size:20px; }
+  .qcard{ padding:18px 16px; }
+  .qq{ font-size:16px; } .choice{ font-size:15px; padding:13px 14px; } .cwhy{ margin-left:10px; }
+  .ox-t{ font-size:16.5px; } .ox-b{ padding:20px; }
+  .gram p,.gram li{ font-size:15px; }
+  .hero{ grid-template-columns:1fr 1fr; padding:16px; gap:12px; }
+  .hero .kpi.big{ grid-column:1/-1; }
+  .mode-grid{ grid-template-columns:1fr 1fr; gap:10px; }
+  .mode-card{ padding:13px; } .mode-name{ font-size:14px; } .mode-desc{ font-size:11px; }
+  .fbar{ grid-template-columns:1fr auto; row-gap:4px; margin:10px 0; }
+  .fbar > span:first-child{ grid-column:1/-1; }
+  .grid2,.grid3{ grid-template-columns:1fr; }
+  .stat3{ grid-template-columns:1fr 1fr; }
+  .fm{ grid-template-columns:1fr 1fr; } .fm label.w2{ grid-column:1/-1; }
+  .in,.gsearch{ font-size:16px; }
+  .acc{ grid-template-columns:5px 1fr; } .acc .a-v{ grid-column:2; text-align:left; } .acc .a-act{ grid-column:2; }
+  table.tb{ font-size:12px; } table.tb th,table.tb td{ padding:7px 7px; }
+  .modal-box{ max-height:92dvh; border-radius:14px 14px 0 0; }
+  #modal{ align-items:flex-end; padding:0; } #modal .modal-box{ max-width:100%; }
+  .modal-body{ padding:16px 16px calc(22px + env(safe-area-inset-bottom)); }
+  .ev .chip{ display:none; } .ev{ gap:10px; padding:10px 12px; } .ev .ev-d{ width:42px; }
+  #tabbar{ display:grid; grid-template-columns:repeat(5,1fr); position:fixed; left:0; right:0; bottom:0; z-index:120;
+    background:rgba(255,255,255,.94); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border-top:1px solid var(--border);
+    padding:6px max(8px,env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right)); }
+  #tabbar button{ border:none; background:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 0; font-size:10.5px; color:var(--text-muted); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  #tabbar button .ti{ font-size:20px; line-height:1.1; filter:grayscale(1); opacity:.7; }
+  #tabbar button.on{ color:var(--accent); font-weight:700; }
+  #tabbar button.on .ti{ filter:none; opacity:1; }
+  #toast{ bottom:calc(80px + env(safe-area-inset-bottom)); }
+}
+@media print{ #hdr,#sb,#tabbar,#crumb{ display:none !important; } body{ height:auto; overflow:visible; } #content{ overflow:visible; } }
+::-webkit-scrollbar{ width:8px; height:8px; } ::-webkit-scrollbar-thumb{ background:#d9d7d0; border-radius:4px; }
+</style>
+</head>
+<body>
+<div id="hdr">
+  <div class="hdr-main">
+    <div class="hdr-title-block" onclick="go('home')">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><rect x="8" y="58" width="40" height="32" rx="6" fill="#1b2436"/><rect x="52" y="58" width="40" height="32" rx="6" fill="#2b4c7e"/><rect x="30" y="20" width="40" height="34" rx="6" fill="#fff" stroke="#1b2436" stroke-width="4"/><text x="50" y="46" text-anchor="middle" font-size="24" font-weight="700" fill="#1b2436" font-family="DM Sans,Arial,sans-serif">¥</text></svg>
+      <div class="hdr-tt">
+        <div class="hdr-title">TSUMIKI</div>
+        <div class="hdr-sub-inline">積み立てるお金 × 積み上げる知識</div>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <span class="rank-pill" id="rank-pill" onclick="go('stats')"></span>
+      <button class="hdr-icon-btn" onclick="go('cal')" title="お金カレンダー">📅<span class="t">カレンダー</span><span class="badge" id="cal-badge" style="display:none"></span></button>
+      <button class="hdr-icon-btn" onclick="go('glossary')" title="用語集">📖<span class="t">用語集</span></button>
+      <button class="hdr-icon-btn" onclick="go('settings')" title="設定・バックアップ">⚙︎<span class="t">設定</span></button>
+    </div>
+  </div>
+</div>
+<div id="app">
+  <aside id="sb">
+    <div class="sb-nav" id="sb-nav"></div>
+    <div class="sb-scroll" id="sb-list"></div>
+  </aside>
+  <main id="main">
+    <div id="crumb"><button class="back" onclick="mobileBack()">‹ もどる</button><span class="ct" id="crumb-t"></span></div>
+    <div id="content"></div>
+  </main>
+</div>
+<div id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <div class="modal-head"><div class="modal-title" id="modal-title">—</div><button class="modal-close" onclick="closeModal()" aria-label="閉じる">✕</button></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+<div id="toast"></div>
+<nav id="tabbar" aria-label="メインメニュー"></nav>
+<script>
+/* ── TSUMIKI 学習コンテンツ（2026年11月時点の制度で作成） ── */
+window.TS=window.TS||{};
+TS.VERSION_NOTE='制度の内容は2026年11月時点（令和8年度税制改正を反映）。毎年の改正で数字が変わるため、最終確認は会社・金融機関・国税庁などの案内で。';
+TS.FIELDS={
+  nisa:{n:'NISA',ic:'🌱',col:'var(--f-nisa)'},
+  fund:{n:'投資信託',ic:'📈',col:'var(--f-fund)'},
+  stock:{n:'持株会・株式',ic:'🏭',col:'var(--f-stock)'},
+  tax:{n:'年末調整・税金',ic:'🧾',col:'var(--f-tax)'},
+  edu:{n:'教育資金・大学',ic:'🎓',col:'var(--f-edu)'},
+  house:{n:'住宅ローン',ic:'🏠',col:'var(--f-house)'},
+  life:{n:'年金・保険・iDeCo',ic:'🛟',col:'var(--f-life)'}
+};
+TS.units=[
+{ id:'nisa1', field:'nisa', icon:'🌱', title:'NISAのしくみ', sub:'2つの枠・生涯1,800万円・枠の復活', gram:`
+<h3>まず、これは何？</h3>
+<p>[[NISA]]は、投資で得た利益（売却益・分配金・配当）に<strong>税金がかからない</strong>口座です。ふつうの口座なら利益の<strong>20.315%</strong>が税金で引かれますが、NISAの中なら0%です。2024年から今の制度になり、期限のない「一生使える制度」になりました。</p>
+<div class="pbox">利益に税金がかからない「特別な財布」。財布に入れられる金額には、1年ごとの上限と、一生ぶんの上限がある。</div>
+<h3>2つの枠と上限</h3>
+<div class="tblwrap"><table><thead><tr><th></th><th>つみたて投資枠</th><th>成長投資枠</th></tr></thead><tbody>
+<tr><td>1年の上限</td><td>120万円</td><td>240万円</td></tr>
+<tr><td>買えるもの</td><td>国の基準を満たした長期・積立向きの投資信託</td><td>上場株式・投資信託など（毎月分配型や高レバレッジ型などは除外）</td></tr>
+<tr><td>買い方</td><td>積立のみ</td><td>一括でも積立でも</td></tr>
+<tr><td>生涯の上限</td><td colspan="2">合計1,800万円（うち成長投資枠は1,200万円まで）</td></tr>
+</tbody></table></div>
+<p>2つの枠は<strong>併用できる</strong>ので、1年で最大360万円まで投資できます。非課税で持っていられる期間は<strong>無期限</strong>です。</p>
+<h3>生涯枠は「買った値段」で数える</h3>
+<p>生涯1,800万円は、今の評価額ではなく<strong>買ったときの金額（簿価）</strong>で管理します。たとえば100万円で買った投資信託が150万円に増えても、枠の使用は100万円のままです。</p>
+<p>売ると、その<strong>簿価の分だけ枠が翌年に復活</strong>します。ただし1年の上限（360万円）は変わらないので、復活した枠を一気に使えるわけではありません。</p>
+<div class="tbox">ダムの貯水量（生涯枠）は「入れた水の量」で数える。水が増えても（値上がり）使用量は増えない。水を抜くと（売却）、翌年からまた入れられる。ただし1年に流し込める量（年間枠）は決まっている。</div>
+<h3>ここで間違えやすい</h3>
+<ul>
+<li>NISAの中で出た<strong>損失は、ほかの口座の利益と相殺（[[損益通算]]）できない</strong>。繰り越しもできない。</li>
+<li>口座は<strong>1人1つ</strong>。金融機関を変えるのは1年ごと。</li>
+<li>口座を開けるのは、その年の<strong>1月1日時点で18歳以上</strong>の人。</li>
+<li>その年の枠は<strong>その年の買付（約定）分</strong>。12月の最終週に注文すると約定が翌年になることがある。</li>
+</ul>
+<div class="mbox">毎月の積立額 × 12 が、その年の枠の使い方の目安。「お金」タブのNISA画面で、今年の枠と生涯枠の残りをいつでも確認できます。</div>
+` },
+{ id:'nisa2', field:'nisa', icon:'👨‍👦', title:'家族のNISAとこどもNISA', sub:'18歳からの口座・2027年からの新制度', gram:`
+<h3>子どもは18歳になったら自分のNISA</h3>
+<p>NISA口座は、その年の1月1日時点で18歳以上なら開けます。大学生になった子どもが<strong>自分名義のNISA</strong>を持つことは可能です。ただし、口座の中身は<strong>子ども本人のお金</strong>です。親のお金を入れれば「親から子への贈与」になります。</p>
+<div class="pbox">親が子の名前を借りて運用する「名義だけの口座」はダメ。お金をあげるなら、あげたことが分かるように（振込記録など）して、子ども自身が管理する。</div>
+<h3>贈与税の基本</h3>
+<p>1人が1年間（1月〜12月）にもらった額が<strong>110万円以下</strong>なら、贈与税はかかりません（[[暦年贈与]]の基礎控除）。また、<strong>必要なつど払う教育費や生活費</strong>は、そもそも贈与税がかかりません。入学金や授業料を親が直接払うのは問題ありません。</p>
+<h3>こどもNISA（2027年1月から）</h3>
+<p>令和8年度の税制改正で、<strong>0〜17歳</strong>も使える「こどもNISA」をつくることが決まりました（2027年1月開始の予定）。</p>
+<div class="tblwrap"><table><thead><tr><th>項目</th><th>こどもNISA（予定）</th></tr></thead><tbody>
+<tr><td>対象</td><td>0〜17歳（親などが管理）</td></tr>
+<tr><td>買えるもの</td><td>つみたて投資枠と同じ投資信託・積立のみ</td></tr>
+<tr><td>上限</td><td>年60万円・合計600万円</td></tr>
+<tr><td>払い出し</td><td>子が12歳以降なら、一定の条件で可能</td></tr>
+<tr><td>18歳になると</td><td>大人のNISAへ自動で移る</td></tr>
+</tbody></table></div>
+<div class="newbox">こどもNISAは2027年1月から始まる予定。詳しい手続きは、金融機関の案内が出てから確認する。</div>
+<div class="mbox">高校生の子どもは、18歳になる年の翌年1月から大人のNISAの対象になります。大学進学後、アルバイト代の一部で積立を始めるのも、お金の教育になります。</div>
+` },
+{ id:'fund1', field:'fund', icon:'📈', title:'投資信託のしくみとコスト', sub:'基準価額・信託報酬・分配金', gram:`
+<h3>まず、これは何？</h3>
+<p>[[投資信託]]は、たくさんの人から集めたお金を、専門家がまとめて株や債券に投資する商品です。少額で多くの会社に<strong>分散投資</strong>できるのが強みです。</p>
+<div class="tbox">みんなでお金を出し合って買う「詰め合わせパック」。1パックの中に数千社の株が少しずつ入っている。</div>
+<h3>値段＝基準価額</h3>
+<p>投資信託の値段は[[基準価額]]といい、ふつう<strong>1万口あたり</strong>の価格で表します。1日に1回だけ決まります。注文した時点では値段が分からない「ブラインド方式」で、海外の株を買う投資信託は、注文の翌営業日の基準価額で約定するのがふつうです。</p>
+<h3>3つのコスト</h3>
+<div class="tblwrap"><table><thead><tr><th>コスト</th><th>いつ</th><th>ポイント</th></tr></thead><tbody>
+<tr><td>購入時手数料</td><td>買うとき</td><td>無料（ノーロード）のものが多い</td></tr>
+<tr><td>[[信託報酬]]</td><td>持っている間ずっと</td><td>毎日少しずつ差し引かれる。長期では最も効く</td></tr>
+<tr><td>信託財産留保額</td><td>売るとき</td><td>かからない商品も多い</td></tr>
+</tbody></table></div>
+<p>信託報酬は年率で表示されますが、<strong>基準価額からすでに引かれた状態</strong>で値段が出ています。請求書は来ないので気づきにくいコストです。</p>
+<h3>インデックスとアクティブ</h3>
+<p><strong>インデックス型</strong>は、日経平均や全世界株式などの指数と同じ動きを目指します。コストが低いのが特徴です。<strong>アクティブ型</strong>は指数を上回ることを目指しますが、コストが高めで、長期で指数に勝ち続けるものは多くありません。</p>
+<h3>分配金の正体</h3>
+<p>[[分配金]]は、投資信託の財産から払い出されるお金です。払った分だけ基準価額が下がります。利益から出る<strong>普通分配金</strong>には税金がかかり、元本の取り崩しにあたる<strong>元本払戻金（特別分配金）</strong>には税金がかかりません。</p>
+<div class="pbox">分配金は「おまけ」ではなく、自分の財布の中身を出しているだけ。増やしたい期間は、分配金を出さない（または再投資する）商品のほうが複利が効く。</div>
+<h3>税金と口座</h3>
+<p>NISA以外の口座で出た利益には<strong>20.315%</strong>（所得税15.315%＋住民税5%）がかかります。[[特定口座]]の「源泉徴収あり」を選べば、証券会社が税金を計算して納めるので、原則として確定申告は要りません。</p>
+` },
+{ id:'fund2', field:'fund', icon:'🧭', title:'積立を続けるコツ', sub:'ドルコスト・複利・リバランス・暴落時', gram:`
+<h3>ドルコスト平均法</h3>
+<p>毎月同じ金額で買い続けると、値段が高いときは少なく、安いときは多く買えます。これを[[ドルコスト平均法]]といいます。買う時期を考えなくていいので、気持ちが楽になるのが最大の効果です。</p>
+<div class="pbox">安いときにたくさん、高いときに少しだけ。「いつ買うか」の悩みを、自動で平らにしてくれる方法。</div>
+<h3>複利と72の法則</h3>
+<p>利益をそのまま再投資すると、利益が利益を生みます（[[複利]]）。お金が2倍になる年数の目安は<strong>72÷年利（%）</strong>です。年3%なら約24年、年6%なら約12年です。</p>
+<h3>リバランス</h3>
+<p>株と債券などの割合は、値動きでだんだんずれていきます。決めた割合に戻すことを[[リバランス]]といいます。年に1回など、<strong>日を決めて機械的に</strong>行うのがコツです。NISAの中で売ると枠の再利用は翌年になるので、<strong>積立の配分を変えて調整する</strong>方法もあります。</p>
+<h3>暴落したとき</h3>
+<p>株式は、数年に一度は大きく下がります。長期の積立では、下がったときにやめてしまうのが一番もったいない行動です。下がっている時期は、同じ金額で多くの口数を買える時期でもあります。</p>
+<div class="tbox">台風の日に畑を売らない。実がなるのは、何年も育てた木から。</div>
+<div class="mbox">「お金」→「わたしの方針」に、暴落時にどうするかを<strong>平常時のうちに</strong>書いておこう。ホーム画面に毎日表示されます。</div>
+<h3>取り崩しの前に</h3>
+<p>使う時期が近いお金（数年以内の教育費など）は、値下がりで困らないよう、<strong>早めに預金など値動きの小さいものへ移しておく</strong>のが基本です。「いつ・いくら使うか」で、置き場所を分けます。</p>
+` },
+{ id:'stock1', field:'stock', icon:'🏭', title:'従業員持株会', sub:'奨励金・単元株・引き出し・注意点', gram:`
+<h3>まず、これは何？</h3>
+<p>[[従業員持株会]]は、社員が給料から毎月お金を出し合い、自社の株を共同で買い続ける仕組みです。会社から上乗せの[[奨励金]]が出ることが多く、ここが最大のメリットです。</p>
+<div class="pbox">会社がおこづかいを足してくれる「自社株の積立」。奨励金10%なら、1万円出すと1.1万円分買える。</div>
+<h3>しくみ</h3>
+<ul>
+<li>毎月決まった額を給料から天引き（ボーナス時に増額できる会社も）。</li>
+<li>株は持株会の名前でまとめて持ち、各自は<strong>持分</strong>（口数・株数）を持つ。</li>
+<li>配当は、持株会の中で<strong>再投資</strong>されるのが一般的。</li>
+<li>持分が<strong>単元株（ふつう100株）</strong>以上になると、自分の証券口座へ引き出せる。</li>
+</ul>
+<h3>税金</h3>
+<p>奨励金は<strong>給与所得</strong>として扱われ、給料と同じく税金がかかります。また、持株会で買う株は<strong>NISAの対象外</strong>です。引き出した株を、あとからNISA口座に移すこともできません。</p>
+<h3>気をつけたいこと</h3>
+<p>一番の注意点は<strong>集中リスク</strong>です。給料も資産も同じ会社に頼ると、会社の業績が悪いときに両方が同時に傷みます。資産全体の中で、自社株の割合に上限を決めておくと安心です。</p>
+<p>もう一つは[[インサイダー取引]]規制です。持株会の<strong>毎月決まった額の買付</strong>は規制の対象外ですが、引き出した株を売るときや、拠出額を臨時に変えるときは、会社の重要な未公表情報を知っていないかに注意し、社内の規程に従います。</p>
+<div class="tbox">好きな店の割引クーポン付き積立。ただし、自分の勤め先という一つのかごに、卵を全部入れないこと。</div>
+<div class="mbox">持株会の毎月の拠出額と奨励金率を「お金」→「資産・積立」に登録すると、年間の奨励金の見込みと、資産全体に占める自社株の割合が自動で出ます。</div>
+` },
+{ id:'tax1', field:'tax', icon:'🧾', title:'年末調整のしくみと書類', sub:'4つの申告書・控除証明書・改正点', gram:`
+<h3>まず、これは何？</h3>
+<p>会社は毎月の給料から所得税を<strong>概算</strong>で天引きしています。1年の最後に、本当の税額を計算し直して差額を精算するのが[[年末調整]]です。多く引かれていれば12月か1月の給料で戻り、少なければ追加で引かれます。</p>
+<div class="pbox">毎月の天引きは「仮払い」。年末に1年分のレシート（控除の書類）を会社に見せて、正しい金額に精算する。</div>
+<h3>出す書類</h3>
+<div class="tblwrap"><table><thead><tr><th>書類</th><th>中身</th></tr></thead><tbody>
+<tr><td>扶養控除等（異動）申告書</td><td>扶養する家族。<strong>翌年分</strong>を年末に出す</td></tr>
+<tr><td>基礎控除申告書 兼 配偶者控除等申告書 兼 所得金額調整控除申告書 兼 特定親族特別控除申告書</td><td>本人の所得見込み・配偶者・19〜22歳の子の控除（略して「基・配・所・特」）</td></tr>
+<tr><td>保険料控除申告書</td><td>生命保険・地震保険・家族の分も払った社会保険料・iDeCo</td></tr>
+<tr><td>住宅借入金等特別控除申告書</td><td>住宅ローン控除の2年目以降。年末残高証明書と一緒に</td></tr>
+</tbody></table></div>
+<h3>控除証明書は10月ごろに届く</h3>
+<p>生命保険会社や損害保険会社から、<strong>控除証明書</strong>がはがきなどで届きます。年末調整で使うので、届いたらすぐ保管します。電子で受け取れる会社も増えています。</p>
+<h3>生命保険料控除</h3>
+<p>2012年以降の契約（新制度）では、<strong>一般・介護医療・個人年金</strong>の3つがそれぞれ最大4万円、合計で最大12万円（所得税）です。</p>
+<div class="newbox">令和8年分から、<strong>23歳未満の扶養親族がいる人</strong>は、新制度の一般生命保険料控除の上限が<strong>6万円</strong>に上がりました（3つの合計上限12万円は同じ）。基礎控除は所得に応じて上乗せされ、所得489万円以下なら最大104万円に。給与所得控除の最低額も74万円になり、所得税がかかり始める年収は178万円に上がりました。改正は12月の年末調整で反映されます。</div>
+<h3>家族の社会保険料も控除になる</h3>
+<p>20歳を過ぎた大学生の子の<strong>国民年金保険料を親が払った</strong>場合、親の[[社会保険料控除]]にできます。年末調整では、日本年金機構の控除証明書を添付します。</p>
+<div class="mbox">「お金」→「年末調整」で、今年出す書類と添付物をチェックリストで管理できます。毎年同じ時期に、同じ順番で。</div>
+` },
+{ id:'tax2', field:'tax', icon:'📮', title:'年末調整でできないこと', sub:'確定申告・ふるさと納税・医療費控除', gram:`
+<h3>確定申告が必要な場面</h3>
+<p>会社員でも、次のような控除は年末調整では受けられず、[[確定申告]]が必要です。期間はふつう<strong>2月16日〜3月15日</strong>です。</p>
+<ul>
+<li><strong>医療費控除</strong>（家族の分も合算できる）</li>
+<li><strong>ふるさと納税</strong>（ワンストップ特例を使わない場合）</li>
+<li><strong>住宅ローン控除の1年目</strong></li>
+<li>雑損控除（災害・盗難）、寄附金控除（一般の寄附）</li>
+</ul>
+<p>税金が戻るだけの申告（還付申告）は、翌年1月1日から<strong>5年間</strong>できます。出し忘れに気づいたら、さかのぼって申告できます。</p>
+<h3>医療費控除</h3>
+<p>1年間（1〜12月）に家族で払った医療費から、保険などで戻った分を引き、<strong>10万円</strong>（所得200万円未満の人は所得の5%）を超えた分が控除になります（上限200万円）。市販薬の購入額が1.2万円を超えた分を控除する<strong>セルフメディケーション税制</strong>もありますが、どちらか一方しか選べません。</p>
+<h3>ふるさと納税</h3>
+<p>[[ふるさと納税]]は、自治体に寄附すると、<strong>自己負担2,000円</strong>を除いた額が所得税・住民税から差し引かれる仕組みです。差し引かれる上限は、年収や家族構成、ほかの控除で変わります。<strong>1月1日〜12月31日</strong>の寄附が、その年の分です。</p>
+<div class="tblwrap"><table><thead><tr><th>ワンストップ特例の条件</th><th>内容</th></tr></thead><tbody>
+<tr><td>確定申告が不要な人</td><td>会社員で、ほかに申告する理由がない</td></tr>
+<tr><td>寄附先</td><td>1年で<strong>5自治体以内</strong></td></tr>
+<tr><td>期限</td><td>申請書を翌年<strong>1月10日</strong>必着</td></tr>
+</tbody></table></div>
+<div class="wbox">⚠️ 医療費控除などで確定申告をすると、ワンストップ特例は<strong>無効</strong>になります。そのときは、ふるさと納税も全部、確定申告に書き込みます。</div>
+<p>2025年10月から、ポータルサイトが寄附に<strong>独自のポイントをつけることは禁止</strong>されました。</p>
+<h3>6月の住民税決定通知書で確認</h3>
+<p>ふるさと納税が住民税から引かれているかは、6月ごろに会社経由で届く<strong>住民税決定通知書</strong>の「寄附金税額控除」欄で確かめます。</p>
+` },
+{ id:'tax3', field:'tax', icon:'👪', title:'子どもと税金・扶養', sub:'扶養控除・特定扶養・年収の壁', gram:`
+<h3>年齢で変わる扶養控除</h3>
+<p>扶養控除は、子どもの<strong>その年の12月31日時点の年齢</strong>で決まります。</p>
+<div class="tblwrap"><table><thead><tr><th>年齢（12/31）</th><th>所得税の控除</th><th>住民税の控除</th></tr></thead><tbody>
+<tr><td>15歳以下</td><td>なし（児童手当がある）</td><td>なし</td></tr>
+<tr><td>16〜18歳</td><td>38万円（一般の扶養）</td><td>33万円</td></tr>
+<tr><td>19〜22歳</td><td><strong>63万円</strong>（[[特定扶養控除]]）</td><td>45万円</td></tr>
+</tbody></table></div>
+<p>大学生年代の19〜22歳は控除が大きくなります。高校生年代の控除を縮小する案は議論されましたが、令和8年度の改正では<strong>見送られ</strong>、38万円のままです。</p>
+<h3>子どもがアルバイトで稼いだら</h3>
+<p>扶養に入れられる子の所得の上限は、令和8年分から<strong>合計所得62万円以下</strong>（給与だけなら年収136万円以下）になりました。</p>
+<p>19〜22歳の子は、それを超えても、合計所得123万円以下までは[[特定親族特別控除]]で、親の控除が<strong>段階的に減る</strong>形になります。急に控除がゼロになる「壁」は小さくなりました。親が年末調整で、子の<strong>年間の所得の見込み</strong>を申告します。</p>
+<div class="pbox">子どもがバイトを頑張っても、親の税金が突然増える段差はゆるやかになった。ただし「見込み額」を書いて出すので、年末に子どもの年収を確認する習慣が大事。</div>
+<h3>税金とは別の「社会保険の壁」</h3>
+<p>健康保険で親の扶養（被扶養者）でいられるかは、税金とは<strong>別のルール</strong>です。ふつうは年収130万円未満ですが、2025年10月から<strong>19〜22歳は150万円未満</strong>に広がりました。超えると、子ども自身が国民健康保険などに入る必要があります。</p>
+<div class="wbox">⚠️ 税金（所得で判定・1〜12月）と社会保険（今後1年間の見込み年収で判定）は、物差しも期間も違う。両方を確認する。</div>
+<div class="mbox">「お金」→「教育資金」で子どもの生年月日を入れると、今年と来年の12月31日時点の年齢と、扶養控除の区分を自動で表示します。</div>
+` },
+{ id:'edu1', field:'edu', icon:'✏️', title:'大学受験のお金', sub:'受験料・入学金・初年度納付金', gram:`
+<h3>受験だけでもお金がかかる</h3>
+<div class="tblwrap"><table><thead><tr><th>項目</th><th>目安</th></tr></thead><tbody>
+<tr><td>大学入学共通テスト</td><td>3教科以上 18,000円／2教科以下 12,000円</td></tr>
+<tr><td>国公立 個別試験</td><td>17,000円</td></tr>
+<tr><td>私立 一般選抜</td><td>1回 30,000〜35,000円前後（共テ利用は安め）</td></tr>
+<tr><td>交通費・宿泊費</td><td>遠方受験なら1回数万円</td></tr>
+</tbody></table></div>
+<p>私立を何校も受けると、受験料だけで十数万円になることもあります。複数学部を同時に受けると割引になる大学もあります。</p>
+<h3>入学までに払うお金</h3>
+<div class="tblwrap"><table><thead><tr><th></th><th>入学金</th><th>授業料（年）</th></tr></thead><tbody>
+<tr><td>国立（標準額）</td><td>282,000円</td><td>535,800円</td></tr>
+<tr><td>私立（平均の目安）</td><td>約24万円</td><td>約96万円＋施設費など</td></tr>
+</tbody></table></div>
+<p>国立でも、授業料を標準額より高く設定している大学があります。必ず志望校の募集要項で確認します。</p>
+<h3>「押さえ」の入学金</h3>
+<p>私立大学の入学金の締め切りは、<strong>国公立の合格発表より前</strong>に来ることが多いです。第一志望の結果を待つ間に、合格した私立の入学金を払って席を確保することを「押さえ」といいます。入学を辞退しても、入学金はふつう戻りません。<strong>授業料などは、決められた期限までに辞退すれば返還される</strong>大学が多いです。</p>
+<div class="wbox">⚠️ 入学金の振込期限は、合格発表から1週間ほどのことも。土日をはさむと銀行振込が間に合わないことがある。期限はカレンダーに必ず登録する。</div>
+<h3>お金の準備は「いつ・いくら」</h3>
+<p>受験費用は1〜2月、入学金は2〜3月、前期授業料は3〜4月に集中します。<strong>2〜3月に最大の山</strong>が来ると考えて、その時期に使える現金を用意します。</p>
+<div class="mbox">「お金」→「教育資金」に受験校を登録すると、受験料の合計、入学金の期限、合格後に必要な額、教育資金口座の残高との差を自動で計算します。</div>
+` },
+{ id:'edu2', field:'edu', icon:'🎒', title:'合格後のお金の使い方', sub:'奨学金・教育ローン・一人暮らし・20歳', gram:`
+<h3>足りないときの2つの道</h3>
+<div class="tblwrap"><table><thead><tr><th></th><th>奨学金（JASSO）</th><th>国の教育ローン</th></tr></thead><tbody>
+<tr><td>借りる人</td><td><strong>学生本人</strong></td><td><strong>保護者</strong></td></tr>
+<tr><td>受け取り</td><td>入学後に毎月振込</td><td>一括で受け取れる</td></tr>
+<tr><td>入学金に</td><td>間に合わない</td><td>間に合う（合格前にも申込可）</td></tr>
+<tr><td>金利</td><td>第一種は無利子・第二種は有利子</td><td>固定金利</td></tr>
+</tbody></table></div>
+<p>[[奨学金]]には返さなくていい<strong>給付型</strong>（家計の基準あり）と、返す<strong>貸与型</strong>があります。高校3年のうちに申し込む「予約採用」が基本です。貸与型の「入学時特別増額」も、振り込まれるのは<strong>入学後</strong>です。</p>
+<p>[[国の教育ローン]]（日本政策金融公庫）は、学生1人あたり原則350万円まで借りられ、世帯年収の上限があります。入学金のつなぎに向いています。</p>
+<div class="pbox">奨学金は「子どもの借金」、教育ローンは「親の借金」。入学前の大きな支払いは、奨学金では間に合わない。</div>
+<h3>一人暮らしの初期費用</h3>
+<p>敷金・礼金・仲介手数料・前家賃、家具・家電、引っ越し代で、<strong>40〜60万円前後</strong>かかることがあります。合格発表から入居まで時間が短いので、物件の見当は事前につけておきます。</p>
+<h3>入学後に決めておくこと</h3>
+<ul>
+<li><strong>仕送り額</strong>と、アルバイト代との分担</li>
+<li>学費を払う口座と、生活費の口座を分ける</li>
+<li>パソコンなど指定がある物品（大学の指定を確認）</li>
+<li>クレジットカードは家族カードか本人カードか</li>
+</ul>
+<h3>20歳になったら国民年金</h3>
+<p>学生でも20歳から国民年金に加入します。収入の少ない学生は[[学生納付特例]]を申請すると、保険料の支払いが猶予されます（10年以内なら後から納められます）。猶予したままだと、将来の年金額が少なくなります。</p>
+<div class="tbox">親が子の国民年金を払うと、その額は<strong>親の</strong>社会保険料控除になる。税金が少し戻る「家族の作戦」。</div>
+` },
+{ id:'house1', field:'house', icon:'🏠', title:'住宅ローン控除と金利', sub:'0.7%・13年・繰上返済の落とし穴', gram:`
+<h3>住宅ローン控除とは</h3>
+<p>[[住宅ローン控除]]は、年末のローン残高の一定割合を、所得税（引ききれない分は住民税）から差し引く制度です。2022年以降に入居した人は、控除率<strong>0.7%</strong>です。</p>
+<div class="tblwrap"><table><thead><tr><th>項目</th><th>2022〜2023年入居の新築の例</th></tr></thead><tbody>
+<tr><td>控除率</td><td>年末残高の0.7%</td></tr>
+<tr><td>期間</td><td>13年（中古住宅は10年）</td></tr>
+<tr><td>残高の上限</td><td>一般の住宅3,000万円、省エネ基準適合4,000万円、ZEH水準4,500万円、長期優良住宅5,000万円</td></tr>
+<tr><td>住民税から</td><td>所得税で引ききれない分。上限は課税総所得金額等の5%（最高9.75万円）</td></tr>
+<tr><td>所得の条件</td><td>合計所得2,000万円以下</td></tr>
+</tbody></table></div>
+<p><strong>1年目は確定申告</strong>が必要です。2年目以降は、税務署から届く申告書と、銀行の<strong>年末残高証明書</strong>を会社に出せば、年末調整で受けられます。</p>
+<h3>変動金利のしくみ</h3>
+<p>変動金利は、多くの銀行で<strong>半年ごと</strong>に見直されます。元利均等返済では、金利が上がっても、返済額の変更は<strong>5年ごと</strong>、上がり幅は前の<strong>1.25倍まで</strong>とする「5年ルール・125%ルール」を設けている銀行があります。ただし、ルールがない銀行もあり、ある場合も<strong>払いきれない利息（未払利息）</strong>が出ることがあります。自分の契約書で確認しておきます。</p>
+<h3>繰上返済と控除の関係</h3>
+<p>繰上返済をすると、年末残高が減り、<strong>控除額も減ります</strong>。ローン金利が控除率0.7%より低い間は、借りておいたほうが手元にお金が残る「[[逆ざや]]」の状態になることがあります。金利が上がり、0.7%を超えてくると、繰上返済の効果が大きくなります。</p>
+<div class="wbox">⚠️ 期間短縮型の繰上返済で、借り入れたときからの返済期間が<strong>10年未満</strong>になると、その年から控除が受けられなくなる。控除期間中の大きな繰上返済は慎重に。</div>
+<h3>借り換え</h3>
+<p>借り換えても、条件を満たせば控除は続けられます（新しいローンが元のローンの返済のためで、残りの返済期間が10年以上など）。控除の対象になるのは、借り換え直前の旧ローン残高までです。手数料・保証料・登記費用などの諸費用を含めて比べます。</p>
+<div class="mbox">「お金」→「住宅ローン」で、年末残高と金利を記録すると、今年の控除見込み額と、控除が終わる年、金利と0.7%の比較が出ます。</div>
+` },
+{ id:'life1', field:'life', icon:'🛟', title:'年金・iDeCo・保険の基本', sub:'ねんきん定期便・iDeCo・保障の見直し', gram:`
+<h3>公的年金は2階建て</h3>
+<p>日本の公的年金は、全員が入る<strong>国民年金（1階）</strong>と、会社員などが入る<strong>厚生年金（2階）</strong>の2階建てです。自分の記録は、誕生月に届く[[ねんきん定期便]]や「ねんきんネット」で確認できます。</p>
+<h3>iDeCo（個人型確定拠出年金）</h3>
+<p>[[iDeCo]]は、自分で掛金を出して運用し、老後に受け取る年金です。</p>
+<ul>
+<li>掛金は<strong>全額が所得控除</strong>（小規模企業共済等掛金控除）。年末調整で申告できる</li>
+<li>運用益は非課税</li>
+<li>原則<strong>60歳まで引き出せない</strong></li>
+<li>受け取るときは、退職所得控除や公的年金等控除の対象</li>
+</ul>
+<p>NISAはいつでも引き出せる自由なお金、iDeCoは老後専用で税金が安くなるお金、と役割を分けて考えます。掛金の上限は、勤め先の企業年金の有無などで変わり、制度の見直しも続いています。</p>
+<h3>保険は「起きたら困ること」に</h3>
+<p>保険は、貯金では払いきれない大きな損失に備えるものです。日本の健康保険には、医療費の自己負担に上限がある[[高額療養費制度]]があります。子どもが独立に近づくと、必要な死亡保障は小さくなっていくので、節目ごとに見直します。</p>
+<div class="pbox">保険は「めったに起きないけど、起きたら家計が壊れること」にだけ使う。小さな出費は貯金で備える。</div>
+` }
+];
+
+TS.gl={
+'NISA':{f:'nisa',d:'投資の利益が非課税になる口座。つみたて投資枠（年120万円）と成長投資枠（年240万円）、生涯1,800万円（簿価）。期間は無期限。'},
+'つみたて投資枠':{f:'nisa',d:'NISAの枠の一つ。年120万円まで。国の基準を満たした長期・積立向きの投資信託を積立で買う。'},
+'成長投資枠':{f:'nisa',d:'NISAの枠の一つ。年240万円、生涯1,200万円まで。上場株式や投資信託を買える（一部除外あり）。'},
+'簿価残高方式':{f:'nisa',d:'NISAの生涯枠を、評価額ではなく買付金額で管理する方式。売却すると簿価分の枠が翌年に復活する。'},
+'こどもNISA':{f:'nisa',d:'2027年1月開始予定。0〜17歳が対象で、つみたて投資枠と同じ商品を年60万円・合計600万円まで。12歳以降に条件付きで払い出し可能。'},
+'暦年贈与':{f:'nisa',d:'1月〜12月にもらった額が110万円以下なら贈与税がかからない。必要なつど払う教育費・生活費は非課税。'},
+'損益通算':{f:'fund',d:'利益と損失を相殺して税金を計算すること。NISA口座の損失は、他の口座の利益と通算できない。'},
+'投資信託':{f:'fund',d:'多くの人の資金をまとめて専門家が運用する商品。少額で分散投資できる。'},
+'基準価額':{f:'fund',d:'投資信託の値段。ふつう1万口あたりで表し、1日1回算出される。'},
+'信託報酬':{f:'fund',d:'投資信託を持っている間、毎日差し引かれる運用・管理の費用。年率で表示される。'},
+'分配金':{f:'fund',d:'投資信託の財産から払い出されるお金。払った分、基準価額は下がる。普通分配金は課税、元本払戻金は非課税。'},
+'特定口座':{f:'fund',d:'証券会社が年間の損益を計算してくれる口座。「源泉徴収あり」なら原則確定申告不要。'},
+'ドルコスト平均法':{f:'fund',d:'一定額を定期的に買い続ける方法。安いときに多く、高いときに少なく買える。'},
+'複利':{f:'fund',d:'利益を再投資して、利益にも利益がつくこと。2倍になる年数の目安は72÷年利（%）。'},
+'リバランス':{f:'fund',d:'値動きでずれた資産の配分を、決めた割合に戻すこと。'},
+'従業員持株会':{f:'stock',d:'社員が給与天引きで自社株を共同購入する仕組み。会社からの奨励金があることが多い。'},
+'奨励金':{f:'stock',d:'持株会で会社が拠出額に上乗せする補助。給与所得として課税される。'},
+'単元株':{f:'stock',d:'株式の売買単位。日本の上場株はふつう100株。持株会の持分が単元以上になると証券口座に引き出せる。'},
+'インサイダー取引':{f:'stock',d:'会社の重要な未公表情報を知って株を売買すること。持株会の定時定額の買付は規制の適用除外。'},
+'配当':{f:'stock',d:'会社が利益の一部を株主に分配するお金。'},
+'年末調整':{f:'tax',d:'会社が1年間の所得税を計算し直し、毎月の天引き額との差額を精算する手続き。'},
+'確定申告':{f:'tax',d:'1年間の所得と税額を自分で計算して税務署に申告する手続き。ふつう2月16日〜3月15日。還付申告は5年間可能。'},
+'基礎控除':{f:'tax',d:'誰でも受けられる控除。令和8年分は所得489万円以下なら最大104万円、所得が高くなると段階的に少なくなる。'},
+'給与所得控除':{f:'tax',d:'給与収入から差し引ける、会社員の必要経費にあたる額。令和8年分の最低額は74万円。'},
+'社会保険料控除':{f:'tax',d:'自分や生計を一にする家族の社会保険料を払ったときの控除。子の国民年金を親が払えば親の控除になる。'},
+'生命保険料控除':{f:'tax',d:'一般・介護医療・個人年金の3区分。新制度は各4万円・合計12万円。令和8年分から23歳未満の扶養親族がいれば一般は6万円まで。'},
+'ふるさと納税':{f:'tax',d:'自治体への寄附で、自己負担2,000円を除く額が所得税・住民税から引かれる。1〜12月分。'},
+'ワンストップ特例':{f:'tax',d:'確定申告が不要な人が、年5自治体以内の寄附なら申請書だけで控除を受けられる制度。翌年1月10日必着。'},
+'医療費控除':{f:'tax',d:'家族の医療費が年10万円（所得200万円未満は所得の5%）を超えた分を控除。確定申告が必要。'},
+'扶養控除':{f:'tax',d:'16歳以上の扶養親族がいるときの控除。16〜18歳は38万円、19〜22歳は63万円（所得税）。12月31日時点の年齢で判定。'},
+'特定扶養控除':{f:'tax',d:'19歳以上23歳未満の扶養親族の控除。所得税63万円、住民税45万円。'},
+'特定親族特別控除':{f:'tax',d:'2025年分から。19〜22歳の子の所得が扶養の上限を超えても、一定額までは親の控除が段階的に減る形で残る。令和8年分は合計所得62万円超123万円以下が対象。'},
+'住民税決定通知書':{f:'tax',d:'毎年5〜6月ごろ会社経由で届く、その年度の住民税額の通知。ふるさと納税の反映も確認できる。'},
+'奨学金':{f:'edu',d:'JASSOなどの学生向け制度。給付型（返済不要）と貸与型（返済必要）。貸与型は学生本人が借りる。'},
+'国の教育ローン':{f:'edu',d:'日本政策金融公庫の保護者向け教育ローン。学生1人あたり原則350万円まで、固定金利。入学前に受け取れる。'},
+'学生納付特例':{f:'edu',d:'20歳以上の学生が国民年金保険料の納付を猶予される制度。10年以内なら追納できる。'},
+'入学金':{f:'edu',d:'入学の権利を得るための費用。国立は標準282,000円。辞退してもふつう返還されない。'},
+'住宅ローン控除':{f:'house',d:'年末ローン残高×控除率（2022年以降入居は0.7%）を税額から差し引く制度。新築は13年。'},
+'年末残高証明書':{f:'house',d:'金融機関が発行する、年末時点のローン残高の証明書。住宅ローン控除の年末調整に必要。'},
+'逆ざや':{f:'house',d:'ローン金利より控除率のほうが高く、借りていたほうが得になる状態。'},
+'変動金利':{f:'house',d:'市場金利に合わせて見直される金利。多くは半年ごとに見直し。'},
+'元利均等返済':{f:'house',d:'毎回の返済額（元金＋利息）が一定になる返済方法。初めは利息の割合が大きい。'},
+'5年ルール・125%ルール':{f:'house',d:'変動金利の元利均等返済で、返済額の変更を5年ごと・前の1.25倍までにするルール。採用していない銀行もある。'},
+'iDeCo':{f:'life',d:'個人型確定拠出年金。掛金は全額所得控除、運用益非課税、原則60歳まで引き出せない。'},
+'ねんきん定期便':{f:'life',d:'誕生月に届く年金記録の通知。35・45・59歳の節目は封書で詳しい内容が届く。'},
+'高額療養費制度':{f:'life',d:'1か月の医療費の自己負担に、所得に応じた上限を設ける健康保険の制度。'}
+};
+
+/* ── TSUMIKI 問題データ ──
+ 4択: {id,u,q,c:[4つ],a:正解index,w:[各選択肢の理由],e:解説}
+ ○×: {id,u,t:文,a:true/false,e:解説} */
+TS.q=[
+/* NISA */
+{id:'n01',u:'nisa1',q:'NISAの「つみたて投資枠」の1年間の上限はいくら？',c:['40万円','120万円','240万円','360万円'],a:1,w:['旧つみたてNISAの上限。','2024年からの新制度の上限。','成長投資枠の上限。','2つの枠の合計。'],e:'つみたて投資枠は年120万円、成長投資枠は年240万円。併用すると年360万円まで。'},
+{id:'n02',u:'nisa1',q:'NISAの生涯の非課税保有限度額（合計）は？',c:['600万円','1,200万円','1,800万円','2,000万円'],a:2,w:['こどもNISA（予定）の合計上限。','成長投資枠だけの上限。','合計の上限。','そのような上限はない。'],e:'生涯1,800万円。うち成長投資枠で使えるのは1,200万円まで。'},
+{id:'n03',u:'nisa1',q:'NISAの生涯枠は何の金額で管理される？',c:['毎日の評価額','買付金額（簿価）','年末時点の評価額','利益の額'],a:1,w:['値上がりしても枠の使用は増えない。','簿価残高方式。','年末時点の時価ではない。','利益は関係ない。'],e:'簿価で管理するので、値上がりしても枠は減らない。売ると簿価分が翌年に復活する。'},
+{id:'n04',u:'nisa1',q:'NISAで100万円で買った投資信託が150万円になり、全部売った。枠はどうなる？',c:['150万円分が今年すぐ復活','100万円分が翌年に復活','50万円分だけ復活','復活しない'],a:1,w:['復活は翌年で、時価ではなく簿価。','簿価100万円分が翌年に復活。','利益分ではない。','2024年からの制度は復活する。'],e:'生涯枠は簿価管理。売却した簿価分が翌年以降に再利用できる。ただし年間枠360万円の範囲内。'},
+{id:'n05',u:'nisa1',q:'NISA口座で出た損失について正しいのは？',c:['特定口座の利益と相殺できる','翌年以降3年間繰り越せる','他の口座と損益通算できない','確定申告すれば還付される'],a:2,w:['NISAの損失は通算できない。','繰越控除もできない。','正しい。','NISAの損失は税務上なかったものとされる。'],e:'利益に税金がかからない代わりに、損失も税金の計算ではないものとされる。'},
+{id:'n06',u:'nisa1',q:'NISA口座を開設できるのは？',c:['その年の1月1日時点で18歳以上','20歳以上','誕生日に18歳になった日から','15歳以上'],a:0,w:['正しい。','以前の制度の年齢。','判定は1月1日時点。','未成年はこどもNISA（2027年〜予定）。'],e:'その年の1月1日時点で18歳以上の人が対象。'},
+{id:'n07',u:'nisa1',q:'成長投資枠で買えないものは？',c:['上場株式','インデックス型の投資信託','毎月分配型の投資信託','ETF'],a:2,w:['買える。','買える。','除外されている。','条件を満たすETFは買える。'],e:'成長投資枠では、毎月分配型や高レバレッジ型、整理・監理銘柄などが対象外。'},
+{id:'n08',u:'nisa1',q:'NISAの非課税で保有できる期間は？',c:['5年','20年','無期限','65歳まで'],a:2,w:['旧一般NISA。','旧つみたてNISA。','2024年からは無期限。','年齢の制限はない。'],e:'2024年からのNISAは、制度も保有期間も恒久化・無期限化された。'},
+{id:'n09',u:'nisa2',q:'こどもNISA（2027年1月開始予定）の年間の投資上限は？',c:['30万円','60万円','80万円','120万円'],a:1,w:['違う。','年60万円の予定。','旧ジュニアNISAの年間上限。','大人のつみたて投資枠。'],e:'こどもNISAは年60万円・合計600万円まで、つみたて投資枠と同じ商品を積立で買う予定。'},
+{id:'n10',u:'nisa2',q:'1年間にもらった額がいくら以下なら贈与税がかからない？（暦年贈与）',c:['60万円','100万円','110万円','200万円'],a:2,w:['違う。','違う。','基礎控除110万円。','違う。'],e:'1月〜12月に1人がもらった額が110万円以下なら非課税。必要なつど払う教育費・生活費はそもそも非課税。'},
+{id:'n11',u:'nisa2',q:'こどもNISAの資産は、子どもが何歳以降なら一定の条件で払い出せる予定？',c:['6歳','12歳','15歳','18歳'],a:1,w:['違う。','12歳以降に条件付きで可能になる予定。','違う。','18歳では大人のNISAへ移る。'],e:'中学生年代以降の教育費などに使えるよう、12歳以降の払い出しが認められる予定。'},
+/* 投資信託 */
+{id:'f01',u:'fund1',q:'投資信託の値段「基準価額」は、ふつう何口あたりの価格？',c:['1口','100口','1万口','100万口'],a:2,w:['違う。','違う。','1万口あたりが一般的。','違う。'],e:'基準価額は1日1回算出され、ふつう1万口あたりで表示される。'},
+{id:'f02',u:'fund1',q:'投資信託を持っている間ずっとかかるコストは？',c:['購入時手数料','信託報酬','信託財産留保額','口座管理料'],a:1,w:['買うときだけ。','毎日差し引かれる。','売るときだけ。','投資信託のコストの区分ではない。'],e:'信託報酬は基準価額から日々差し引かれるので気づきにくい。長期では差が大きくなる。'},
+{id:'f03',u:'fund1',q:'NISA以外の口座で投資信託の利益が出たとき、かかる税率は？',c:['10.21%','15%','20.315%','30%'],a:2,w:['違う。','違う。','所得税15.315%＋住民税5%。','違う。'],e:'20.315%（所得税15％＋復興特別所得税0.315％＋住民税5％）。'},
+{id:'f04',u:'fund1',q:'分配金のうち、税金がかからないのはどれ？',c:['普通分配金','元本払戻金（特別分配金）','すべての分配金','再投資した分配金'],a:1,w:['利益から出るので課税。','元本の払い戻しなので非課税。','普通分配金は課税。','再投資しても課税対象。'],e:'元本払戻金は自分のお金が戻っただけなので非課税。分配金が出ると基準価額はその分下がる。'},
+{id:'f05',u:'fund1',q:'特定口座で「源泉徴収あり」を選ぶと？',c:['税金がかからない','原則、確定申告が不要','損失が出ない','NISAと同じ扱いになる'],a:1,w:['税金はかかる。','証券会社が計算・納税してくれる。','関係ない。','別の口座。'],e:'源泉徴収ありの特定口座なら、利益が出ても原則として確定申告しなくてよい。'},
+{id:'f06',u:'fund1',q:'インデックス型投資信託の特徴として正しいのは？',c:['指数を大きく上回ることを目指す','指数と同じ動きを目指し、コストが低め','元本が保証される','分配金が必ず毎月出る'],a:1,w:['アクティブ型の目標。','正しい。','投資信託に元本保証はない。','商品による。'],e:'インデックス型は日経平均や全世界株式などの指数に連動。低コストが長期の強み。'},
+{id:'f07',u:'fund2',q:'年利6%で運用すると、お金が約2倍になるのは何年後？（72の法則）',c:['6年','12年','18年','24年'],a:1,w:['違う。','72÷6＝12。','違う。','年3%のとき。'],e:'72÷年利（%）で、お金が2倍になる年数の目安が出せる。'},
+{id:'f08',u:'fund2',q:'毎月同じ金額で買い続けると、値段が安いときは？',c:['少なく買える','多くの口数を買える','買えなくなる','手数料が上がる'],a:1,w:['逆。','同じ金額で多くの口数を買える。','買える。','関係ない。'],e:'ドルコスト平均法。高いときは少なく、安いときは多く買うので、平均の購入単価がならされる。'},
+{id:'f09',u:'fund2',q:'リバランスについて正しいのは？',c:['値上がりした資産をさらに買い増すこと','ずれた資産配分を決めた割合に戻すこと','全部売って現金にすること','毎日行うのが理想'],a:1,w:['逆の動き。','正しい。','違う。','年1回など日を決めて機械的に。'],e:'NISA内で売ると枠の再利用は翌年になるため、積立の配分変更で調整する方法もある。'},
+{id:'f10',u:'fund2',q:'3年後に使う予定の教育資金の置き場所として、基本の考え方は？',c:['全額を株式の投資信託で運用','使う時期が近いので値動きの小さいものへ','暴落を待って一括投資','持株会に回す'],a:1,w:['値下がりしたときに困る。','近く使うお金は守る。','時期を当てるのは難しい。','集中リスクが大きい。'],e:'「いつ・いくら使うか」で置き場所を分ける。数年以内に使うお金は預金などへ早めに移す。'},
+/* 持株会 */
+{id:'s01',u:'stock1',q:'持株会の奨励金は、税金上どう扱われる？',c:['非課税','給与所得','配当所得','一時所得'],a:1,w:['課税される。','給料と同じく給与所得。','配当とは別。','違う。'],e:'会社が出す奨励金は給与所得として課税される。'},
+{id:'s02',u:'stock1',q:'毎月15,000円拠出、奨励金10%のとき、1年間の奨励金はいくら？',c:['1,500円','15,000円','18,000円','180,000円'],a:2,w:['1か月分。','違う。','15,000×12×10%＝18,000円。','1年分の拠出額。'],e:'拠出額×奨励金率×12か月。ボーナス月の拠出がある場合はその分も加わる。'},
+{id:'s03',u:'stock1',q:'持株会の持分を自分の証券口座に引き出せるのは、ふつう何株から？',c:['1株','10株','100株（単元株）','1,000株'],a:2,w:['違う。','違う。','単元株以上で引き出せるのが一般的。','違う。'],e:'単元株（ふつう100株）未満の端数は持株会に残る。'},
+{id:'s04',u:'stock1',q:'持株会で買った株とNISAの関係で正しいのは？',c:['持株会はNISAで買える','引き出した株はNISA口座に移せる','持株会はNISAの対象外で、あとから移すこともできない','奨励金だけNISAの対象'],a:2,w:['対象外。','NISAへの移管はできない。','正しい。','違う。'],e:'NISAは口座内で新たに買うものだけが対象。持株会の株は持株会口座→証券口座へ引き出す。'},
+{id:'s05',u:'stock1',q:'持株会で一番気をつけたいリスクは？',c:['為替リスク','給料と資産が同じ会社に集中するリスク','金利上昇リスク','インフレリスク'],a:1,w:['自社株なら主な論点ではない。','業績悪化時に給料と資産が同時に傷む。','直接は関係が薄い。','主な論点ではない。'],e:'資産全体に占める自社株の割合に上限を決めると安心。'},
+{id:'s06',u:'stock1',q:'インサイダー取引規制と持株会について正しいのは？',c:['持株会の買付はすべて禁止','毎月決まった額の買付は規制の対象外','引き出した株はいつ売っても問題ない','社員は自社株を一切売れない'],a:1,w:['禁止ではない。','定時定額の買付は適用除外。','重要な未公表情報を知っているときの売買は規制対象。','規程に従えば売れる。'],e:'売却や臨時の拠出変更のときは、重要事実を知っていないかに注意し、社内規程に従う。'},
+{id:'s07',u:'stock1',q:'持株会の配当金は、一般にどうなる？',c:['毎回現金で振り込まれる','持株会の中で再投資される','会社に返す','受け取れない'],a:1,w:['再投資が一般的。','正しい。','違う。','持分に応じて受け取る（再投資）。'],e:'配当は持株会の中で自社株の購入に回るのが一般的。'},
+/* 年末調整 */
+{id:'t01',u:'tax1',q:'年末調整で、毎年「翌年分」を提出する書類は？',c:['保険料控除申告書','扶養控除等（異動）申告書','住宅借入金等特別控除申告書','医療費控除の明細書'],a:1,w:['今年分。','翌年分を年末に出す。','今年分。','確定申告で使う。'],e:'年末調整の時期には、今年分の書類と一緒に、翌年分の扶養控除等申告書も出す。'},
+{id:'t02',u:'tax1',q:'新制度の生命保険料控除（所得税）の、3区分の合計上限は？',c:['5万円','10万円','12万円','15万円'],a:2,w:['地震保険料控除の上限。','旧制度の合計上限。','一般・介護医療・個人年金で合計12万円。','違う。'],e:'令和8年分から23歳未満の扶養親族がいれば一般は6万円までになるが、合計12万円は同じ。'},
+{id:'t03',u:'tax1',q:'令和8年分から、一般生命保険料控除の上限が6万円になる条件は？',c:['年収500万円以下','23歳未満の扶養親族がいる','40歳以上','共働き世帯'],a:1,w:['所得の条件ではない。','子育て世帯への拡充。','年齢の条件ではない。','違う。'],e:'23歳未満の扶養親族がいる人は、新制度の一般生命保険料控除の上限が4万円→6万円。'},
+{id:'t04',u:'tax1',q:'令和8年分で、所得税がかかり始める年収（課税最低限）はいくら？',c:['103万円','123万円','160万円','178万円'],a:3,w:['以前の水準。','令和7年改正前の目安。','令和7年分の水準。','令和8年分は178万円。'],e:'基礎控除（最大104万円）と給与所得控除の最低額（74万円）で178万円。'},
+{id:'t05',u:'tax1',q:'大学生の子の国民年金保険料を親が払った。どうなる？',c:['子の控除にしかならない','親の社会保険料控除にできる','控除の対象外','贈与税がかかる'],a:1,w:['払った人の控除。','生計を一にする親族の分を払えば親の控除。','対象になる。','生活費・教育費の範囲。'],e:'年末調整では日本年金機構の控除証明書を保険料控除申告書に添付する。'},
+{id:'t06',u:'tax1',q:'年末調整の書類のうち「基・配・所・特」の「特」は何？',c:['特別徴収','特定親族特別控除','特定扶養控除','特別減税'],a:1,w:['住民税の天引きのこと。','令和7年分から兼用様式に加わった。','特定扶養控除は扶養控除等申告書で。','違う。'],e:'基礎控除・配偶者控除等・所得金額調整控除・特定親族特別控除の申告書が1枚になっている。'},
+{id:'t07',u:'tax1',q:'令和8年分の基礎控除は、合計所得489万円以下なら最大いくら？',c:['48万円','58万円','95万円','104万円'],a:3,w:['令和6年分まで。','令和7年分の本則。','令和7年分の最大。','本則62万円＋特例42万円。'],e:'所得が高いほど特例の上乗せは小さくなる（489万超655万以下は＋5万円など）。特例は令和9年分まで。'},
+{id:'t08',u:'tax2',q:'ふるさと納税のワンストップ特例が使える寄附先の数は？',c:['1年で3自治体以内','1年で5自治体以内','1年で10自治体以内','制限なし'],a:1,w:['違う。','5自治体以内。','違う。','6以上なら確定申告。'],e:'確定申告が不要な人が、年5自治体以内なら申請書だけで済む。翌年1月10日必着。'},
+{id:'t09',u:'tax2',q:'ワンストップ特例を申請した人が、医療費控除のため確定申告をした。どうなる？',c:['両方そのまま有効','ワンストップ特例は無効になり、寄附も申告に書く必要がある','医療費控除が無効になる','翌年に自動で調整される'],a:1,w:['確定申告するとワンストップは無効。','正しい。','違う。','されない。'],e:'申告に寄附を書き忘れると、ふるさと納税の控除が受けられなくなる。'},
+{id:'t10',u:'tax2',q:'医療費控除の対象になるのは、原則いくらを超えた分？',c:['5万円','10万円','12,000円','20万円'],a:1,w:['違う。','10万円（所得200万円未満は所得の5%）。','セルフメディケーション税制の基準。','違う。'],e:'家族の分も合算できる。保険で補てんされた額は差し引く。'},
+{id:'t11',u:'tax2',q:'税金が戻るだけの「還付申告」は、いつまでさかのぼってできる？',c:['翌年3月15日まで','1年間','3年間','5年間'],a:3,w:['通常の確定申告の期限。','違う。','違う。','翌年1月1日から5年間。'],e:'出し忘れた医療費控除なども5年以内なら申告できる。'},
+{id:'t12',u:'tax2',q:'ふるさと納税の住民税からの控除は、何で確認できる？',c:['源泉徴収票','住民税決定通知書','ねんきん定期便','給与明細の基本給欄'],a:1,w:['所得税の情報。','6月ごろ届く通知書の寄附金税額控除欄。','関係ない。','関係ない。'],e:'ワンストップ特例の分は、所得税ではなく住民税から全額控除される。'},
+{id:'t13',u:'tax3',q:'扶養控除の年齢は、いつの時点で判定する？',c:['4月1日','誕生日','その年の12月31日','年末調整の提出日'],a:2,w:['学年の基準ではない。','違う。','12月31日時点。','違う。'],e:'たとえば12月31日時点で19歳なら、その年は特定扶養控除（63万円）。'},
+{id:'t14',u:'tax3',q:'19〜22歳の子の特定扶養控除（所得税）はいくら？',c:['38万円','45万円','58万円','63万円'],a:3,w:['16〜18歳の一般の扶養。','住民税の額。','違う。','所得税63万円。'],e:'住民税は45万円。高校生年代の16〜18歳は38万円（住民税33万円）。'},
+{id:'t15',u:'tax3',q:'令和8年分で、子を扶養控除の対象にできる給与収入の上限は？',c:['103万円','123万円','136万円','150万円'],a:2,w:['以前の壁。','令和7年分。','合計所得62万円＝給与136万円。','健康保険の19〜22歳の基準。'],e:'19〜22歳なら、超えても特定親族特別控除で親の控除が段階的に残る。'},
+{id:'t16',u:'tax3',q:'健康保険の被扶養者でいられる年収基準で、19〜22歳（配偶者を除く）は2025年10月からいくら未満？',c:['103万円','130万円','150万円','188万円'],a:2,w:['税金の古い基準。','ふつうの基準。','19〜22歳は150万円未満。','税金の特定親族特別控除に関係した数字。'],e:'税金と社会保険は別ルール。社会保険は今後1年の見込み年収で判定する。'},
+{id:'t17',u:'tax3',q:'特定親族特別控除の説明として正しいのは？',c:['19〜22歳の子の所得が扶養の上限を超えても、一定額まで親の控除が段階的に残る','子ども本人の控除','16歳未満の子の控除','確定申告でしか受けられない'],a:0,w:['正しい。','親の控除。','19歳以上23歳未満が対象。','年末調整で申告できる。'],e:'親が年末調整で子の所得の見込み額を申告する。令和8年分は合計所得62万円超123万円以下が対象。'},
+/* 教育 */
+{id:'e01',u:'edu1',q:'国立大学の入学料の標準額は？',c:['130,000円','282,000円','535,800円','817,800円'],a:1,w:['違う。','標準額。','授業料（年）の標準額。','入学料＋授業料。'],e:'国立は入学料282,000円・授業料535,800円が標準額。大学によっては授業料が高い。'},
+{id:'e02',u:'edu1',q:'大学入学共通テスト（3教科以上）の検定料は？',c:['12,000円','17,000円','18,000円','35,000円'],a:2,w:['2教科以下。','国公立の個別試験。','3教科以上。','私立一般選抜の目安。'],e:'受験料は1〜2月に集中。私立を複数受けると十数万円になることも。'},
+{id:'e03',u:'edu1',q:'私立の「押さえ」で払った入学金は、入学を辞退するとふつうどうなる？',c:['全額戻る','戻らない','半額戻る','国公立に合格すれば戻る'],a:1,w:['入学金はふつう返還されない。','正しい。','違う。','合格では戻らない。'],e:'授業料などは期限までに辞退すれば返還される大学が多い。入学金と授業料の期限を分けて確認する。'},
+{id:'e04',u:'edu1',q:'受験〜入学で支払いの山が最も大きくなりやすい時期は？',c:['10〜11月','12月','2〜3月','5〜6月'],a:2,w:['出願準備の時期。','違う。','入学金・前期授業料が集中。','入学後。'],e:'2〜3月に使える現金を用意しておく。'},
+{id:'e05',u:'edu2',q:'入学金の支払いに間に合いやすいのは？',c:['JASSOの第一種奨学金','JASSOの入学時特別増額貸与','国の教育ローン','給付型奨学金'],a:2,w:['入学後の振込。','振込は入学後。','一括で受け取れ、合格前にも申し込める。','入学後の支給。'],e:'奨学金は入学後に振り込まれるので、入学前の支払いには教育ローンなどでつなぐ。'},
+{id:'e06',u:'edu2',q:'JASSOの貸与型奨学金の借主は誰？',c:['保護者','学生本人','大学','高校'],a:1,w:['教育ローンは保護者。','学生本人が借りて返す。','違う。','違う。'],e:'卒業後に本人が返す。借りる額は将来の返済額から逆算して決める。'},
+{id:'e07',u:'edu2',q:'国の教育ローン（日本政策金融公庫）の融資上限は、学生1人あたり原則いくら？',c:['100万円','200万円','350万円','1,000万円'],a:2,w:['違う。','違う。','原則350万円（条件により上乗せあり）。','違う。'],e:'固定金利。世帯年収の上限があり、子どもの数で変わる。'},
+{id:'e08',u:'edu2',q:'20歳になった学生の国民年金保険料について正しいのは？',c:['学生は加入しなくてよい','学生納付特例で猶予でき、10年以内なら追納できる','大学が払ってくれる','卒業後にまとめて払う義務がある'],a:1,w:['20歳から加入義務。','正しい。','違う。','追納は任意（しないと年金額が減る）。'],e:'猶予しても届け出は必要。親が払えば親の社会保険料控除になる。'},
+{id:'e09',u:'edu2',q:'一人暮らしの初期費用（敷金・礼金・家具家電・引っ越し）の目安は？',c:['5万円前後','10万円前後','40〜60万円前後','200万円前後'],a:2,w:['少なすぎる。','少なすぎる。','目安。','多すぎる。'],e:'合格発表から入居までが短いので、物件の相場は事前に調べておく。'},
+/* 住宅ローン */
+{id:'h01',u:'house1',q:'2022年以降に入居した人の住宅ローン控除の控除率は？',c:['0.5%','0.7%','1.0%','1.2%'],a:1,w:['違う。','0.7%。','2021年までの入居。','違う。'],e:'年末残高（上限あり）×0.7%を所得税から、引ききれない分は住民税から差し引く。'},
+{id:'h02',u:'house1',q:'2022年入居の新築住宅の住宅ローン控除の期間は？',c:['10年','13年','15年','35年'],a:1,w:['中古住宅の期間。','新築は13年。','違う。','ローン期間ではない。'],e:'2022年入居なら、2034年分まで（13年）が控除の対象。'},
+{id:'h03',u:'house1',q:'住宅ローン控除の2年目以降、年末調整で必要なものは？',c:['確定申告書','住宅借入金等特別控除申告書と年末残高証明書','売買契約書の原本','固定資産税の通知書'],a:1,w:['1年目は確定申告。','税務署の申告書＋銀行の証明書。','初年度の申告で使う。','違う。'],e:'税務署の申告書は初年度の申告後に、残りの年数分がまとめて届くことが多い。なくさないように保管。'},
+{id:'h04',u:'house1',q:'ローン金利が0.5%、控除率が0.7%のとき、繰上返済について言えることは？',c:['すぐに全額返すほど得','控除が減るため、手元に置いたほうが有利な場合がある（逆ざや）','控除は変わらない','金利が上がる'],a:1,w:['控除が減る。','正しい。','年末残高が減ると控除も減る。','関係ない。'],e:'金利が0.7%を超えてくると、繰上返済の効果が大きくなる。'},
+{id:'h05',u:'house1',q:'期間短縮型の繰上返済で注意すべき点は？',c:['借入時からの返済期間が10年未満になると控除が受けられなくなる','手数料が必ずかかる','金利が固定になる','団信が外れる'],a:0,w:['正しい。','無料の銀行も多い。','違う。','違う。'],e:'住宅ローン控除の要件は「償還期間10年以上」。控除期間中の大きな繰上返済は慎重に。'},
+{id:'h06',u:'house1',q:'変動金利の「125%ルール」とは？',c:['金利は125%まで上がる','返済額の見直し時、新しい返済額は前の1.25倍まで','借入額の125%まで借り換えできる','控除が125%になる'],a:1,w:['違う。','正しい。','違う。','違う。'],e:'返済額が抑えられても利息は減らないので、未払利息が出ることがある。ルールがない銀行もある。'},
+{id:'h07',u:'house1',q:'住宅ローン控除で、所得税から引ききれない分の住民税からの控除の上限は？',c:['5万円','9.75万円','13.65万円','上限なし'],a:1,w:['違う。','課税総所得金額等×5%（最高9.75万円）。','以前の制度。','上限がある。'],e:'所得税と住民税の両方から差し引ける。'},
+{id:'h08',u:'house1',q:'借り換えた場合の住宅ローン控除について正しいのは？',c:['控除は必ず終わる','条件を満たせば続けられる','新しいローン全額が対象になる','控除率が1%に戻る'],a:1,w:['続けられる場合がある。','旧ローンの返済のため等の条件あり。','借り換え直前の旧ローン残高が限度。','変わらない。'],e:'諸費用を含めて総額で比べる。'},
+/* 年金など */
+{id:'l01',u:'life1',q:'iDeCoの掛金の税金上の扱いは？',c:['一部だけ控除','全額が所得控除','控除なし','受取時に非課税'],a:1,w:['全額。','小規模企業共済等掛金控除。','控除がある。','受取時は退職所得控除などの対象（課税あり）。'],e:'会社員は年末調整で払込証明書を出して申告できる。'},
+{id:'l02',u:'life1',q:'iDeCoの資産は原則何歳まで引き出せない？',c:['50歳','55歳','60歳','65歳'],a:2,w:['違う。','違う。','原則60歳。','違う。'],e:'NISAはいつでも引き出せる。老後専用のお金と自由なお金で役割を分ける。'},
+{id:'l03',u:'life1',q:'ねんきん定期便が届くのは？',c:['毎年1月','誕生月','加入月','年金を受け取る年だけ'],a:1,w:['違う。','誕生月に届く。','違う。','毎年届く。'],e:'35・45・59歳の節目は封書で詳しい記録が届く。ねんきんネットでも確認できる。'},
+{id:'l04',u:'life1',q:'1か月の医療費の自己負担に上限を設ける健康保険の制度は？',c:['医療費控除','高額療養費制度','傷病手当金','セルフメディケーション税制'],a:1,w:['税金の制度。','正しい。','休業中の給付。','税金の制度。'],e:'上限は所得で変わる。大きな医療費への備えは、まずこの制度を前提に考える。'}
+];
+TS.ox=[
+{id:'o01',u:'nisa1',t:'NISAのつみたて投資枠と成長投資枠は、同じ年に併用できる。',a:true,e:'併用できる。合計で年360万円まで。'},
+{id:'o02',u:'nisa1',t:'NISAで値上がりした投資信託を持っていると、そのぶん生涯枠が減っていく。',a:false,e:'枠は簿価（買付金額）で管理する。値上がりしても枠の使用は増えない。'},
+{id:'o03',u:'nisa1',t:'NISA口座は、複数の証券会社で1つずつ持てる。',a:false,e:'1人1口座。金融機関の変更は年単位でできる。'},
+{id:'o04',u:'nisa1',t:'12月の最終週に注文すると、約定が翌年になり、翌年の枠を使うことがある。',a:true,e:'枠はその年の約定分で数える。年末の注文は早めに。'},
+{id:'o05',u:'nisa2',t:'親が子どもの名義で口座を作り、親のお金で親が運用するのは問題ない。',a:false,e:'名義預金とみなされるおそれがある。あげるなら贈与として記録を残し、子が管理する。'},
+{id:'o06',u:'nisa2',t:'親が大学の授業料を直接払っても、贈与税はかからない。',a:true,e:'必要なつど払う教育費は非課税。'},
+{id:'o07',u:'fund1',t:'信託報酬は、年に1回まとめて請求される。',a:false,e:'毎日、基準価額から差し引かれている。'},
+{id:'o08',u:'fund1',t:'分配金が出ると、その分だけ基準価額は下がる。',a:true,e:'投資信託の財産から払い出すため。'},
+{id:'o09',u:'fund1',t:'投資信託は、注文した時点で約定価格が分かる。',a:false,e:'ブラインド方式。海外資産の投資信託は翌営業日の基準価額で約定するのがふつう。'},
+{id:'o10',u:'fund2',t:'株価が大きく下がったときは、積立を止めるのが長期投資の基本だ。',a:false,e:'下がった時期は同じ金額で多くの口数を買える。止めるのが一番もったいない。'},
+{id:'o11',u:'fund2',t:'リバランスは、日を決めて機械的に行うのがコツだ。',a:true,e:'感情に左右されないため。年1回など。'},
+{id:'o12',u:'stock1',t:'持株会の奨励金には税金がかからない。',a:false,e:'給与所得として課税される。'},
+{id:'o13',u:'stock1',t:'持株会の株は、単元株未満でも自由に証券口座へ引き出せる。',a:false,e:'ふつうは単元株（100株）以上から。'},
+{id:'o14',u:'stock1',t:'持株会の毎月決まった額の買付は、インサイダー取引規制の対象外だ。',a:true,e:'定時定額の買付は適用除外。売却や臨時の変更時は注意。'},
+{id:'o15',u:'tax1',t:'生命保険料の控除証明書は、確定申告にしか使わない。',a:false,e:'会社員は年末調整の保険料控除申告書に添付する。'},
+{id:'o16',u:'tax1',t:'令和8年度の税制改正の内容は、12月の年末調整で反映される。',a:true,e:'改正は令和8年12月1日に施行され、年末調整で年税額を計算し直す。'},
+{id:'o17',u:'tax1',t:'iDeCoの掛金は、年末調整で控除を受けられる。',a:true,e:'小規模企業共済等掛金控除。払込証明書を添付する。'},
+{id:'o18',u:'tax2',t:'ふるさと納税は、1月1日〜12月31日の寄附がその年の分になる。',a:true,e:'12月31日が締め切り。決済日に注意。'},
+{id:'o19',u:'tax2',t:'医療費控除は年末調整で受けられる。',a:false,e:'確定申告が必要。'},
+{id:'o20',u:'tax2',t:'ワンストップ特例の申請書は、翌年3月15日までに届けばよい。',a:false,e:'翌年1月10日必着。'},
+{id:'o21',u:'tax3',t:'高校生年代の扶養控除は、令和8年度の改正で25万円に縮小された。',a:false,e:'縮小は見送られ、38万円のまま。'},
+{id:'o22',u:'tax3',t:'子の扶養は、税金と健康保険で同じ基準で判定される。',a:false,e:'別ルール。税金は1〜12月の所得、健康保険は今後1年の見込み年収。'},
+{id:'o23',u:'tax3',t:'12月31日時点で19歳になる子は、その年から特定扶養控除の対象になる。',a:true,e:'19歳以上23歳未満が特定扶養親族。'},
+{id:'o24',u:'edu1',t:'私立大学の入学金の締め切りは、国公立の合格発表より後に来ることが多い。',a:false,e:'前に来ることが多い。そのため「押さえ」の入学金が必要になる。'},
+{id:'o25',u:'edu1',t:'国立大学の授業料は、どこも標準額と同じだ。',a:false,e:'標準額より高く設定している大学もある。募集要項で確認。'},
+{id:'o26',u:'edu2',t:'JASSOの奨学金は、入学前の入学金の支払いに使える。',a:false,e:'振込は入学後。入学前は国の教育ローンなどでつなぐ。'},
+{id:'o27',u:'edu2',t:'学生は20歳になっても国民年金に加入しなくてよい。',a:false,e:'20歳から加入義務。学生納付特例で猶予できる。'},
+{id:'o28',u:'house1',t:'住宅ローン控除の1年目は、確定申告が必要だ。',a:true,e:'2年目以降は年末調整で受けられる。'},
+{id:'o29',u:'house1',t:'繰上返済をしても、住宅ローン控除の額は変わらない。',a:false,e:'年末残高が減るので控除も減る。'},
+{id:'o30',u:'house1',t:'変動金利は、多くの銀行で半年ごとに見直される。',a:true,e:'返済額の変更は5年ごとの銀行もある（ない銀行もある）。'},
+{id:'o31',u:'life1',t:'iDeCoの資産は、急にお金が必要になれば40代でも自由に引き出せる。',a:false,e:'原則60歳まで引き出せない。'},
+{id:'o32',u:'life1',t:'子どもが独立に近づくと、必要な死亡保障は小さくなっていく。',a:true,e:'節目ごとに保障を見直す。'}
+];
+
+</script>
+<script>
+/* ══════════ TSUMIKI app ══════════ */
+const KEY='tsumiki.v1';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>ymd(new Date());
+const parseD=s=>{const [y,m,d]=String(s).split('-').map(Number);return new Date(y,(m||1)-1,d||1);};
+const addDays=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return ymd(d);};
+const diffDays=(a,b)=>Math.round((parseD(b)-parseD(a))/86400000);
+const YEAR=()=>new Date().getFullYear();
+const WD='日月火水木金土';
+const fmtMD=s=>{const d=parseD(s);return (d.getMonth()+1)+'/'+d.getDate()+'('+WD[d.getDay()]+')';};
+const fmtYMD=s=>{if(!s)return '—';const d=parseD(s);return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();};
+const N=v=>{const n=Number(String(v==null?'':v).replace(/[,，円\s]/g,''));return isFinite(n)?n:0;};
+const yen=n=>Math.round(n).toLocaleString('ja-JP')+'円';
+const man=n=>{const a=Math.abs(n);if(a>=1e8)return (n/1e8).toFixed(2).replace(/\.?0+$/,'')+'億円';if(a>=1e4)return (n/1e4).toFixed(a>=1e6?0:1).replace(/\.0$/,'')+'万円';return yen(n);};
+const pct=(a,b)=>b>0?Math.round(a/b*100):0;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const seedRand=seed=>{let x=0;for(const c of seed)x=(x*31+c.charCodeAt(0))>>>0;return ()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296;};};
+
+/* ── 状態 ── */
+const DEF=()=>({v:1,srs:{},keep:{},hist:[],days:{},xp:0,accounts:[],events:[],evDone:{},tplOv:{},children:[],nencho:{},
+  loan:{bank:'',kind:'変動金利・元利均等',start:'',moveIn:'',kRate:0.7,kYears:13,kCap:3000,monthly:0,endYm:'',bals:[],rates:[],memo:''},
+  policy:{goal:'',monthly:'',crash:'',withdraw:'',ownmax:20,review:'',other:''},customQ:[],created:today()});
+let S=load();
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.v)return Object.assign(DEF(),s,{loan:Object.assign(DEF().loan,s.loan||{}),policy:Object.assign(DEF().policy,s.policy||{})});}catch(e){}return DEF();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast('保存できませんでした（容量・プライベートモードを確認）');}}
+
+/* ── 定数 ── */
+const TYPES={
+  nisa_t:{n:'NISA つみたて投資枠',s:'NISAつみたて',col:'#3d78b0'},
+  nisa_g:{n:'NISA 成長投資枠',s:'NISA成長',col:'#c2561b'},
+  tokutei:{n:'特定口座・一般口座',s:'特定口座',col:'#2f8f5b'},
+  mochikabu:{n:'従業員持株会',s:'持株会',col:'#7a4fa0'},
+  ideco:{n:'iDeCo',s:'iDeCo',col:'#d0a020'},
+  edu:{n:'教育資金',s:'教育資金',col:'#c0447a'},
+  deposit:{n:'預金',s:'預金',col:'#0b8fa8'},
+  other:{n:'その他',s:'その他',col:'#98a0ac'}
+};
+const INT=[1,1,3,7,14,30,60,120];
+const RANKS=[[0,'礎石','まずは土台から'],[100,'一段目','最初の積み木'],[300,'二段目','少しずつ高く'],[600,'三段目','崩れにくくなってきた'],[1000,'小さな家','家族が入れる'],[1600,'土蔵','しまっておける知恵'],[2500,'千両蔵','頼れる備え'],[4000,'天守','わが家の城']];
+const TOWER_COL=['#1b2436','#2b4c7e','#7f9cc6','#e9b949','#c99a2e','#3d78b0','#c2561b','#2f8f5b'];
+const STATUS=['検討中','出願済','受験済','合格','不合格','入学手続済','辞退'];
+const TPL=[
+  {id:'t_onestop',m:1,d:10,t:'ふるさと納税 ワンストップ申請書 必着',c:'tax',n:'前年分・5自治体以内で確定申告しない場合'},
+  {id:'t_nisanew',m:1,d:5,t:'NISAの新しい年の枠がスタート',c:'nisa',n:'積立額・配分を見直す'},
+  {id:'t_gensen',m:1,d:31,t:'源泉徴収票を受け取って保管',c:'tax',n:'教育ローン・借り換えの審査でも使う'},
+  {id:'t_kakutei1',m:2,d:16,t:'確定申告 受付開始',c:'tax',n:'医療費控除・ふるさと6自治体以上など'},
+  {id:'t_kakutei2',m:3,d:15,t:'確定申告 期限',c:'tax',n:'還付申告だけなら5年間さかのぼれる'},
+  {id:'t_jumin',m:6,d:15,t:'住民税決定通知書でふるさと納税の反映を確認',c:'tax',n:'寄附金税額控除の欄'},
+  {id:'t_cert',m:10,d:15,t:'保険の控除証明書が届く → 保管',c:'tax',n:'生命保険・地震保険・iDeCoなど'},
+  {id:'t_nencho1',m:11,d:1,t:'年末調整の書類をそろえる',c:'tax',n:'「お金」→「年末調整」のチェックリスト'},
+  {id:'t_nencho2',m:11,d:20,t:'年末調整の書類を会社に提出',c:'tax',n:'会社の締切に合わせて日付を変更'},
+  {id:'t_nisaend',m:12,d:1,t:'NISA 今年の枠の使い方を確認',c:'nisa',n:'年末の注文は約定が翌年になることがある'},
+  {id:'t_furusato',m:12,d:20,t:'ふるさと納税 今年の分を寄附',c:'tax',n:'12/31締切。決済日に注意'},
+  {id:'t_snap',m:12,d:31,t:'年末の資産を記録する',c:'me',n:'1年の積み上げを残す'}
+];
+const NENCHO=[
+  {k:'cert',t:'控除証明書をそろえる',s:'生命保険・地震保険・個人年金の証明書（10月ごろ届く）。電子交付ならデータを保存。'},
+  {k:'loanbal',t:'住宅ローンの年末残高証明書を用意',s:'銀行から届く（電子交付の銀行も）。税務署の「住宅借入金等特別控除申告書」も手元に。',cond:'loan'},
+  {k:'ideco',t:'iDeCoの掛金払込証明書',s:'国民年金基金連合会から届く。',cond:'ideco'},
+  {k:'nenkin',t:'家族の国民年金を払った場合は、その控除証明書',s:'20歳以上の学生の子の分など。日本年金機構から届く。'},
+  {k:'fuyo',t:'扶養控除等（異動）申告書（翌年分）を書く',s:'子どもの翌年12/31時点の年齢を確認。19歳になるなら特定扶養（63万円）。'},
+  {k:'kihon',t:'基・配・所・特 申告書を書く',s:'自分の今年の所得見込み・配偶者・19〜22歳の子の所得見込み。'},
+  {k:'hoken',t:'保険料控除申告書を書く',s:'生命保険料（23歳未満の扶養親族がいれば一般は上限6万円）・地震保険料・社会保険料・iDeCo。'},
+  {k:'loanform',t:'住宅借入金等特別控除申告書を書く',s:'年末残高を記入し、残高証明書を添付。',cond:'loan'},
+  {k:'submit',t:'会社に提出した',s:'提出日をメモしておくと、来年の目安になる。'},
+  {k:'check',t:'12月・1月の給与明細で還付（徴収）額を確認',s:''},
+  {k:'gensen',t:'源泉徴収票を受け取って保管',s:'借り換え・教育ローンの審査などで使う。'},
+  {k:'kakutei',t:'確定申告が必要か判断する',s:'医療費が10万円超・ふるさと納税が6自治体以上など。必要なら2/16〜3/15。'},
+  {k:'furusato',t:'ふるさと納税 ワンストップ申請書を送る（1/10必着）',s:'5自治体以内で、確定申告をしない場合。'}
+];
+const EDU_TODO=['入学金を振り込む（期限・振込人名義を確認）','前期授業料の納付期限を確認','辞退する大学は期限内に辞退手続（授業料の返還）','奨学金（予約採用）の進学届を出す','国の教育ローンが必要か判断・申し込む','住まいを探す（一人暮らしの場合）','引っ越し・家具家電の予算を決める','パソコン・教科書など指定物品をそろえる','学生用の口座・カードを準備','仕送り額とアルバイトの方針を親子で決める','20歳になったら国民年金（学生納付特例か、親が払うか）','年末に子どもの年収見込みを確認（扶養・特定親族特別控除）'];
+const POLICY_F=[['goal','何のために積み立てる？','例：子ども2人の学費／60歳以降の生活費'],['monthly','毎月の積立ルール','例：給料日に自動。ボーナスの1/3はNISA'],['crash','暴落したら、わたしは…','例：積立は止めない。追加購入は生活防衛資金を残してから'],['withdraw','取り崩し・移し替えのルール','例：使う3年前から少しずつ預金へ移す'],['review','見直しの時期','例：毎年1月と、子どもの進学時'],['other','その他の約束','例：SNSで話題の商品は1か月寝かせてから考える']];
+
+/* ── データ ── */
+const UNITS=TS.units, UMAP=Object.fromEntries(UNITS.map(u=>[u.id,u]));
+function allQ(){return TS.q.map(x=>Object.assign({k:'q'},x)).concat(TS.ox.map(x=>Object.assign({k:'ox'},x))).concat((S.customQ||[]).map(x=>Object.assign({k:x.t!=null?'ox':'q',custom:true},x)));}
+let POOL=allQ();
+const qField=it=>it.me?'me':(UMAP[it.u]?UMAP[it.u].field:(it.f||'life'));
+function srsOf(id){return S.srs[id]||null;}
+function dueList(){const t=today();return POOL.filter(it=>{const s=S.srs[it.id];return s&&s.due<=t;});}
+function mastery(items){if(!items.length)return 0;return pct(items.filter(it=>{const s=S.srs[it.id];return s&&s.b>=3;}).length,items.length);}
+
+/* ── お金の計算 ── */
+const latestSnap=a=>{const s=(a.snaps||[]).slice().sort((x,y)=>x.d<y.d?-1:1);return s[s.length-1]||null;};
+const snapAt=(a,d)=>{let r=null;for(const s of (a.snaps||[]).slice().sort((x,y)=>x.d<y.d?-1:1)){if(s.d<=d)r=s;}return r;};
+function totals(){let v=0,p=0,m=0,y=0;S.accounts.forEach(a=>{const s=latestSnap(a);if(s){v+=N(s.v);p+=N(s.p||s.v);}m+=N(a.monthly);y+=N(a.monthly)*12+N(a.bonus);});return {v,p,m,y};}
+function byType(){const o={};S.accounts.forEach(a=>{const s=latestSnap(a);if(!s)return;o[a.type]=(o[a.type]||0)+N(s.v);});return o;}
+function nisaStat(){const Y=YEAR(),y0=(Y-1)+'-12-31';let planT=0,planG=0,bookT=0,bookG=0,yrT=0,yrG=0;
+  S.accounts.forEach(a=>{if(a.type!=='nisa_t'&&a.type!=='nisa_g')return;const plan=N(a.monthly)*12+N(a.bonus);const s=latestSnap(a),s0=snapAt(a,y0);const bk=s?N(s.p||0):0;const yr=s&&s.d>y0?bk-(s0?N(s0.p||0):0):0;
+    if(a.type==='nisa_t'){planT+=plan;bookT+=bk;yrT+=Math.max(0,yr);}else{planG+=plan;bookG+=bk;yrG+=Math.max(0,yr);}});
+  return {planT,planG,bookT,bookG,yrT,yrG,book:bookT+bookG};}
+function ageAt(birth,dateStr){if(!birth)return null;const b=parseD(birth),d=parseD(dateStr);let a=d.getFullYear()-b.getFullYear();if(d.getMonth()<b.getMonth()||(d.getMonth()===b.getMonth()&&d.getDate()<b.getDate()))a--;return a;}
+function fuyoKbn(age){if(age==null)return '—';if(age<=15)return '扶養控除なし（児童手当）';if(age<=18)return '一般の扶養 38万円';if(age<=22)return '特定扶養 63万円';if(age<=69)return '一般の扶養 38万円（所得要件あり）';return '老人扶養';}
+function loanInfo(){const L=S.loan,Y=YEAR();const mv=N(L.moveIn)||(L.start?N(L.start.slice(0,4)):0);const last=mv?mv+N(L.kYears)-1:0;
+  const bals=(L.bals||[]).slice().sort((a,b)=>a.y-b.y);const bal=bals.length?N(bals[bals.length-1].bal):0;
+  const rates=(L.rates||[]).slice().sort((a,b)=>a.d<b.d?-1:1);const rate=rates.length?N(rates[rates.length-1].r):0;
+  const ded=Math.min(bal,N(L.kCap)*1e4)*N(L.kRate)/100;return {mv,last,remain:last?last-Y+1:0,bal,rate,ded,bals,rates};}
+
+/* ── イベント ── */
+function occurrences(from,to){const out=[];const Y0=parseD(from).getFullYear(),Y1=parseD(to).getFullYear();
+  const push=(o)=>{if(o.date>=from&&o.date<=to){o.key=o.src+':'+o.ref+':'+o.date;o.done=!!S.evDone[o.key];out.push(o);}};
+  TPL.forEach(t=>{const ov=S.tplOv[t.id]||{};if(ov.off)return;for(let y=Y0;y<=Y1;y++)push({src:'tpl',ref:t.id,date:y+'-'+pad(ov.m||t.m)+'-'+pad(ov.d||t.d),title:t.t,cat:t.c,note:t.n});});
+  S.events.forEach(e=>{if(!e.date)return;if(e.rep){const md=e.date.slice(5);for(let y=Y0;y<=Y1;y++)if(y+'-'+md>=e.date)push({src:'u',ref:e.id,date:y+'-'+md,title:e.title,cat:e.cat||'me',note:e.note,amount:e.amount});}else push({src:'u',ref:e.id,date:e.date,title:e.title,cat:e.cat||'me',note:e.note,amount:e.amount});});
+  S.children.forEach(ch=>(ch.schools||[]).forEach(sc=>{if(sc.status==='不合格'||sc.status==='辞退')return;const nm=(ch.name||'子ども')+'・'+(sc.name||'大学');
+    if(sc.exam)push({src:'sc',ref:sc.id+'e',date:sc.exam,title:nm+' 試験日',cat:'edu'});
+    if(sc.result)push({src:'sc',ref:sc.id+'r',date:sc.result,title:nm+' 合格発表',cat:'edu'});
+    if(sc.payBy&&sc.status!=='入学手続済')push({src:'sc',ref:sc.id+'p',date:sc.payBy,title:nm+' 入学金の期限',cat:'edu',amount:sc.entry});
+    if(sc.tuitBy&&(sc.status==='合格'||sc.status==='入学手続済'))push({src:'sc',ref:sc.id+'t',date:sc.tuitBy,title:nm+' 授業料などの期限',cat:'edu',amount:sc.tuit});}));
+  return out.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);}
+function upcoming(days){const t=today();return occurrences(addDays(t,-3),addDays(t,days)).filter(o=>!(o.done&&o.date<t));}
+function soonCount(){const t=today();return occurrences(t,addDays(t,14)).filter(o=>!o.done).length;}
+
+/* ══════════ ルーティング ══════════ */
+let RT={n:'home',a:null};
+function go(n,a){RT={n,a};document.body.classList.add('in-content');render();$('content').scrollTop=0;}
+function mobileBack(){if(RT.n==='run'){if(!confirm('クイズを中断しますか？'))return;}if(['unit'].includes(RT.n)||RT.n==='learn'){document.body.classList.remove('in-content');RT={n:'learn'};renderSide();return;}go('home');}
+function render(){POOL=allQ();renderSide();renderTab();renderHdr();const c=$('content');
+  const R={home:pgHome,learn:pgLearnTop,unit:pgUnit,quiz:pgQuiz,run:pgRun,result:pgResult,money:pgMoney,cal:pgCal,stats:pgStats,glossary:pgGlossary,settings:pgSettings}[RT.n]||pgHome;
+  c.innerHTML=R(RT.a);if(RT.n==='money'&&(RT.a||'assets')==='assets')bindCharts();
+  const titles={home:'ホーム',learn:'学ぶ',quiz:'クイズ',run:'クイズ',result:'結果',money:'わたしのお金',cal:'お金カレンダー',stats:'成績',glossary:'用語集',settings:'設定'};
+  $('crumb-t').textContent=RT.n==='unit'?(UMAP[RT.a]||{}).title:titles[RT.n]||'';
+  $('crumb').className=(RT.n==='unit'?'':RT.n==='home'?'nob hide':'nob');}
+function renderHdr(){const r=rankOf(S.xp);$('rank-pill').textContent='🧱 '+r.name+' · '+S.xp+'pt';const n=soonCount();const b=$('cal-badge');b.style.display=n?'':'none';b.textContent=n;}
+function renderTab(){const tabs=[['home','🏠','ホーム'],['learn','📚','学ぶ'],['quiz','🎯','クイズ'],['money','💴','お金'],['cal','📅','予定']];
+  const cur=RT.n==='unit'?'learn':RT.n==='run'||RT.n==='result'?'quiz':RT.n;
+  $('tabbar').innerHTML=tabs.map(t=>`<button class="${cur===t[0]?'on':''}" onclick="tabGo('${t[0]}')"><span class="ti">${t[1]}</span>${t[2]}</button>`).join('');}
+function tabGo(n){if(n==='learn'&&window.innerWidth<=640){RT={n:'learn'};document.body.classList.remove('in-content');renderSide();renderTab();return;}go(n);}
+function renderSide(){const nav=[['home','🏠','ホーム'],['quiz','🎯','クイズ'],['money','💴','お金'],['cal','📅','カレンダー'],['stats','📊','成績'],['glossary','📖','用語集']];
+  $('sb-nav').innerHTML=nav.map(x=>`<button class="navbtn ${RT.n===x[0]?'on':''}" onclick="go('${x[0]}')">${x[1]} ${x[2]}</button>`).join('');
+  const mon=[['assets','💰','資産・積立','口座・持株会・推移'],['nisa','🌱','NISAの枠','今年の枠・生涯枠'],['loan','🏠','住宅ローン','残高・金利・控除'],['edu','🎓','教育資金','受験校・入学金・ToDo'],['nencho','🧾','年末調整',YEAR()+'年のチェックリスト'],['policy','🧭','わたしの方針','自分との約束']];
+  let h=`<div class="grp-lbl">💴 わたしのお金</div>`+mon.map(m=>`<button class="ubtn ${RT.n==='money'&&(RT.a||'assets')===m[0]?'active':''}" onclick="go('money','${m[0]}')"><span class="uicon">${m[1]}</span><span class="utxt"><span class="ut-main">${m[2]}</span><span class="ut-sub">${m[3]}</span></span></button>`).join('');
+  Object.entries(TS.FIELDS).forEach(([f,F])=>{const us=UNITS.filter(u=>u.field===f);if(!us.length)return;
+    h+=`<div class="grp-lbl" style="color:${F.col}">${F.ic} ${F.n}<span class="gn">${us.length}単元</span></div>`;
+    us.forEach(u=>{const m=mastery(POOL.filter(q=>q.u===u.id));h+=`<button class="ubtn ${RT.n==='unit'&&RT.a===u.id?'active':''}" onclick="go('unit','${u.id}')"><span class="uicon">${u.icon}</span><span class="utxt"><span class="ut-main">${esc(u.title)}</span><span class="ut-sub">${esc(u.sub)}</span></span><span class="umeter ${m>=80?'good':''}">${m}%</span></button>`;});});
+  $('sb-list').innerHTML=h;}
+
+/* ══════════ 共通UI ══════════ */
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2200);}
+function openModal(title,html){$('modal-title').textContent=title;$('modal-body').innerHTML=html;$('modal').classList.add('show');}
+function closeModal(){$('modal').classList.remove('show');}
+function chip(f){if(f==='me')return '<span class="chip me">🏠 わたしの数字</span>';const F=TS.FIELDS[f];return F?`<span class="chip ${f}">${F.ic} ${F.n}</span>`:'';}
+function glink(html){return html.replace(/\[\[(.+?)\]\]/g,(m,t)=>`<span class="gl" onclick="showGl('${t.replace(/'/g,'')}')">${t}</span>`);}
+function showGl(t){const g=TS.gl[t];if(!g)return;openModal('📖 用語',`<div style="font-size:16px;font-weight:700;margin-bottom:6px">${esc(t)} ${chip(g.f)}</div><p class="dim" style="line-height:1.9">${esc(g.d)}</p>`);}
+function fld(id,label,val,type,ph,cls){type=type||'text';return `<label class="${cls||''}">${label}<input class="in" id="${id}" type="${type}" value="${esc(val==null?'':val)}" placeholder="${esc(ph||'')}" ${type==='number'?'inputmode="decimal" step="any"':''}></label>`;}
+function sel(id,label,opts,val,cls){return `<label class="${cls||''}">${label}<select class="in" id="${id}">${opts.map(o=>{const [v,t]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${String(v)===String(val)?'selected':''}>${esc(t)}</option>`;}).join('')}</select></label>`;}
+const V=id=>{const e=$(id);return e?e.value.trim():'';};
+function rankOf(xp){let i=0;RANKS.forEach((r,k)=>{if(xp>=r[0])i=k;});const nx=RANKS[i+1];return {i,name:RANKS[i][1],desc:RANKS[i][2],next:nx?nx[0]:null,nextName:nx?nx[1]:null,base:RANKS[i][0]};}
+function towerHTML(lv,w){w=w||46;let h='';for(let k=0;k<=lv;k++){const ww=Math.max(18,w-k*3);h+=`<i style="width:${ww}px;background:${TOWER_COL[k%TOWER_COL.length]}"></i>`;}return `<div class="tower" style="min-height:${(lv+1)*16}px">${h}</div>`;}
+function streak(){let n=0,d=today();if(!S.days[d])d=addDays(d,-1);while(S.days[d]){n++;d=addDays(d,-1);}return n;}
+
+/* ══════════ ホーム ══════════ */
+function pgHome(){const T=totals(),due=dueList().length,st=streak(),r=rankOf(S.xp);const pl=T.v-T.p;
+  let h=`<div class="wrap">
+  <div class="hero">
+    <div class="kpi big"><div class="k-l">わが家の資産（登録分）</div><div class="k-v">${T.v?man(T.v):'—'}</div><div class="k-s">${T.v?('評価損益 '+(pl>=0?'+':'')+man(pl)):'「お金」から口座を登録'}</div></div>
+    <div class="kpi"><div class="k-l">毎月の積立</div><div class="k-v">${T.m?man(T.m):'—'}</div><div class="k-s">年 ${T.y?man(T.y):'—'}</div></div>
+    <div class="kpi"><div class="k-l">今日の復習</div><div class="k-v">${due}<small>問</small></div><div class="k-s">忘れる前に</div></div>
+    <div class="kpi"><div class="k-l">連続学習</div><div class="k-v">${st}<small>日</small></div><div class="k-s">${r.name}</div></div>
+  </div>`;
+  const dq=dailyQ();if(dq)h+=`<div class="daily" onclick="startRun('daily')"><div class="dl">☀️ きょうの1問 ${chip(qField(dq))}</div><div class="dq">${esc(dq.q||dq.t)}</div></div>`;
+  const pf=POLICY_F.filter(p=>S.policy[p[0]]);if(pf.length){const r2=seedRand(today())();const p=pf[Math.floor(r2*pf.length)];h+=`<div class="promise" onclick="go('money','policy')" style="cursor:pointer"><div class="dl">🧭 自分との約束 — ${esc(p[1])}</div>${esc(S.policy[p[0]]).replace(/\n/g,'<br>')}</div>`;}
+  h+=remindersHTML();
+  const ev=upcoming(45).slice(0,6);h+=`<div class="sec-h">近いお金の予定<span class="r"><button class="btn xs" onclick="go('cal')">すべて見る</button></span></div>`+(ev.length?evListHTML(ev):`<div class="empty">45日以内の予定はありません。</div>`);
+  h+=`<div class="sec-h">クイズで積み上げる</div>`+modeGrid();
+  h+=`<div class="sec-h">分野ごとの定着度</div>`+fieldBars()+`</div>`;return h;}
+function remindersHTML(){const out=[];const t=today();
+  if(!S.accounts.length)out.push(['🧱','最初の積み木を置こう','NISA・持株会・預金・教育資金などの口座を登録すると、総資産と積立の状況がここに出ます。',"go('money','assets')",'口座を登録']);
+  else{const old=S.accounts.filter(a=>{const s=latestSnap(a);return !s||diffDays(s.d,t)>31;});if(old.length)out.push(['📝','今月の残高を記録しよう',old.map(a=>a.name).join('・')+' の記録が1か月以上前です。月に1回の記録で、推移グラフが育ちます。',"recordAll()",'まとめて記録']);}
+  const m=new Date().getMonth()+1,Y=YEAR();
+  if(m>=10){const done=NENCHO.filter(n=>(S.nencho[Y]||{})[n.k]).length;if(done<NENCHO.length)out.push(['🧾',Y+'年の年末調整',`チェックリスト ${done}/${NENCHO.length} 完了。`,"go('money','nencho')",'チェックする']);}
+  if(!out.length)return '';return out.map(o=>`<div class="card" style="display:flex;gap:14px;align-items:center"><div style="font-size:26px">${o[0]}</div><div style="flex:1;min-width:0"><h4>${o[1]}</h4><div class="muted">${esc(o[2])}</div></div><button class="btn sm p" onclick="${o[3]}">${o[4]}</button></div>`).join('');}
+function modeGrid(){const due=dueList().length,me=genMe().length,weak=weakItems().length,keep=Object.keys(S.keep).filter(k=>S.keep[k]).length,fresh=POOL.filter(it=>!S.srs[it.id]).length;
+  const M=[['due','🔁','今日の復習',due?`忘れかけた${due}問を、ちょうどいい間隔で。`:`期限の問題はなし。新しい問題から${Math.min(10,fresh)}問。`,'due',due],
+    ['me','🏠','わたしの数字クイズ',me?`自分の積立額・期限・控除など${me}問。`:'お金の情報を登録すると出題されます。','me',0],
+    ['mix','🎯','ミックス10問','全分野からランダムに。','',0],
+    ['ox','⭕','○×スピード','10問をテンポよく。','',0],
+    ['test','📝','総合テスト20問','80%で合格。実力チェック。','',0],
+    ['weak','💪','苦手を克服',weak?`間違えた${weak}問。`:'まだ苦手はありません。','',0],
+    ['keep','📌','キープした問題',keep?`${keep}問。`:'問題の📌でキープ。','',0]];
+  return `<div class="mode-grid">`+M.map(m=>`<button class="mode-card ${m[4]}" onclick="startRun('${m[0]}')" ${(m[0]==='me'&&!me)||(m[0]==='weak'&&!weak)||(m[0]==='keep'&&!keep)?'disabled':''}>${m[5]?`<span class="cnt">${m[5]}</span>`:''}<span class="mode-ic">${m[1]}</span><span class="mode-name">${m[2]}</span><span class="mode-desc">${m[3]}</span></button>`).join('')+`</div>`;}
+function fieldBars(){return `<div class="fbars">`+Object.entries(TS.FIELDS).map(([f,F])=>{const its=POOL.filter(q=>qField(q)===f);const m=mastery(its);return `<div class="fbar" style="cursor:pointer" onclick="startRun('field','${f}')"><span>${F.ic} ${F.n}</span><div class="tr"><div class="fl" style="width:${m}%;background:${F.col}"></div></div><span class="v">${m}% / ${its.length}問</span></div>`;}).join('')+`</div>`;}
+function evListHTML(list){const t=today();return `<div class="ev-list">`+list.map(o=>{const dd=diffDays(t,o.date);const cls=dd<=7?'soon':dd<=30?'mid':'far';const lbl=dd<0?(-dd)+'日前':dd===0?'今日':'あと'+dd+'日';
+  return `<div class="ev ${o.done?'done':''}"><button class="ck2" onclick="toggleEv('${o.key}')" aria-label="完了">${o.done?'✓':''}</button><div class="ev-d"><b>${parseD(o.date).getMonth()+1}/${parseD(o.date).getDate()}</b><span>${WD[parseD(o.date).getDay()]}曜</span></div><div class="ev-m"><div class="ev-t">${esc(o.title)} ${o.amount?`<span class="num dim" style="font-size:12px">${yen(N(o.amount))}</span>`:''}</div>${o.note?`<div class="ev-s">${esc(o.note)}</div>`:''}</div>${chip(o.cat)}<span class="ev-c ${cls}">${o.done?'完了':lbl}</span></div>`;}).join('')+`</div>`;}
+function toggleEv(k){if(S.evDone[k])delete S.evDone[k];else S.evDone[k]=today();save();render();}
+
+/* ══════════ 学ぶ ══════════ */
+function pgLearnTop(){return `<div class="wrap"><h2 class="pg">📚 学ぶ</h2><div class="pg-sub">左の一覧から単元を選んでください。読んだら、その単元の問題で定着させましょう。</div>`+Object.entries(TS.FIELDS).map(([f,F])=>`<div class="sec-h" style="color:${F.col}">${F.ic} ${F.n}</div><div class="mode-grid">`+UNITS.filter(u=>u.field===f).map(u=>`<button class="mode-card" onclick="go('unit','${u.id}')"><span class="mode-ic">${u.icon}</span><span class="mode-name">${esc(u.title)}</span><span class="mode-desc">${esc(u.sub)}</span></button>`).join('')+`</div>`).join('')+`</div>`;}
+function pgUnit(id){const u=UMAP[id];if(!u)return pgLearnTop();const its=POOL.filter(q=>q.u===id);const i=UNITS.indexOf(u);const pv=UNITS[i-1],nx=UNITS[i+1];
+  return `<div class="gram"><h2 class="pg">${u.icon} ${esc(u.title)} ${chip(u.field)}</h2><div class="pg-sub">${esc(u.sub)} ・ 問題 ${its.length}問 ・ 定着度 ${mastery(its)}%</div>${glink(u.gram)}
+  <div class="nbox">${esc(TS.VERSION_NOTE)}</div>
+  <div class="unit-foot"><button class="btn p" onclick="startRun('unit','${id}')">🎯 この単元の問題（${its.length}問）</button>${pv?`<button class="btn" onclick="go('unit','${pv.id}')">‹ ${esc(pv.title)}</button>`:''}${nx?`<button class="btn" onclick="go('unit','${nx.id}')">${esc(nx.title)} ›</button>`:''}</div></div>`;}
+
+/* ══════════ クイズ ══════════ */
+function pgQuiz(){return `<div class="wrap"><h2 class="pg">🎯 クイズ</h2><div class="pg-sub">正解すると次に出るまでの間隔がのびます（1→3→7→14→30→60→120日）。間違えると翌日にもう一度。忘れかけたころに出るので、記憶が長持ちします。</div>${modeGrid()}<div class="sec-h">分野を選んで10問</div>${fieldBars()}</div>`;}
+function weakItems(){return POOL.filter(it=>{const s=S.srs[it.id];return s&&s.ng>0&&s.b<=1;});}
+function dailyQ(){const due=dueList();const base=due.length?due:POOL;if(!base.length)return null;const r=seedRand('d'+today())();return base[Math.floor(r*base.length)];}
+let R=null;
+function startRun(mode,arg){let items=[],title='';const fresh=()=>shuffle(POOL.filter(it=>!S.srs[it.id]));
+  if(mode==='due'){items=shuffle(dueList()).slice(0,15);if(!items.length)items=fresh().slice(0,10);title='今日の復習';}
+  else if(mode==='daily'){const d=dailyQ();items=d?[d]:[];title='きょうの1問';}
+  else if(mode==='me'){items=shuffle(genMe());title='わたしの数字クイズ';}
+  else if(mode==='mix'){items=shuffle(POOL).slice(0,10);title='ミックス10問';}
+  else if(mode==='ox'){items=shuffle(POOL.filter(i=>i.k==='ox')).slice(0,10);title='○×スピード';}
+  else if(mode==='test'){items=shuffle(POOL.filter(i=>i.k==='q')).slice(0,20);title='総合テスト20問';}
+  else if(mode==='weak'){items=shuffle(weakItems()).slice(0,15);title='苦手を克服';}
+  else if(mode==='keep'){items=shuffle(POOL.filter(i=>S.keep[i.id]));title='キープした問題';}
+  else if(mode==='field'){items=shuffle(POOL.filter(i=>qField(i)===arg)).slice(0,10);title=TS.FIELDS[arg].n+'の10問';}
+  else if(mode==='unit'){items=shuffle(POOL.filter(i=>i.u===arg));title=(UMAP[arg]||{}).title+'の問題';}
+  if(!items.length){toast('出題できる問題がありません');return;}
+  R={mode,arg,title,items:items.map(it=>Object.assign({},it,{ord:it.k==='q'?(it.me?it.c.map((_,k)=>k):shuffle(it.c.map((_,k)=>k))):null})),i:0,ans:[],done:false};go('run');}
+function pgRun(){if(!R)return pgQuiz();const it=R.items[R.i],n=R.items.length,a=R.ans[R.i];const f=qField(it);
+  let h=`<div class="qprog"><span class="qlbl">${esc(R.title)}</span><div class="qtrack"><div class="qfill" style="width:${(R.i+(a?1:0))/n*100}%"></div></div><span class="qlbl">${R.i+1} / ${n}</span></div><div class="qcard"><div class="qmeta">${chip(f)}${it.u&&UMAP[it.u]?`<span class="src">${esc(UMAP[it.u].title)}</span>`:''}${it.k==='ox'?'<span class="chip gray">○×</span>':''}</div>`;
+  if(it.k==='ox'){h+=`<div class="ox-t">${esc(it.t)}</div><div class="ox-btns"><button class="ox-b o ${a&&a.pick===true?'hit':''}" onclick="answer(true)" ${a?'disabled':''}>○</button><button class="ox-b x ${a&&a.pick===false?'hit':''}" onclick="answer(false)" ${a?'disabled':''}>×</button></div>`;}
+  else{h+=`<div class="qq">${esc(it.q)}</div><div class="choices">`;it.ord.forEach((ci,k)=>{let cls='';if(a){if(ci===it.a)cls='ok';else if(ci===a.pick)cls='ng';}
+      h+=`<button class="choice ${cls}" onclick="answer(${ci})" ${a?'disabled':''}><span class="ck">${'ABCD'[k]}</span><span>${esc(it.c[ci])}</span></button>`;if(a&&it.w&&it.w[ci])h+=`<div class="cwhy"><b class="${ci===it.a?'o':'x'}">${ci===it.a?'○':'×'}</b> ${esc(it.w[ci])}</div>`;});h+=`</div>`;}
+  h+=`</div>`;
+  if(a){const s=S.srs[it.id];h+=`<div class="fb ${a.ok?'ok':'ng'}"><div class="fb-h">${a.ok?'⭕ 正解！':'❌ 不正解'}${it.k==='ox'?'　正解は「'+(it.a?'○':'×')+'」':''}</div><div class="fb-body">${esc(it.e||'')}</div>${s?`<div class="srs">次にこの問題が出るのは ${s.due===addDays(today(),1)?'明日':fmtYMD(s.due)}（${INT[s.b]}日後）</div>`:''}</div>
+    <div class="qnav">${it.me?'':`<button class="keepbtn ${S.keep[it.id]?'on':''}" onclick="toggleKeep('${it.id}')">📌 ${S.keep[it.id]?'キープ中':'キープ'}</button>`}${it.u&&UMAP[it.u]?`<button class="btn sm" onclick="openUnitModal('${it.u}')">📚 解説を読む</button>`:''}<span class="spacer"></span><button class="btn p" onclick="nextQ()">${R.i+1<n?'次の問題 ›':'結果を見る ›'}</button></div>`;}
+  else h+=`<div class="qnav"><button class="btn sm" onclick="if(confirm('中断しますか？'))go('quiz')">中断</button></div>`;return h;}
+function answer(pick){const it=R.items[R.i];if(R.ans[R.i])return;const ok=it.k==='ox'?pick===it.a:pick===it.a;R.ans[R.i]={pick,ok};
+  const s=S.srs[it.id]||{b:0,ok:0,ng:0};if(ok){s.b=Math.min(s.b+1,INT.length-1);s.ok++;}else{s.b=0;s.ng++;}s.due=addDays(today(),INT[s.b]);s.last=today();S.srs[it.id]=s;
+  S.xp+=ok?10:2;S.days[today()]=(S.days[today()]||0)+1;save();render();}
+function nextQ(){if(R.i+1<R.items.length){R.i++;render();$('content').scrollTop=0;}else{const ok=R.ans.filter(a=>a&&a.ok).length;S.hist.unshift({d:today(),t:R.title,n:R.items.length,ok});S.hist=S.hist.slice(0,200);save();go('result');}}
+function toggleKeep(id){S.keep[id]=!S.keep[id];save();render();}
+function openUnitModal(u){const x=UMAP[u];openModal(x.icon+' '+x.title,`<div class="gram">${glink(x.gram)}</div>`);}
+function pgResult(){if(!R)return pgQuiz();const n=R.items.length,ok=R.ans.filter(a=>a&&a.ok).length,p=pct(ok,n),pass=R.mode==='test'?p>=80:p>=70;
+  let h=`<div class="result-badge ${pass?'pass':'fail'}"><div class="rb-big">${ok} / ${n}</div><div class="rb-sub">${esc(R.title)} ・ 正答率 ${p}% ${R.mode==='test'?(pass?'・合格！':'・合格まであと少し'):''}</div></div>`;
+  h+=R.items.map((it,k)=>{const a=R.ans[k]||{};return `<div class="rev-item ${a.ok?'ok':'no'}">${chip(qField(it))}<div class="rq">${esc(it.q||it.t)}</div><div class="rl">${a.ok?'<span style="color:var(--green);font-weight:600">正解</span>':'<span style="color:var(--red);font-weight:600">不正解</span>'} ・ 答え：${esc(it.k==='ox'?(it.a?'○':'×'):it.c[it.a])}</div></div>`;}).join('');
+  h+=`<div class="qnav"><button class="btn" onclick="go('home')">ホームへ</button><span class="spacer"></span><button class="btn p" onclick="startRun('${R.mode}'${R.arg?`,'${R.arg}'`:''})">もう一度</button></div>`;return h;}
+
+/* ── わたしの数字クイズ（登録データから自動生成） ── */
+function niceRound(v){if(v>=1e6)return Math.round(v/1e5)*1e5;if(v>=1e5)return Math.round(v/1e4)*1e4;if(v>=1e4)return Math.round(v/1e3)*1e3;if(v>=1000)return Math.round(v/500)*500;return Math.round(v);}
+function numQ(id,q,v,fmt,e){if(!v)return null;const set=new Set([v]);[0.5,0.75,1.25,1.5,2,0.6,1.4].forEach(m=>{if(set.size<4){const x=niceRound(v*m);if(x>0&&!set.has(x))set.add(x);}});
+  const c=[...set].slice(0,4).sort((a,b)=>a-b);return {id,me:true,k:'q',q,c:c.map(fmt),a:c.indexOf(v),e};}
+function genMe(){const out=[];const T=totals();
+  S.accounts.forEach(a=>{if(N(a.monthly)>0)out.push(numQ('me_m_'+a.id,`「${a.name}」の毎月の積立額は？`,N(a.monthly),yen,`毎月 ${yen(N(a.monthly))}、年間 ${man(N(a.monthly)*12+N(a.bonus))}。`));
+    if(a.type==='mochikabu'&&N(a.rate)>0&&N(a.monthly)>0){const y=Math.round((N(a.monthly)*12+N(a.bonus))*N(a.rate)/100);out.push(numQ('me_r_'+a.id,`「${a.name}」の奨励金、1年間の見込みは？（奨励金率${a.rate}%）`,y,yen,'拠出額×奨励金率。奨励金は給与所得として課税される。'));}});
+  if(T.m>0&&S.accounts.filter(a=>N(a.monthly)>0).length>1)out.push(numQ('me_mt','毎月の積立の合計は？',T.m,yen,`年間では約${man(T.y)}。`));
+  const ns=nisaStat();if(ns.book>0){const rem=Math.max(0,18e6-ns.book);out.push(numQ('me_nl','NISA生涯枠（1,800万円）の残りは、簿価ベースで約いくら？',niceRound(rem),man,'生涯枠は買付金額（簿価）で数える。売ると翌年に復活。'));}
+  if(ns.planT>0)out.push(numQ('me_nt','今年のNISAつみたて投資枠の使用予定（毎月×12＋ボーナス）は？',ns.planT,man,'つみたて投資枠の年間上限は120万円。'));
+  const own=byType().mochikabu||0;if(own&&T.v&&pct(own,T.v)>=1){const p=pct(own,T.v);const c=[...new Set([p,Math.max(1,p-10),p+10,p+20].map(x=>Math.min(99,x)))].slice(0,4).sort((a,b)=>a-b);if(c.length===4)out.push({id:'me_own',me:true,k:'q',q:'資産全体に占める持株会（自社株）の割合は？',c:c.map(x=>x+'%'),a:c.indexOf(p),e:`方針の上限は${S.policy.ownmax||'—'}%。集中しすぎていないか定期的に確認。`});}
+  const L=loanInfo();if(L.last){const c=[L.last-2,L.last-1,L.last,L.last+2];out.push({id:'me_ll',me:true,k:'q',q:'住宅ローン控除は何年分まで受けられる？',c:c.map(y=>y+'年分'),a:2,e:`${L.mv}年入居・${S.loan.kYears}年間で ${L.last}年分まで（あと${Math.max(0,L.remain)}年）。`});}
+  if(L.rate){const r=L.rate;const c=[r,+(r+0.25).toFixed(3),+(Math.max(0.1,r-0.25)).toFixed(3),+(r+0.5).toFixed(3)].sort((a,b)=>a-b);out.push({id:'me_lr',me:true,k:'q',q:'いまの住宅ローン金利は？',c:c.map(x=>x+'%'),a:c.indexOf(r),e:`控除率${S.loan.kRate}%と比べて、金利が${r<S.loan.kRate?'低い（逆ざや）':'高い'}状態。`});}
+  if(L.ded>0)out.push(numQ('me_ld','今年の住宅ローン控除の見込み額（最新の年末残高×控除率）は？',Math.round(L.ded),yen,'所得税から引ききれない分は住民税から（上限あり）。'));
+  const nx=occurrences(today(),addDays(today(),120)).filter(o=>!o.done&&o.src!=='tpl')[0];if(nx){const c=[-7,-3,0,7].map(k=>addDays(nx.date,k));out.push({id:'me_ev',me:true,k:'q',q:`「${nx.title}」はいつ？`,c:c.map(fmtYMD),a:2,e:`${fmtYMD(nx.date)}。カレンダーで完了チェックを。`});}
+  S.children.forEach(ch=>{if(!ch.birth)return;const age=ageAt(ch.birth,(YEAR()+1)+'-12-31');const opts=['扶養控除なし（児童手当）','一般の扶養 38万円','特定扶養 63万円','老人扶養'];const ans=fuyoKbn(age);const ai=opts.indexOf(ans);if(ai>=0)out.push({id:'me_fy_'+ch.id,me:true,k:'q',q:`${ch.name||'子ども'}の、来年（${YEAR()+1}年）の扶養控除の区分は？（所得税）`,c:opts,a:ai,e:`${YEAR()+1}年12月31日時点で${age}歳。扶養控除等申告書（翌年分）に反映する。`});
+    (ch.schools||[]).forEach(sc=>{if(sc.payBy&&sc.status!=='不合格'&&sc.status!=='辞退'&&sc.status!=='入学手続済'){const c=[-3,0,3,7].map(k=>addDays(sc.payBy,k));out.push({id:'me_sp_'+sc.id,me:true,k:'q',q:`${sc.name}の入学金の振込期限は？`,c:c.map(fmtYMD),a:1,e:`${fmtYMD(sc.payBy)}（${yen(N(sc.entry))}）。土日・銀行の締め時間に注意。`});}});});
+  if(S.policy.crash){const d=['すぐに全部売って現金にする','積立をいったん止めて様子を見る','SNSで話題の銘柄に乗り換える'];const c=shuffle([S.policy.crash.slice(0,80)].concat(d));out.push({id:'me_pc',me:true,k:'q',q:'暴落したとき、わたしが決めていた行動は？',c,a:c.indexOf(S.policy.crash.slice(0,80)),e:'平常時に決めた約束を、慌てたときに思い出せるように。'});}
+  return out.filter(Boolean).filter(q=>q.a>=0);}
+
+/* ══════════ お金 ══════════ */
+function pgMoney(tab){tab=tab||'assets';const tabs=[['assets','💰 資産・積立'],['nisa','🌱 NISA'],['loan','🏠 住宅ローン'],['edu','🎓 教育資金'],['nencho','🧾 年末調整'],['policy','🧭 方針']];
+  const body={assets:mAssets,nisa:mNisa,loan:mLoan,edu:mEdu,nencho:mNencho,policy:mPolicy}[tab]();
+  return `<div class="wrap"><h2 class="pg">💴 わたしのお金</h2><div class="pg-sub">データはこの端末のブラウザの中だけに保存されます（サーバーには送られません）。定期的に「設定」からバックアップを。</div><div class="tabs">${tabs.map(t=>`<button class="tab ${tab===t[0]?'on':''}" onclick="go('money','${t[0]}')">${t[1]}</button>`).join('')}</div>${body}</div>`;}
+
+/* 資産 */
+function mAssets(){const T=totals(),bt=byType(),own=bt.mochikabu||0;let h='';
+  if(!S.accounts.length)return `<div class="empty">まだ口座がありません。<br>よく使う口座をまとめて追加するか、1つずつ登録してください。<div class="row" style="justify-content:center;margin-top:12px"><button class="btn g" onclick="quickSetup()">🧱 よく使う口座をまとめて追加</button><button class="btn" onclick="editAcc()">＋ 1つずつ登録</button></div></div>`;
+  const pl=T.v-T.p;
+  h+=`<div class="stat3"><div class="stat hl"><div class="l">総資産（評価額）</div><div class="v">${man(T.v)}</div><div class="s">元本 ${man(T.p)}</div></div><div class="stat"><div class="l">評価損益</div><div class="v ${pl>=0?'pl-p':'pl-m'}">${pl>=0?'+':''}${man(pl)}</div><div class="s">${T.p?(pl>=0?'+':'')+(pl/T.p*100).toFixed(1)+'%':''}</div></div><div class="stat"><div class="l">毎月の積立</div><div class="v">${man(T.m)}</div><div class="s">年 ${man(T.y)}</div></div></div>`;
+  if(T.v){const ord=Object.keys(TYPES).filter(k=>bt[k]>0);h+=`<div class="sec-h">資産の内訳</div><div class="card"><div class="stack" role="img" aria-label="資産の内訳">${ord.map(k=>`<i style="width:${bt[k]/T.v*100}%;background:${TYPES[k].col}" title="${TYPES[k].n} ${man(bt[k])}"></i>`).join('')}</div><div class="legend">${ord.map(k=>`<span><i style="background:${TYPES[k].col}"></i>${TYPES[k].s} <b class="num">${man(bt[k])}</b> <span class="muted">${pct(bt[k],T.v)}%</span></span>`).join('')}</div>`;
+    if(own){const p=pct(own,T.v),mx=N(S.policy.ownmax)||20;h+=`<div class="muted" style="margin-top:10px">${p>mx?'⚠️ ':''}持株会（自社株）の割合 <b>${p}%</b>（方針の上限 ${mx}%）${p>mx?' — 上限を超えています。分散を検討。':''}</div>`;}h+=`</div>`;}
+  const pts=assetSeries();if(pts.length>=2)h+=`<div class="sec-h">資産の推移</div><div class="card">${lineChart('ch1',pts)}</div>`;
+  h+=`<div class="sec-h">口座と積立<span class="r"><button class="btn xs" onclick="recordAll()">📝 まとめて記録</button> <button class="btn xs p" onclick="editAcc()">＋ 口座</button></span></div>`;
+  S.accounts.forEach(a=>{const s=latestSnap(a),t=TYPES[a.type]||TYPES.other;const v=s?N(s.v):0,p=s?N(s.p||s.v):0,d=v-p;
+    const ex=a.type==='mochikabu'&&N(a.rate)?` ・ 奨励金${a.rate}%（年 ${yen((N(a.monthly)*12+N(a.bonus))*N(a.rate)/100)}）`:'';
+    h+=`<div class="acc"><span class="sw" style="background:${t.col}"></span><div><div class="a-n">${esc(a.name)} <span class="chip gray">${t.s}</span></div><div class="a-s">毎月 ${a.monthly?yen(N(a.monthly)):'—'}${N(a.bonus)?' ・ ボーナス等 年'+yen(N(a.bonus)):''}${ex}${a.start?' ・ '+esc(a.start)+'〜':''}</div><div class="a-s">${s?'記録 '+fmtYMD(s.d):'未記録'}${a.note?' ・ '+esc(a.note):''}</div></div><div class="a-v">${s?`<b>${man(v)}</b><span class="${d>=0?'pl-p':'pl-m'}">${d>=0?'+':''}${man(d)}</span>`:'<span class="muted">—</span>'}<div class="row a-act" style="justify-content:flex-end;gap:6px;margin-top:6px"><button class="btn xs p" onclick="addSnap('${a.id}')">記録</button><button class="btn xs" onclick="accHist('${a.id}')">履歴</button><button class="btn xs" onclick="editAcc('${a.id}')">編集</button></div></div></div>`;});
+  return h;}
+function quickSetup(){const tp=[['NISA つみたて投資枠','nisa_t'],['NISA 成長投資枠','nisa_g'],['従業員持株会','mochikabu'],['教育資金（預金）','edu'],['生活防衛資金（預金）','deposit']];
+  openModal('🧱 よく使う口座をまとめて追加',`<p class="muted" style="margin-bottom:10px">追加したい口座にチェック。金額はあとから「編集」で入れられます。</p><div class="ckl">${tp.map((x,i)=>`<label class="it" style="cursor:pointer"><input type="checkbox" id="qs${i}" checked style="width:20px;height:20px"><div><div class="t">${x[0]}</div><div class="s">${TYPES[x[1]].n}</div></div></label>`).join('')}</div><div class="fm-act"><button class="btn p" onclick="doQuick()">追加する</button></div>`);
+  window._qs=tp;}
+function doQuick(){window._qs.forEach((x,i)=>{if($('qs'+i).checked)S.accounts.push({id:uid(),name:x[0],type:x[1],monthly:0,bonus:0,rate:'',start:'',note:'',snaps:[]});});save();closeModal();render();toast('口座を追加しました。「編集」で毎月の積立額を入れてください');}
+function editAcc(id){const a=S.accounts.find(x=>x.id===id)||{name:'',type:'nisa_t',monthly:'',bonus:'',rate:'',start:'',note:''};
+  openModal(id?'口座を編集':'口座を登録',`<div class="fm">${fld('a_name','名前',a.name,'text','例：楽天証券 NISA','w2')}${sel('a_type','種類',Object.entries(TYPES).map(([k,t])=>[k,t.n]),a.type)}${fld('a_mon','毎月の積立額（円）',a.monthly,'number','15000')}${fld('a_bon','ボーナス等の追加（年・円）',a.bonus,'number','0')}${fld('a_rate','奨励金率（%・持株会）',a.rate,'number','例：10')}${fld('a_start','積立開始（年月）',a.start,'month')}${fld('a_note','メモ',a.note,'text','銘柄・引落口座など','full')}</div>
+  <div class="fm-act">${id?`<button class="btn danger" onclick="delAcc('${id}')">削除</button>`:''}<button class="btn p" onclick="saveAcc('${id||''}')">保存</button></div>`);}
+function saveAcc(id){const o={name:V('a_name')||'口座',type:V('a_type'),monthly:N(V('a_mon')),bonus:N(V('a_bon')),rate:V('a_rate'),start:V('a_start'),note:V('a_note')};
+  if(id)Object.assign(S.accounts.find(x=>x.id===id),o);else S.accounts.push(Object.assign({id:uid(),snaps:[]},o));save();closeModal();render();}
+function delAcc(id){if(!confirm('この口座と記録を削除しますか？'))return;S.accounts=S.accounts.filter(x=>x.id!==id);save();closeModal();render();}
+function addSnap(id){const a=S.accounts.find(x=>x.id===id),s=latestSnap(a);const nisa=a.type.startsWith('nisa');
+  openModal('📝 '+a.name+' を記録',`<div class="fm">${fld('s_d','日付',today(),'date')}${fld('s_v','評価額（円）','','number',s?String(s.v):'')}${fld('s_p',nisa?'買付金額の合計＝簿価（円）':'元本・拠出額の合計（円）','','number',s?String(s.p||''):'')}</div><p class="muted" style="margin-top:8px">${nisa?'簿価は証券会社の「NISA 投資可能枠」や「取得額」で確認できます。':'元本が分からなければ空欄でOK（評価額と同じ扱い）。'}</p><div class="fm-act"><button class="btn p" onclick="saveSnap('${id}')">記録する</button></div>`);}
+function saveSnap(id){const a=S.accounts.find(x=>x.id===id);const d=V('s_d')||today(),v=N(V('s_v'));if(!V('s_v')){toast('評価額を入力してください');return;}const p=V('s_p')?N(V('s_p')):v;
+  a.snaps=(a.snaps||[]).filter(x=>x.d!==d);a.snaps.push({d,v,p});save();closeModal();render();toast('記録しました 🧱');}
+function recordAll(){if(!S.accounts.length){go('money','assets');return;}openModal('📝 まとめて記録（'+fmtYMD(today())+'）',`<p class="muted" style="margin-bottom:10px">分かるものだけ入力。空欄の口座は記録しません。</p><table class="tb"><thead><tr><th>口座</th><th class="r">評価額</th><th class="r">元本・簿価</th></tr></thead><tbody>${S.accounts.map(a=>{const s=latestSnap(a);return `<tr><td>${esc(a.name)}<div class="muted">${s?'前回 '+man(N(s.v)):'未記録'}</div></td><td><input class="in" id="ra_v_${a.id}" inputmode="decimal" type="number"></td><td><input class="in" id="ra_p_${a.id}" inputmode="decimal" type="number" placeholder="${s&&s.p?s.p:''}"></td></tr>`;}).join('')}</tbody></table><div class="fm-act"><button class="btn p" onclick="saveAll()">記録する</button></div>`);}
+function saveAll(){const d=today();let n=0;S.accounts.forEach(a=>{const v=V('ra_v_'+a.id);if(!v)return;const pv=V('ra_p_'+a.id);const s=latestSnap(a);const p=pv?N(pv):(s&&s.p&&s.v!==s.p?N(s.p)+N(a.monthly):N(v));a.snaps=(a.snaps||[]).filter(x=>x.d!==d);a.snaps.push({d,v:N(v),p});n++;});save();closeModal();render();toast(n+'件を記録しました 🧱');}
+function accHist(id){const a=S.accounts.find(x=>x.id===id);const s=(a.snaps||[]).slice().sort((x,y)=>x.d<y.d?1:-1);
+  openModal('📈 '+a.name+' の記録',s.length?`<table class="tb"><thead><tr><th>日付</th><th class="r">評価額</th><th class="r">元本・簿価</th><th class="r">損益</th><th></th></tr></thead><tbody>${s.map(x=>`<tr><td>${fmtYMD(x.d)}</td><td class="r num">${yen(N(x.v))}</td><td class="r num">${yen(N(x.p||x.v))}</td><td class="r num ${N(x.v)-N(x.p||x.v)>=0?'pl-p':'pl-m'}">${man(N(x.v)-N(x.p||x.v))}</td><td><button class="btn xs danger" onclick="delSnap('${id}','${x.d}')">削除</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">記録がありません。</div>');}
+function delSnap(id,d){const a=S.accounts.find(x=>x.id===id);a.snaps=a.snaps.filter(x=>x.d!==d);save();accHist(id);render();}
+function assetSeries(){const ds=[...new Set(S.accounts.flatMap(a=>(a.snaps||[]).map(s=>s.d)))].sort();return ds.map(d=>{let v=0,p=0;S.accounts.forEach(a=>{const s=snapAt(a,d);if(s){v+=N(s.v);p+=N(s.p||s.v);}});return {d,v,p};});}
+/* 折れ線（評価額）＋元本の点線。ホバーで値を表示 */
+window._ch={};
+function lineChart(id,pts){const W=760,H=240,L=70,Rr=14,Tp=14,B=30;const vs=pts.flatMap(p=>[p.v,p.p]);let mx=Math.max(...vs),mn=Math.min(...vs);if(mx===mn){mx*=1.1;mn*=0.9;}const pad2=(mx-mn)*0.08;mx+=pad2;mn=Math.max(0,mn-pad2);
+  const x=i=>L+(pts.length===1?0:i*(W-L-Rr)/(pts.length-1)),y=v=>Tp+(H-Tp-B)*(1-(v-mn)/(mx-mn));
+  const line=k=>pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p[k]).toFixed(1)).join(' ');
+  let g='';for(let k=0;k<=3;k++){const v=mn+(mx-mn)*k/3;g+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--border-soft)"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" font-size="13" fill="var(--text-muted)">${man(v)}</text>`;}
+  const lbl=[0,Math.floor((pts.length-1)/2),pts.length-1].filter((v,i,a)=>a.indexOf(v)===i);
+  lbl.forEach(i=>{g+=`<text x="${x(i)}" y="${H-8}" text-anchor="${i===0?'start':i===pts.length-1?'end':'middle'}" font-size="13" fill="var(--text-muted)">${fmtYMD(pts[i].d)}</text>`;});
+  const area=line('v')+` L${x(pts.length-1)} ${H-B} L${x(0)} ${H-B} Z`;
+  const hits=pts.map((p,i)=>{const w=(W-L-Rr)/Math.max(1,pts.length-1);return `<rect x="${x(i)-w/2}" y="${Tp}" width="${w}" height="${H-Tp-B}" fill="transparent" data-i="${i}"/>`;}).join('');
+  window._ch[id]={pts,x,y};
+  return `<div class="chart" id="${id}"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="資産の推移">${g}<path d="${area}" fill="var(--accent)" opacity=".07"/><path d="${line('p')}" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="5 4"/><path d="${line('v')}" fill="none" stroke="var(--accent)" stroke-width="2"/>${pts.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.v)}" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`).join('')}<line class="xh" x1="0" x2="0" y1="${Tp}" y2="${H-B}" stroke="var(--text-muted)" stroke-dasharray="3 3" opacity="0"/>${hits}</svg><div class="tip"></div></div>
+  <div class="legend"><span><i style="background:var(--accent)"></i>評価額</span><span><i style="background:var(--text-muted)"></i>元本（点線）</span></div>`;}
+function bindCharts(){Object.keys(window._ch).forEach(id=>{const el=$(id);if(!el)return;const C=window._ch[id],tip=el.querySelector('.tip'),xh=el.querySelector('.xh'),svg=el.querySelector('svg');
+  const show=i=>{const p=C.pts[i];const r=svg.getBoundingClientRect(),sc=r.width/760;tip.innerHTML=`${fmtYMD(p.d)}<br>評価額 <b>${man(p.v)}</b><br>元本 ${man(p.p)}`;tip.style.left=(C.x(i)*sc)+'px';tip.style.top=(C.y(p.v)*sc)+'px';tip.classList.add('show');xh.setAttribute('x1',C.x(i));xh.setAttribute('x2',C.x(i));xh.setAttribute('opacity','1');};
+  el.querySelectorAll('rect[data-i]').forEach(rc=>{const i=+rc.dataset.i;rc.addEventListener('mouseenter',()=>show(i));rc.addEventListener('touchstart',()=>show(i),{passive:true});});
+  svg.addEventListener('mouseleave',()=>{tip.classList.remove('show');xh.setAttribute('opacity','0');});});}
+
+/* NISA */
+function meterHTML(used,cap,col,label){const p=Math.min(100,used/cap*100);return `<div style="margin:10px 0 14px"><div class="row" style="justify-content:space-between;font-size:12.5px"><b>${label}</b><span class="num">${man(used)} / ${man(cap)}</span></div><div class="meter" style="margin-top:4px"><i style="width:${p}%;background:${col}"></i></div><div class="meter-l"><span>使用 ${p.toFixed(0)}%</span><span>残り ${man(Math.max(0,cap-used))}</span></div></div>`;}
+function mNisa(){const n=nisaStat(),Y=YEAR();const has=S.accounts.some(a=>a.type.startsWith('nisa'));
+  if(!has)return `<div class="empty">NISAの口座が登録されていません。<br>「資産・積立」で種類を「NISA つみたて投資枠／成長投資枠」にして登録してください。<div style="margin-top:12px"><button class="btn p" onclick="editAcc()">＋ NISA口座を登録</button></div></div>`;
+  const left=12-new Date().getMonth();const yrs=n.planT+n.planG>0?Math.ceil(Math.max(0,18e6-n.book)/(n.planT+n.planG)):null;
+  let h=`<div class="sec-h">${Y}年の枠（年間）</div><div class="card">${meterHTML(n.planT,1.2e6,TYPES.nisa_t.col,'つみたて投資枠（計画：毎月×12＋ボーナス）')}${meterHTML(n.planG,2.4e6,TYPES.nisa_g.col,'成長投資枠（計画）')}
+  <div class="muted">${n.yrT+n.yrG>0?`記録からの今年の実績（簿価の増加）：つみたて ${man(n.yrT)} ・ 成長 ${man(n.yrG)}`:'今年の実績は、年末と今年の簿価を記録すると自動計算されます。'}</div>
+  ${n.planT<1.2e6?`<div class="nbox">つみたて投資枠はあと <b>${man(1.2e6-n.planT)}</b> 空いています（毎月 ${yen(Math.floor((1.2e6-n.planT)/12))} 増やすと上限）。${left<=2?'年末の注文は約定が翌年になることがあるので早めに。':''}</div>`:''}</div>
+  <div class="sec-h">生涯の枠（簿価ベース）</div><div class="card">${meterHTML(n.book,1.8e7,'var(--accent)','合計 1,800万円')}${meterHTML(n.bookG,1.2e7,TYPES.nisa_g.col,'うち成長投資枠 1,200万円')}
+  <div class="muted">${yrs!=null?`今のペース（年 ${man(n.planT+n.planG)}）だと、生涯枠を使い切るまで約 <b>${yrs}年</b>（${Y+yrs}年ごろ）。`:''}売った分の簿価は翌年に枠が復活します。</div></div>
+  <div class="sec-h">覚えておくこと</div><div class="card"><ul style="padding-left:18px;font-size:13px;line-height:1.9" class="dim"><li>1年の上限：つみたて120万円＋成長240万円＝360万円</li><li>生涯1,800万円（うち成長1,200万円）は簿価で管理</li><li>NISAの損失は他の口座と損益通算できない</li><li>持株会の株はNISAの対象外</li><li>2027年から0〜17歳の「こどもNISA」（年60万円）が始まる予定</li></ul><div class="row" style="margin-top:8px"><button class="btn sm" onclick="go('unit','nisa1')">📚 NISAのしくみ</button><button class="btn sm" onclick="startRun('field','nisa')">🎯 NISAの問題</button></div></div>`;return h;}
+
+/* 住宅ローン */
+function mLoan(){const L=S.loan,I=loanInfo(),Y=YEAR();let h='';
+  h+=`<div class="stat3"><div class="stat hl"><div class="l">最新の年末残高</div><div class="v">${I.bal?man(I.bal):'—'}</div><div class="s">${I.bals.length?I.bals[I.bals.length-1].y+'年末':'未記録'}</div></div><div class="stat"><div class="l">今年の控除見込み</div><div class="v">${I.ded?yen(I.ded):'—'}</div><div class="s">残高(上限${L.kCap}万円)×${L.kRate}%</div></div><div class="stat"><div class="l">控除が終わる年</div><div class="v">${I.last?I.last+'<small>年分</small>':'—'}</div><div class="s">${I.last?(I.remain>0?'あと'+I.remain+'年':'終了'):'入居年を設定'}</div></div></div>`;
+  if(I.rate){const gap=I.rate-N(L.kRate);h+=`<div class="${gap<0?'nbox':'wbox'}" style="margin-top:12px">いまの金利 <b>${I.rate}%</b> は控除率 ${L.kRate}% より${gap<0?`<b>低い</b>（逆ざや）。控除期間中は、繰上返済より手元資金を残すほうが有利な場合があります。`:`<b>高い</b>。繰上返済の効果が出やすい状態です。ただし控除額は減り、期間短縮型で返済期間が通算10年未満になると控除が受けられなくなる点に注意。`}</div>`;}
+  h+=`<div class="sec-h">契約の情報<span class="r"><button class="btn xs p" onclick="editLoan()">編集</button></span></div><div class="card"><table class="tb"><tbody>
+  <tr><td>銀行</td><td>${esc(L.bank||'—')}</td></tr><tr><td>金利タイプ</td><td>${esc(L.kind||'—')}</td></tr><tr><td>借入</td><td>${esc(L.start||'—')}</td></tr><tr><td>入居年</td><td>${I.mv||'—'}</td></tr>
+  <tr><td>控除</td><td>${L.kRate}% ・ ${L.kYears}年 ・ 残高上限 ${L.kCap}万円</td></tr><tr><td>毎月の返済額</td><td>${L.monthly?yen(N(L.monthly)):'—'}</td></tr><tr><td>完済予定</td><td>${esc(L.endYm||'—')}</td></tr>${L.memo?`<tr><td>メモ</td><td>${esc(L.memo).replace(/\n/g,'<br>')}</td></tr>`:''}</tbody></table></div>`;
+  h+=`<div class="grid2"><div><div class="sec-h">年末残高の記録<span class="r"><button class="btn xs" onclick="addBal()">＋</button></span></div>${I.bals.length?`<table class="tb"><thead><tr><th>年</th><th class="r">年末残高</th><th class="r">控除の目安</th><th></th></tr></thead><tbody>${I.bals.slice().reverse().map(b=>`<tr><td>${b.y}年末</td><td class="r num">${yen(N(b.bal))}</td><td class="r num">${(I.mv&&b.y>=I.mv&&b.y<=I.last)?yen(Math.min(N(b.bal),N(L.kCap)*1e4)*N(L.kRate)/100):'対象外'}</td><td><button class="btn xs danger" onclick="delBal(${b.y})">×</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">残高証明書が届いたら記録。</div>'}</div>
+  <div><div class="sec-h">金利の記録<span class="r"><button class="btn xs" onclick="addRate()">＋</button></span></div>${I.rates.length?`<table class="tb"><thead><tr><th>適用日</th><th class="r">金利</th><th class="r">変化</th><th></th></tr></thead><tbody>${I.rates.slice().reverse().map((r,i,a)=>{const pv=a[i+1];const df=pv?N(r.r)-N(pv.r):0;return `<tr><td>${fmtYMD(r.d)}</td><td class="r num">${r.r}%</td><td class="r num ${df>0?'pl-m':df<0?'pl-p':''}">${pv?(df>0?'+':'')+df.toFixed(3)+'%':''}</td><td><button class="btn xs danger" onclick="delRate('${r.d}')">×</button></td></tr>`;}).join('')}</tbody></table>`:'<div class="empty">金利の通知が来たら記録。</div>'}</div></div>
+  <div class="row" style="margin-top:16px"><button class="btn sm" onclick="go('unit','house1')">📚 住宅ローン控除と金利</button><button class="btn sm" onclick="startRun('field','house')">🎯 住宅ローンの問題</button></div>`;return h;}
+function editLoan(){const L=S.loan;openModal('🏠 住宅ローンの情報',`<div class="fm">${fld('l_bank','銀行',L.bank,'text','例：〇〇銀行')}${fld('l_kind','金利タイプ・返済方法',L.kind)}${fld('l_start','借入（年月）',L.start,'month')}${fld('l_mv','入居年（控除の1年目）',L.moveIn,'number','2022')}${fld('l_kr','控除率（%）',L.kRate,'number')}${fld('l_ky','控除期間（年）',L.kYears,'number')}${fld('l_kc','残高の上限（万円）',L.kCap,'number','3000')}${fld('l_mo','毎月の返済額（円）',L.monthly,'number')}${fld('l_end','完済予定（年月）',L.endYm,'month')}<label class="full">メモ<textarea class="in" id="l_memo" placeholder="5年ルール・125%ルールの有無、繰上返済の手数料など">${esc(L.memo)}</textarea></label></div><p class="muted" style="margin-top:8px">控除の上限は住宅の性能と入居年で違います（2022〜23年入居の新築：一般3,000万／省エネ4,000万／ZEH4,500万／長期優良5,000万円）。</p><div class="fm-act"><button class="btn p" onclick="saveLoan()">保存</button></div>`);}
+function saveLoan(){Object.assign(S.loan,{bank:V('l_bank'),kind:V('l_kind'),start:V('l_start'),moveIn:V('l_mv'),kRate:N(V('l_kr'))||0.7,kYears:N(V('l_ky'))||13,kCap:N(V('l_kc'))||3000,monthly:N(V('l_mo')),endYm:V('l_end'),memo:V('l_memo')});save();closeModal();render();}
+function addBal(){openModal('年末残高を記録',`<div class="fm">${fld('b_y','年',YEAR(),'number')}${fld('b_v','年末残高（円）','','number')}</div><p class="muted" style="margin-top:8px">銀行の「年末残高証明書」の金額。年末調整の申告書にも同じ額を書きます。</p><div class="fm-act"><button class="btn p" onclick="saveBal()">記録</button></div>`);}
+function saveBal(){const y=N(V('b_y'));if(!y||!V('b_v'))return;S.loan.bals=(S.loan.bals||[]).filter(b=>b.y!==y);S.loan.bals.push({y,bal:N(V('b_v'))});save();closeModal();render();}
+function delBal(y){S.loan.bals=S.loan.bals.filter(b=>b.y!==y);save();render();}
+function addRate(){openModal('金利を記録',`<div class="fm">${fld('r_d','適用日',today(),'date')}${fld('r_v','金利（%）','','number','0.5')}</div><div class="fm-act"><button class="btn p" onclick="saveRate()">記録</button></div>`);}
+function saveRate(){if(!V('r_v'))return;const d=V('r_d')||today();S.loan.rates=(S.loan.rates||[]).filter(r=>r.d!==d);S.loan.rates.push({d,r:N(V('r_v'))});save();closeModal();render();}
+function delRate(d){S.loan.rates=S.loan.rates.filter(r=>r.d!==d);save();render();}
+
+/* 教育資金 */
+function mEdu(){const Y=YEAR();const eduBal=S.accounts.filter(a=>a.type==='edu').reduce((s,a)=>{const x=latestSnap(a);return s+(x?N(x.v):0);},0);let h='';
+  if(!S.children.length)return `<div class="empty">子どもを登録すると、受験校・入学金の期限・扶養控除の区分・合格後のToDoを管理できます。<div style="margin-top:12px"><button class="btn p" onclick="editChild()">＋ 子どもを登録</button></div></div>`;
+  S.children.forEach(ch=>{const sc=ch.schools||[];const a1=ageAt(ch.birth,Y+'-12-31'),a2=ageAt(ch.birth,(Y+1)+'-12-31');
+    const fee=sc.reduce((s,x)=>s+N(x.fee),0);const live=sc.filter(x=>x.status!=='不合格'&&x.status!=='辞退');
+    const entryNeed=sc.filter(x=>x.status==='合格'||x.status==='入学手続済').reduce((s,x)=>s+N(x.entry),0);
+    const go1=sc.find(x=>x.status==='入学手続済');const first=go1?N(go1.entry)+N(go1.tuit):0;const extra=N(ch.extra);
+    const need=fee+entryNeed+(go1?N(go1.tuit):0)+extra;
+    h+=`<div class="card"><h4>🎓 ${esc(ch.name||'子ども')} ${ch.grade?`<span class="chip gray">${esc(ch.grade)}</span>`:''}<span style="margin-left:auto"></span><button class="btn xs" onclick="editChild('${ch.id}')">編集</button></h4>
+    ${ch.birth?`<div class="muted">${Y}年12/31時点 <b>${a1}歳</b>（${fuyoKbn(a1)}） → ${Y+1}年12/31時点 <b>${a2}歳</b>（${fuyoKbn(a2)}）${a2>=19&&a2<=22?' ・ 子の所得が増えても、特定親族特別控除で段階的に残る':''}</div>`:'<div class="muted">生年月日を入れると扶養控除の区分を表示します。</div>'}
+    <div class="stat3" style="margin-top:12px"><div class="stat"><div class="l">受験料の合計</div><div class="v">${yen(fee)}</div><div class="s">${sc.length}校</div></div><div class="stat"><div class="l">合格校の入学金</div><div class="v">${yen(entryNeed)}</div><div class="s">押さえ含む</div></div><div class="stat hl"><div class="l">必要額の見込み</div><div class="v">${man(need)}</div><div class="s">受験料＋入学金＋${go1?'授業料等＋':''}その他</div></div></div>
+    ${eduBal?`<div style="margin-top:10px">${meterHTML(Math.min(need,eduBal),Math.max(need,eduBal)||1,need>eduBal?'var(--red)':'var(--green)','教育資金口座 '+man(eduBal)+' に対して')}<div class="muted">${need>eduBal?'⚠️ 不足 '+man(need-eduBal)+'：国の教育ローンなどを検討':'✅ 余裕 '+man(eduBal-need)}</div></div>`:'<div class="muted" style="margin-top:8px">「資産・積立」で種類を「教育資金」にした口座を登録すると、残高と比べられます（全員分の合計）。</div>'}
+    <div class="sec-h">受験校<span class="r"><button class="btn xs p" onclick="editSchool('${ch.id}')">＋ 受験校</button></span></div>
+    ${sc.length?sc.slice().sort((a,b)=>(a.exam||'9')<(b.exam||'9')?-1:1).map(x=>{return `<div class="school"><div class="sh"><span class="sn">${esc(x.name)} <span class="muted">${esc(x.kind||'')}</span></span><select class="st-sel" onchange="setSt('${ch.id}','${x.id}',this.value)">${STATUS.map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`).join('')}</select><button class="btn xs" onclick="editSchool('${ch.id}','${x.id}')">編集</button></div>
+      <div class="sd"><span>受験料 <b>${x.fee?yen(N(x.fee)):'—'}</b></span><span>試験日 <b>${x.exam?fmtMD(x.exam):'—'}</b></span><span>発表 <b>${x.result?fmtMD(x.result):'—'}</b></span><span>入学金期限 <b style="${x.payBy&&diffDays(today(),x.payBy)<=7&&diffDays(today(),x.payBy)>=0?'color:var(--red)':''}">${x.payBy?fmtMD(x.payBy):'—'}</b></span><span>入学金 <b>${x.entry?yen(N(x.entry)):'—'}</b></span><span>授業料等 <b>${x.tuit?yen(N(x.tuit)):'—'}</b>${x.tuitBy?' ('+fmtMD(x.tuitBy)+'まで)':''}</span></div></div>`;}).join(''):'<div class="empty">受験校を登録すると、試験日・発表・入学金の期限がカレンダーに自動で入ります。</div>'}
+    <div class="sec-h">合格後のお金ToDo（${EDU_TODO.filter((t,i)=>(ch.todo||{})[i]).length}/${EDU_TODO.length}）</div><div class="ckl">${EDU_TODO.map((t,i)=>`<div class="it ${(ch.todo||{})[i]?'on':''}" onclick="togTodo('${ch.id}',${i})"><span class="bx">${(ch.todo||{})[i]?'✓':''}</span><div><div class="t">${esc(t)}</div></div></div>`).join('')}</div>
+    ${extra?`<div class="muted" style="margin-top:8px">その他の見込み（一人暮らし初期費用など）：${yen(extra)}</div>`:''}</div>`;});
+  h+=`<div class="row"><button class="btn" onclick="editChild()">＋ 子どもを追加</button><button class="btn sm" onclick="go('unit','edu1')">📚 大学受験のお金</button><button class="btn sm" onclick="go('unit','edu2')">📚 合格後のお金</button></div>`;return h;}
+function editChild(id){const c=S.children.find(x=>x.id===id)||{name:'',birth:'',grade:'',extra:''};openModal(id?'子どもの情報':'子どもを登録',`<div class="fm">${fld('c_name','呼び名',c.name,'text','例：長男')}${fld('c_birth','生年月日',c.birth,'date')}${fld('c_grade','学年・メモ',c.grade,'text','例：高3・受験生')}${fld('c_extra','その他の見込み額（円）',c.extra,'number','一人暮らし初期費用など')}</div><div class="fm-act">${id?`<button class="btn danger" onclick="delChild('${id}')">削除</button>`:''}<button class="btn p" onclick="saveChild('${id||''}')">保存</button></div>`);}
+function saveChild(id){const o={name:V('c_name')||'子ども',birth:V('c_birth'),grade:V('c_grade'),extra:N(V('c_extra'))};if(id)Object.assign(S.children.find(x=>x.id===id),o);else S.children.push(Object.assign({id:uid(),schools:[],todo:{}},o));save();closeModal();render();}
+function delChild(id){if(!confirm('削除しますか？'))return;S.children=S.children.filter(x=>x.id!==id);save();closeModal();render();}
+function editSchool(cid,sid){const ch=S.children.find(x=>x.id===cid);const s=(ch.schools||[]).find(x=>x.id===sid)||{name:'',kind:'私立',fee:'',exam:'',result:'',payBy:'',entry:'',tuit:'',tuitBy:'',status:'検討中'};
+  openModal(sid?'受験校を編集':'受験校を追加',`<div class="fm">${fld('sc_name','大学・学部・方式',s.name,'text','例：〇〇大 経済 一般','w2')}${sel('sc_kind','区分',['国立','公立','私立'],s.kind)}${sel('sc_st','状況',STATUS,s.status)}${fld('sc_fee','受験料（円）',s.fee,'number','35000')}${fld('sc_exam','試験日',s.exam,'date')}${fld('sc_res','合格発表',s.result,'date')}${fld('sc_pay','入学金の期限',s.payBy,'date')}${fld('sc_ent','入学金（円）',s.entry,'number',s.kind==='国立'?'282000':'')}${fld('sc_tui','授業料など初年度（円）',s.tuit,'number')}${fld('sc_tby','授業料などの期限',s.tuitBy,'date')}</div><div class="fm-act">${sid?`<button class="btn danger" onclick="delSchool('${cid}','${sid}')">削除</button>`:''}<button class="btn p" onclick="saveSchool('${cid}','${sid||''}')">保存</button></div>`);}
+function saveSchool(cid,sid){const ch=S.children.find(x=>x.id===cid);ch.schools=ch.schools||[];const o={name:V('sc_name')||'大学',kind:V('sc_kind'),status:V('sc_st'),fee:N(V('sc_fee')),exam:V('sc_exam'),result:V('sc_res'),payBy:V('sc_pay'),entry:N(V('sc_ent')),tuit:N(V('sc_tui')),tuitBy:V('sc_tby')};if(sid)Object.assign(ch.schools.find(x=>x.id===sid),o);else ch.schools.push(Object.assign({id:uid()},o));save();closeModal();render();}
+function delSchool(cid,sid){const ch=S.children.find(x=>x.id===cid);ch.schools=ch.schools.filter(x=>x.id!==sid);save();closeModal();render();}
+function setSt(cid,sid,v){const ch=S.children.find(x=>x.id===cid);ch.schools.find(x=>x.id===sid).status=v;save();render();if(v==='合格')toast('おめでとう！🎉 入学金の期限を確認しよう');}
+function togTodo(cid,i){const ch=S.children.find(x=>x.id===cid);ch.todo=ch.todo||{};ch.todo[i]=!ch.todo[i];save();render();}
+
+/* 年末調整 */
+function mNencho(){const Y=RT.ny||YEAR();const st=S.nencho[Y]=S.nencho[Y]||{};const hasLoan=!!(S.loan.moveIn||S.loan.start),hasIdeco=S.accounts.some(a=>a.type==='ideco');
+  const items=NENCHO.filter(n=>!n.cond||(n.cond==='loan'&&hasLoan)||(n.cond==='ideco'&&hasIdeco));const done=items.filter(n=>st[n.k]).length;
+  let h=`<div class="row" style="margin-bottom:12px"><div class="seg">${[YEAR()-1,YEAR(),YEAR()+1].map(y=>`<button class="${y===Y?'on':''}" onclick="RT.ny=${y};render()">${y}年分</button>`).join('')}</div><span class="muted">${done}/${items.length} 完了</span></div>
+  <div class="meter" style="margin-bottom:16px"><i style="width:${pct(done,items.length)}%;background:var(--green)"></i></div>`;
+  if(Y===2026)h+=`<div class="newbox">基礎控除（所得489万円以下で最大104万円）と給与所得控除の最低額（74万円）が上がり、課税最低限は178万円に。扶養できる家族の所得要件は合計所得62万円以下（給与のみ136万円以下）。23歳未満の扶養親族がいれば一般生命保険料控除は上限6万円。改正は12月の年末調整で反映。</div>`;
+  const kids=S.children.filter(c=>c.birth);if(kids.length)h+=`<div class="mbox">${kids.map(c=>`${esc(c.name)}：${Y}年12/31時点 ${ageAt(c.birth,Y+'-12-31')}歳（${fuyoKbn(ageAt(c.birth,Y+'-12-31'))}） / ${Y+1}年分の申告書では ${ageAt(c.birth,(Y+1)+'-12-31')}歳（${fuyoKbn(ageAt(c.birth,(Y+1)+'-12-31'))}）`).join('<br>')}</div>`;
+  const I=loanInfo();if(hasLoan&&I.mv){h+=`<div class="muted" style="margin-bottom:10px">🏠 住宅ローン控除：${Y>=I.mv&&Y<=I.last?(Y===I.mv?'1年目は確定申告で。':`${Y-I.mv+1}年目（年末調整で申告）。`):'この年は対象外。'}</div>`;}
+  h+=`<div class="ckl">${items.map(n=>`<div class="it ${st[n.k]?'on':''}" onclick="togNen(${Y},'${n.k}')"><span class="bx">${st[n.k]?'✓':''}</span><div><div class="t">${esc(n.t)}</div>${n.s?`<div class="s">${esc(n.s)}</div>`:''}</div></div>`).join('')}</div>
+  <div class="sec-h">${Y}年分のメモ</div><textarea class="in" id="nen_memo" placeholder="例：生命保険料 一般 〇〇円／提出日 11/18／還付額 〇〇円" onchange="S.nencho[${Y}].memo=this.value;save();toast('メモを保存しました')">${esc(st.memo||'')}</textarea>
+  <div class="row" style="margin-top:14px"><button class="btn sm" onclick="go('unit','tax1')">📚 年末調整のしくみ</button><button class="btn sm" onclick="go('unit','tax2')">📚 年末調整でできないこと</button><button class="btn sm" onclick="startRun('field','tax')">🎯 税金の問題</button></div>`;return h;}
+function togNen(y,k){S.nencho[y]=S.nencho[y]||{};S.nencho[y][k]=!S.nencho[y][k];save();render();}
+
+/* 方針 */
+function mPolicy(){return `<div class="pg-sub" style="margin-bottom:12px">平常心のときに決めた「自分との約束」。ホーム画面に毎日1つ表示され、「暴落したら」はわたしの数字クイズにも出ます。</div><div class="fm">${POLICY_F.map(p=>`<label class="full">${p[1]}<textarea class="in" id="pol_${p[0]}" placeholder="${esc(p[2])}">${esc(S.policy[p[0]]||'')}</textarea></label>`).join('')}${fld('pol_own','自社株（持株会）の上限（資産全体の%）',S.policy.ownmax,'number','20')}</div><div class="fm-act"><button class="btn p" onclick="savePol()">保存</button></div>`;}
+function savePol(){POLICY_F.forEach(p=>S.policy[p[0]]=V('pol_'+p[0]));S.policy.ownmax=N(V('pol_own'))||20;save();toast('約束を保存しました 🧭');render();}
+
+/* ══════════ カレンダー ══════════ */
+function pgCal(){const t=today();const list=occurrences(addDays(t,-30),addDays(t,365));const byM={};list.forEach(o=>{const k=o.date.slice(0,7);(byM[k]=byM[k]||[]).push(o);});
+  let h=`<div class="wrap"><h2 class="pg">📅 お金カレンダー</h2><div class="pg-sub">税金・NISA・年末調整の毎年の予定と、自分で追加した予定、受験校の日程をまとめて表示。終わったら✓。</div><div class="row" style="margin-bottom:8px"><button class="btn p sm" onclick="editEv()">＋ 予定を追加</button><button class="btn sm" onclick="tplSet()">⚙︎ 毎年の予定を調整</button></div>`;
+  Object.keys(byM).sort().forEach(k=>{const [y,m]=k.split('-');h+=`<div class="sec-h">${y}年${+m}月</div>`+evListHTML(byM[k]).replace(/<div class="ev-m">/g,'<div class="ev-m">');});
+  const mine=S.events;if(mine.length)h+=`<div class="sec-h">自分で追加した予定</div><table class="tb"><tbody>${mine.map(e=>`<tr><td>${fmtYMD(e.date)}${e.rep?' 🔁':''}</td><td>${esc(e.title)}</td><td class="r">${e.amount?yen(N(e.amount)):''}</td><td class="r"><button class="btn xs" onclick="editEv('${e.id}')">編集</button></td></tr>`).join('')}</tbody></table>`;
+  return h+`</div>`;}
+function editEv(id){const e=S.events.find(x=>x.id===id)||{title:'',date:today(),amount:'',cat:'me',rep:false,note:''};
+  openModal(id?'予定を編集':'予定を追加',`<div class="fm">${fld('e_t','内容',e.title,'text','例：固定資産税 第1期','w2')}${fld('e_d','日付',e.date,'date')}${fld('e_a','金額（円・任意）',e.amount,'number')}${sel('e_c','分野',[['me','わたし']].concat(Object.entries(TS.FIELDS).map(([k,f])=>[k,f.n])),e.cat)}${sel('e_r','くり返し',[['0','1回だけ'],['1','毎年']],e.rep?'1':'0')}${fld('e_n','メモ',e.note,'text','','full')}</div><div class="fm-act">${id?`<button class="btn danger" onclick="delEv('${id}')">削除</button>`:''}<button class="btn p" onclick="saveEv('${id||''}')">保存</button></div>`);}
+function saveEv(id){const o={title:V('e_t')||'予定',date:V('e_d')||today(),amount:N(V('e_a'))||'',cat:V('e_c'),rep:V('e_r')==='1',note:V('e_n')};if(id)Object.assign(S.events.find(x=>x.id===id),o);else S.events.push(Object.assign({id:uid()},o));save();closeModal();render();}
+function delEv(id){S.events=S.events.filter(x=>x.id!==id);save();closeModal();render();}
+function tplSet(){openModal('⚙︎ 毎年の予定',`<p class="muted" style="margin-bottom:10px">会社の締切などに合わせて日付を変えたり、不要なものをオフにできます。</p><table class="tb"><tbody>${TPL.map(t=>{const ov=S.tplOv[t.id]||{};return `<tr><td><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="tp_on_${t.id}" ${ov.off?'':'checked'}>${esc(t.t)}</label></td><td style="width:150px"><div class="row" style="gap:4px;flex-wrap:nowrap"><input class="in" style="width:56px" type="number" id="tp_m_${t.id}" value="${ov.m||t.m}">月<input class="in" style="width:56px" type="number" id="tp_d_${t.id}" value="${ov.d||t.d}">日</div></td></tr>`;}).join('')}</tbody></table><div class="fm-act"><button class="btn p" onclick="saveTpl()">保存</button></div>`);}
+function saveTpl(){TPL.forEach(t=>{const m=N(V('tp_m_'+t.id)),d=N(V('tp_d_'+t.id)),off=!$('tp_on_'+t.id).checked;const o={};if(off)o.off=true;if(m&&m!==t.m)o.m=m;if(d&&d!==t.d)o.d=d;if(Object.keys(o).length)S.tplOv[t.id]=o;else delete S.tplOv[t.id];});save();closeModal();render();}
+
+/* ══════════ 成績 ══════════ */
+function pgStats(){const r=rankOf(S.xp);const seen=Object.values(S.srs);const ok=seen.reduce((s,x)=>s+x.ok,0),ng=seen.reduce((s,x)=>s+x.ng,0);
+  const box=[0,0,0,0,0,0,0,0];seen.forEach(s=>box[s.b]++);const mxb=Math.max(1,...box);const fresh=POOL.length-POOL.filter(it=>S.srs[it.id]).length;
+  let h=`<div class="wrap"><h2 class="pg">📊 成績</h2><div class="rankcard">${towerHTML(r.i)}<div class="rk-main"><div class="rk-l">RANK</div><div class="rk-n">🧱 ${r.name} <span class="muted" style="font-weight:400">— ${r.desc}</span></div><div class="rk-bar"><div class="rk-fill" style="width:${r.next?pct(S.xp-r.base,r.next-r.base):100}%"></div></div><div class="rk-next">${r.next?`次の「${r.nextName}」まで ${r.next-S.xp}pt（正解10pt・挑戦2pt）`:'最高ランク！'}</div></div></div>
+  <div class="stat3"><div class="stat"><div class="l">解いた回数</div><div class="v">${ok+ng}</div><div class="s">正答率 ${pct(ok,ok+ng)}%</div></div><div class="stat"><div class="l">連続学習</div><div class="v">${streak()}<small>日</small></div><div class="s">学習した日 ${Object.keys(S.days).length}日</div></div><div class="stat"><div class="l">定着（7日以上の間隔）</div><div class="v">${seen.filter(s=>s.b>=3).length}<small>/${POOL.length}</small></div><div class="s">未挑戦 ${fresh}問</div></div></div>
+  <div class="sec-h">記憶の段階（次に出るまでの間隔）</div><div class="card"><div class="srsbar">${box.map(b=>`<div style="height:${b/mxb*100}%" title="${b}問"></div>`).join('')}</div><div class="srsbar-l">${INT.map((d,i)=>`<span>${i===0?'要復習':d+'日'}<br><b>${box[i]}</b></span>`).join('')}</div></div>
+  <div class="sec-h">分野ごとの定着度</div>${fieldBars()}
+  <div class="sec-h">最近のクイズ</div>${S.hist.length?`<table class="tb"><thead><tr><th>日付</th><th>内容</th><th class="r">結果</th></tr></thead><tbody>${S.hist.slice(0,15).map(x=>`<tr><td>${fmtYMD(x.d)}</td><td>${esc(x.t)}</td><td class="r num">${x.ok}/${x.n}（${pct(x.ok,x.n)}%）</td></tr>`).join('')}</tbody></table>`:'<div class="empty">まだ記録がありません。</div>'}
+  <div class="sec-h">ランクの積み木</div><div class="card">${RANKS.map((x,i)=>`<div class="row" style="padding:5px 0;${i===r.i?'font-weight:700;color:var(--accent)':i>r.i?'color:var(--text-muted)':''}"><span style="width:80px" class="num">${x[0]}pt〜</span><span>${i<=r.i?'🧱':'▫️'} ${x[1]}</span><span class="muted">${x[2]}</span></div>`).join('')}</div></div>`;return h;}
+
+/* ══════════ 用語集 ══════════ */
+let GLQ='',GLF='';
+function pgGlossary(){const ks=Object.keys(TS.gl).filter(k=>(!GLF||TS.gl[k].f===GLF)&&(!GLQ||(k+TS.gl[k].d).includes(GLQ)));
+  return `<div class="wrap"><h2 class="pg">📖 用語集</h2><div class="pg-sub">${Object.keys(TS.gl).length}語。解説の中の点線の用語をタップしても開けます。</div><input class="gsearch" placeholder="検索（例：控除、NISA）" value="${esc(GLQ)}" oninput="GLQ=this.value;const p=this.selectionStart;render();const e=document.querySelector('.gsearch');e.focus();e.setSelectionRange(p,p)"><div class="seg" style="margin:12px 0">${[['','すべて']].concat(Object.entries(TS.FIELDS).map(([k,f])=>[k,f.ic+' '+f.n])).map(x=>`<button class="${GLF===x[0]?'on':''}" onclick="GLF='${x[0]}';render()">${x[1]}</button>`).join('')}</div><div class="gl-list">${ks.map(k=>`<button class="gl-item" onclick="showGl('${k}')"><div>${esc(k)}</div><div class="gd">${esc(TS.gl[k].d)}</div></button>`).join('')||'<div class="empty">見つかりません</div>'}</div></div>`;}
+
+/* ══════════ 設定 ══════════ */
+function pgSettings(){return `<div class="wrap"><h2 class="pg">⚙︎ 設定・バックアップ</h2><div class="pg-sub">${esc(TS.VERSION_NOTE)}</div>
+  <div class="sec-h">バックアップ</div><div class="card"><p class="muted" style="margin-bottom:10px">データはこの端末のブラウザ（localStorage）だけにあります。機種変更・ブラウザのデータ削除で消えるので、月に1回はファイルに保存を。別の端末へ移すときも、このファイルを読み込みます。</p><div class="row"><button class="btn p" onclick="exportData()">⬇︎ バックアップを保存</button><label class="btn">⬆︎ バックアップを読み込む<input type="file" accept=".json,application/json" style="display:none" onchange="importData(this)"></label></div></div>
+  <div class="sec-h">問題を追加する</div><div class="card"><p class="muted" style="margin-bottom:8px">Claudeなどで作った問題をJSONで貼り付けて追加できます。<br>4択：{"id":"x01","u":"nisa1","q":"問題文","c":["A","B","C","D"],"a":0,"w":["理由","理由","理由","理由"],"e":"解説"}<br>○×：{"id":"x02","u":"tax1","t":"文","a":true,"e":"解説"}<br>u は単元ID（${UNITS.map(u=>u.id).join(' / ')}）。</p><textarea class="in" id="cq" placeholder='[ {...}, {...} ]' style="min-height:120px;font-family:ui-monospace,monospace;font-size:12px"></textarea><div class="row" style="margin-top:8px"><button class="btn p" onclick="addCQ()">追加</button><span class="muted">追加済み ${(S.customQ||[]).length}問</span>${(S.customQ||[]).length?`<button class="btn sm danger" onclick="if(confirm('追加した問題を全部消しますか？')){S.customQ=[];save();render();}">追加分を削除</button>`:''}</div><div id="cq-msg" class="imp-msg"></div></div>
+  <div class="sec-h">リセット</div><div class="card"><div class="row"><button class="btn danger" onclick="if(confirm('クイズの成績だけを消しますか？（お金のデータは残ります）')){S.srs={};S.hist=[];S.days={};S.xp=0;S.keep={};save();render();}">クイズの成績を消す</button><button class="btn danger" onclick="if(confirm('すべてのデータを消しますか？先にバックアップを。')&&confirm('本当に消しますか？')){localStorage.removeItem(KEY);S=DEF();render();}">すべて消す</button></div></div>
+  <div class="sec-h">このアプリについて</div><div class="card"><p class="dim" style="font-size:13px;line-height:1.9"><b>TSUMIKI（積み木）</b> — 積み立てるお金と、積み上げる知識を、ひとつずつ。<br>サーバーなし・外部通信なしの1ファイルアプリ。学習内容は一般的な制度の説明で、個別の税務・投資の判断は、会社・金融機関・税務署などで確認してください。</p></div></div>`;}
+function exportData(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='tsumiki_backup_'+today()+'.json';a.click();toast('バックアップを保存しました');}
+function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.v)throw 0;if(!confirm('今のデータを、このバックアップで置き換えますか？'))return;localStorage.setItem(KEY,JSON.stringify(d));S=load();render();toast('読み込みました');}catch(e){toast('読み込めませんでした（ファイルを確認）');}};r.readAsText(f);}
+function addCQ(){const m=$('cq-msg');try{let a=JSON.parse(V('cq'));if(!Array.isArray(a))a=[a];const ids=new Set(allQ().map(x=>x.id));let n=0,bad=[];a.forEach((x,i)=>{const ok=x&&x.id&&!ids.has(x.id)&&((x.q&&Array.isArray(x.c)&&x.c.length>=2&&Number.isInteger(x.a)&&x.a<x.c.length)||(x.t&&typeof x.a==='boolean'));if(ok){S.customQ.push(x);ids.add(x.id);n++;}else bad.push(i+1);});save();m.className='imp-msg ok';m.textContent=n+'問を追加しました。'+(bad.length?'\n形式エラー・ID重複でスキップ：'+bad.join(', ')+'番目':'');POOL=allQ();renderSide();}catch(e){m.className='imp-msg err';m.textContent='JSONの形式が正しくありません。';}}
+
+/* ══════════ 起動 ══════════ */
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(RT.n==='run'&&R){const a=R.ans[R.i],it=R.items[R.i];if(!a){if(it.k==='ox'){if(e.key==='o'||e.key==='1')answer(true);if(e.key==='x'||e.key==='2')answer(false);}else{const k='abcd1234'.indexOf(e.key.toLowerCase())%4;if(k>=0&&it.ord[k]!=null)answer(it.ord[k]);}}else if(e.key==='Enter')nextQ();}});
+if(window.innerWidth<=640)document.body.classList.add('in-content');
+render();
+
+</script>
+</body>
+</html>
