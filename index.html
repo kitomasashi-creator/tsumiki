@@ -550,6 +550,18 @@ body.dragging::after{ content:"📂 ここにドロップして読み込み"; po
 .ichi-next .btn{ width:100%; justify-content:center; min-height:56px; font-size:16px; border-radius:14px; }
 @media (max-width:640px){ .ichi-next{ position:sticky; bottom:calc(76px + env(safe-area-inset-bottom)); z-index:5; } .ichi-next .btn{ box-shadow:0 6px 18px rgba(0,0,0,.3); } }
 
+/* ══════════ わかりやすく言うと・覚え方（APEX方式） ══════════ */
+.plw{ margin:8px 0 10px; }
+.plainbtn{ border:none; background:none; padding:4px 0; font-size:12.5px; color:var(--amber); cursor:pointer; font-weight:700; -webkit-tap-highlight-color:transparent; font-family:inherit; }
+.plw.tt .plainbtn{ color:var(--accent); }
+.plain{ display:none; background:var(--amber-bg); border:1px solid rgba(192,138,30,.3); border-radius:var(--r); padding:10px 14px; margin-top:4px; font-size:13.5px; line-height:1.9; color:var(--text); }
+.plw.tt .plain{ background:var(--accent-bg); border-color:rgba(127,156,198,.35); }
+.plain.open{ display:block; animation:fadein .15s ease; }
+.tipline{ margin-top:8px; font-size:12.5px; line-height:1.8; color:var(--text-dim); background:var(--surface2); border-radius:8px; padding:8px 12px; }
+.tipline b{ color:var(--accent); font-size:11.5px; letter-spacing:.06em; }
+.fb .plw{ margin-bottom:0; }
+html[data-theme="night"] .plw.tt .plain{ border-color:rgba(232,196,106,.3); }
+
 </style>
 </head>
 <body>
@@ -730,6 +742,7 @@ TS.units=[
 <li>雑損控除（災害・盗難）、寄附金控除（一般の寄附）</li>
 </ul>
 <p>税金が戻るだけの申告（還付申告）は、翌年1月1日から<strong>5年間</strong>できます。出し忘れに気づいたら、さかのぼって申告できます。</p>
+<div class="pbox">年末調整は「会社がまとめてやってくれる精算」。会社が知らないこと（病院代、寄附、家を買った1年目）は、自分で税務署に伝える。それが確定申告。</div>
 <h3>医療費控除</h3>
 <p>1年間（1〜12月）に家族で払った医療費から、保険などで戻った分を引き、<strong>10万円</strong>（所得200万円未満の人は所得の5%）を超えた分が控除になります（上限200万円）。市販薬の購入額が1.2万円を超えた分を控除する<strong>セルフメディケーション税制</strong>もありますが、どちらか一方しか選べません。</p>
 <h3>ふるさと納税</h3>
@@ -771,6 +784,7 @@ TS.units=[
 <tr><td>交通費・宿泊費</td><td>遠方受験なら1回数万円</td></tr>
 </tbody></table></div>
 <p>私立を何校も受けると、受験料だけで十数万円になることもあります。複数学部を同時に受けると割引になる大学もあります。</p>
+<div class="tbox">受験は「入場料（受験料）」→「席の予約料（入学金）」→「1年目の利用料（授業料）」の順にお金がかかるイベント。予約料は、キャンセルしても戻らない。</div>
 <h3>入学までに払うお金</h3>
 <div class="tblwrap"><table><thead><tr><th></th><th>入学金</th><th>授業料（年）</th></tr></thead><tbody>
 <tr><td>国立（標準額）</td><td>282,000円</td><td>535,800円</td></tr>
@@ -818,6 +832,7 @@ TS.units=[
 <tr><td>住民税から</td><td>所得税で引ききれない分。上限は課税総所得金額等の5%（最高9.75万円）</td></tr>
 <tr><td>所得の条件</td><td>合計所得2,000万円以下</td></tr>
 </tbody></table></div>
+<div class="pbox">ローンを借りて家を買った人へのごほうび。年末に残っている借金の0.7%ぶん、税金が安くなる。借金が減るほど、ごほうびも小さくなる。</div>
 <p><strong>1年目は確定申告</strong>が必要です。2年目以降は、税務署から届く申告書と、銀行の<strong>年末残高証明書</strong>を会社に出せば、年末調整で受けられます。</p>
 <h3>変動金利のしくみ</h3>
 <p>変動金利は、多くの銀行で<strong>半年ごと</strong>に見直されます。元利均等返済では、金利が上がっても、返済額の変更は<strong>5年ごと</strong>、上がり幅は前の<strong>1.25倍まで</strong>とする「5年ルール・125%ルール」を設けている銀行があります。ただし、ルールがない銀行もあり、ある場合も<strong>払いきれない利息（未払利息）</strong>が出ることがあります。自分の契約書で確認しておきます。</p>
@@ -1008,6 +1023,151 @@ TS.ox=[
 {id:'o32',u:'life1',t:'子どもが独立に近づくと、必要な死亡保障は小さくなっていく。',a:true,e:'節目ごとに保障を見直す。'}
 ];
 
+/* ── 1問ごとの「わかりやすく言うと（p）」「覚え方・豆知識（k）」 ── */
+TS.pl={
+n01:{p:'毎月10万円ずつ積み立てると、ちょうど1年で120万円。それが上限。',k:'「つみたて120、成長240、合わせて360」。成長はつみたての2倍。'},
+n02:{p:'一生のうちにNISAに入れておける元本は、合計1,800万円まで。',k:'1,800万円＝毎月5万円を30年。成長投資枠だけなら1,200万円まで。'},
+n03:{p:'「いくらで買ったか」で数える。値上がりしても、使った枠は増えない。',k:'枠は「入れた水の量」で数えるダム。増えた分（値上がり）は数えない。'},
+n04:{p:'売ると、買ったときの金額（100万円）だけ、翌年にまた使えるようになる。',k:'復活は「簿価で・翌年に」。年360万円の上限は変わらない。'},
+n05:{p:'NISAの中の損は、ほかの口座の得と差し引きできない。なかったことになる。',k:'利益は無税、損は無視。いいとこ取りはできない。'},
+n06:{p:'その年の1月1日に18歳なら、その年から口座を作れる。',k:'判定は元日。誕生日ではない。'},
+n07:{p:'毎月お金を払い出すタイプの投資信託は、長く育てるのに向かないので対象外。',k:'成長投資枠のNG：毎月分配型・高レバレッジ型・整理銘柄。'},
+n08:{p:'期限なし。何十年でも、ずっと税金なしで持っていられる。',k:'旧制度は5年（一般）と20年（つみたて）。2024年から無期限に。'},
+n09:{p:'子ども用のNISAは、1年に60万円まで（月5万円）。',k:'こどもNISAは「年60万・合計600万」。大人のつみたて枠の半分。'},
+n10:{p:'1年でもらった合計が110万円までなら、税金はかからない。',k:'「いい（11）おまけ（0）」で110万円。'},
+n11:{p:'中学生になる12歳以降なら、条件付きで引き出せる予定。',k:'12歳＝中学の入学費用に使えるように、という設計。'},
+f01:{p:'1万口あたりの値段で表すのが決まり。',k:'スタートはたいてい1万口＝1万円。'},
+f02:{p:'持っている間、毎日少しずつ引かれる手数料。請求書は来ない。',k:'信託報酬は「サイレント手数料」。長期ではいちばん効く。'},
+f03:{p:'利益の約2割が税金。100万円もうかったら約20万円。',k:'所得税15％＋復興税0.315％＋住民税5％＝20.315％。'},
+f04:{p:'自分が入れたお金を返してもらっただけの分は、税金がかからない。',k:'元本払戻金（特別分配金）＝自分のお金の払い戻し。'},
+f05:{p:'証券会社が税金を計算して払ってくれる。自分で申告しなくていい。',k:'会社員なら「特定口座・源泉徴収あり」が手間なし。'},
+f06:{p:'日経平均などの指数と同じ動きをめざす。手数料が安い。',k:'インデックス＝平均点をねらう。アクティブ＝高得点をねらう（でも高コスト）。'},
+f07:{p:'72を利回りで割ると、2倍になる年数の目安が出る。72÷6＝12年。',k:'72の法則。年3%なら24年、年8%なら9年。'},
+f08:{p:'同じ金額でも、安いときはたくさん買える。',k:'ドルコスト平均法＝「安いときに多く、高いときに少なく」が自動で起きる。'},
+f09:{p:'増えすぎた分を減らし、減った分を足して、決めた割合に戻すこと。',k:'年に1回、日を決めて。積立の配分を変えるだけでも調整できる。'},
+f10:{p:'すぐ使うお金は、値下がりしないところ（預金など）に移しておく。',k:'「いつ・いくら使うか」で置き場所を決める。'},
+s01:{p:'会社がくれる上乗せ分は「給料の一部」扱い。給料と同じく税金がかかる。',k:'奨励金＝おまけの給料。'},
+s02:{p:'15,000円×12か月×10%＝18,000円。',k:'奨励金の年額＝毎月の拠出×12×奨励金率。'},
+s03:{p:'100株（1単元）たまったら、自分の証券口座に移せる。',k:'1単元＝100株が日本の株の売買単位。'},
+s04:{p:'持株会の株はNISAとは別。あとからNISAに移すこともできない。',k:'NISAは「NISAの中で新しく買う」ものだけ。'},
+s05:{p:'会社が苦しくなると、給料も株も同時に下がる。卵を同じかごに入れすぎない。',k:'資産のうち自社株は何％まで、と上限を決めておく。'},
+s06:{p:'毎月決まった額を自動で買うのはOK。売るときは、社内の決まりと重要な秘密情報に注意。',k:'定時・定額の買付はインサイダー規制の対象外。'},
+s07:{p:'配当は現金でもらわず、持株会の中でまた自社株を買うのにふつう使われる。',k:'持株会の配当＝自動で再投資。'},
+t01:{p:'扶養控除の申告書は「来年の分」を年末に出す。',k:'扶養控除等申告書だけは翌年分。ほかは今年分。'},
+t02:{p:'3種類（一般・介護医療・個人年金）を合わせて最大12万円。',k:'4万×3＝12万（2012年以降の契約）。'},
+t03:{p:'23歳未満の子どもを扶養していると、一般の枠が6万円まで広がる。',k:'子育て世帯の拡充。3区分の合計12万円は同じ。'},
+t04:{p:'年収178万円までなら所得税がかからない。',k:'基礎控除104万＋給与所得控除74万＝178万（令和8年分）。'},
+t05:{p:'子どもの年金を親が払えば、その分は親の税金が安くなる。',k:'払った人の控除。証明書を年末調整に付ける。'},
+t06:{p:'19〜22歳の子の「特定親族特別控除」。バイトで稼いでも親の控除が急に消えない仕組み。',k:'基・配・所・特＝基礎・配偶者・所得金額調整・特定親族特別。'},
+t07:{p:'所得が489万円までの人は、基礎控除が最大104万円。',k:'本則62万＋特例42万＝104万。所得が上がるほど特例は小さくなる。'},
+t08:{p:'1年に5か所までなら、申請書を送るだけで済む。',k:'ワンストップは「5つまで・1月10日必着」。'},
+t09:{p:'確定申告をすると特例は消える。ふるさと納税も申告書に全部書く。',k:'申告するなら、寄附も全部いっしょに。'},
+t10:{p:'家族の医療費が1年で10万円を超えた分が対象。',k:'10万円の壁。所得200万円未満の人は所得の5%。'},
+t11:{p:'税金を返してもらうだけの申告は、5年前までさかのぼれる。',k:'出し忘れても5年以内ならセーフ。'},
+t12:{p:'6月ごろ会社から届く住民税の通知に、引かれた額が書いてある。',k:'「寄附金税額控除」の欄を見る。'},
+t13:{p:'その年の12月31日に何歳かで決まる。',k:'扶養の年齢は大みそかで判定。'},
+t14:{p:'大学生くらいの子（19〜22歳）は控除が大きく、所得税で63万円。',k:'16〜18歳は38万、19〜22歳は63万。'},
+t15:{p:'子どものバイト代が年136万円までなら、扶養控除の対象（令和8年分）。',k:'所得62万＋給与所得控除74万＝136万。'},
+t16:{p:'19〜22歳なら、年収150万円未満まで親の健康保険に入っていられる。',k:'税金とは別ルール。ふつうは130万、大学生年代は150万。'},
+t17:{p:'子の稼ぎが多くても、親の控除は急にゼロにならず、少しずつ減る。',k:'「壁」から「坂」へ。'},
+e01:{p:'国立大学に入るときに払うお金は、基本28万2千円。',k:'入学料282,000円・授業料535,800円が国立の標準。'},
+e02:{p:'3教科以上なら18,000円。',k:'2教科以下は12,000円。'},
+e03:{p:'入学金はふつう返ってこない。授業料は期限までに辞退すれば戻ることが多い。',k:'入学金＝席の予約料。'},
+e04:{p:'2〜3月に、受験料・入学金・前期授業料がまとめて来る。',k:'2〜3月に使える現金を用意しておく。'},
+e05:{p:'親が借りる国の教育ローンなら、入学前でもお金を受け取れる。',k:'奨学金は入学後。入学前のつなぎは教育ローン。'},
+e06:{p:'奨学金は子ども本人の借金。卒業後に本人が返す。',k:'奨学金＝子の借金、教育ローン＝親の借金。'},
+e07:{p:'学生1人あたり原則350万円まで借りられる。',k:'固定金利。世帯年収の上限あり。'},
+e08:{p:'20歳になると学生も年金に入る。払えなければ「学生納付特例」で待ってもらえる。',k:'10年以内なら後から払える（追納）。'},
+e09:{p:'部屋を借りて家具をそろえると、40〜60万円くらいかかる。',k:'合格発表から入居までが短い。物件の相場は先に調べる。'},
+h01:{p:'年末のローン残高の0.7%が、税金から引かれる。',k:'2021年までは1%、2022年から0.7%。'},
+h02:{p:'新築なら13年間、控除を受けられる。',k:'新築13年・中古10年。'},
+h03:{p:'税務署から届く申告書と、銀行の残高証明書を会社に出す。',k:'1年目だけ確定申告、2年目からは年末調整。'},
+h04:{p:'金利より控除のほうが大きいので、借りておいたほうが得なことがある。',k:'金利＜0.7%なら「逆ざや」。'},
+h05:{p:'返済期間が通算10年より短くなると、控除が受けられなくなる。',k:'控除の条件は「返済期間10年以上」。'},
+h06:{p:'金利が上がっても、返済額の値上げは前の1.25倍まで。ただし利息は消えない。',k:'5年ルールとセット。ない銀行もある。'},
+h07:{p:'所得税で引ききれない分は、住民税から最大9.75万円まで引ける。',k:'課税総所得金額等の5%・上限9.75万円。'},
+h08:{p:'借り換えても、条件を満たせば控除は続く。対象は元の残高まで。',k:'控除の年数は、最初に住んだ年から数える。'},
+l01:{p:'iDeCoに払ったお金は全部、所得から差し引ける。税金が安くなる。',k:'小規模企業共済等掛金控除。年末調整で出せる。'},
+l02:{p:'原則60歳まで引き出せない、老後専用のお金。',k:'NISA＝いつでも、iDeCo＝60歳から。'},
+l03:{p:'自分の誕生月に届く。',k:'35・45・59歳は封筒で詳しく届く。'},
+l04:{p:'1か月の医療費が高くなっても、自己負担には上限がある。',k:'大きな病気のときの保険を考える前に、まずこの制度。'},
+o01:{p:'2つの枠は同じ年に両方使える。',k:'つみたて＋成長＝年360万円。'},
+o02:{p:'値上がりしても、使った枠は増えない。',k:'枠は買った値段（簿価）で数える。'},
+o03:{p:'NISAは1人1口座だけ。',k:'金融機関を変えるのは1年ごと。'},
+o04:{p:'年末の注文は、約定が年をまたぐことがある。',k:'その年の枠は「その年の約定分」。'},
+o05:{p:'名前だけ子どもで、中身は親のお金のままだと、問題になることがある。',k:'あげるなら、あげた記録を残して子どもが管理する。'},
+o06:{p:'必要なときに払う学費は、贈与税の対象外。',k:'「必要なつど・直接払う」がポイント。'},
+o07:{p:'信託報酬は毎日少しずつ引かれている。',k:'基準価額には、もう引かれた後の値段が出ている。'},
+o08:{p:'分配金は財産から出すので、その分だけ値段が下がる。',k:'分配金はおまけではなく、自分の財布から出したお金。'},
+o09:{p:'注文した時点では値段がわからない（ブラインド方式）。',k:'海外資産の投資信託は、翌営業日の値段で約定するのがふつう。'},
+o10:{p:'下がったときこそ、同じ金額でたくさん買える。やめるのが一番もったいない。',k:'「暴落したら」の約束を、平常時に決めておく。'},
+o11:{p:'気分ではなく、日を決めて機械的に。',k:'たとえば毎年1月に1回。'},
+o12:{p:'奨励金は給料の一部として税金がかかる。',k:'奨励金＝おまけの給料。'},
+o13:{p:'100株（1単元）たまらないと引き出せない。',k:'端数は持株会に残る。'},
+o14:{p:'毎月決まった額を自動で買うのは、規制の対象外。',k:'気をつけるのは売るときと臨時の変更。'},
+o15:{p:'会社員は年末調整で使う。',k:'10月ごろ届いたら、すぐ保管。'},
+o16:{p:'12月の年末調整で、新しいルールで計算し直される。',k:'改正は12月1日から。'},
+o17:{p:'iDeCoの掛金は、年末調整で控除にできる。',k:'払込証明書を保険料控除申告書に付ける。'},
+o18:{p:'1月から12月の寄附が、その年の分。',k:'12/31の決済分まで。'},
+o19:{p:'医療費控除は確定申告で受ける。',k:'年末調整でできないこと：医療費・寄附（6自治体以上）・ローン控除1年目。'},
+o20:{p:'締め切りは翌年1月10日（必着）。',k:'ワンストップは「5つまで・1月10日」。'},
+o21:{p:'縮小は見送られ、38万円のまま。',k:'令和8年度の改正では変わらなかった。'},
+o22:{p:'税金と健康保険は、別々のルールで判断する。',k:'税金＝1〜12月の所得、保険＝これから1年の見込み年収。'},
+o23:{p:'大みそかに19歳なら、その年から63万円の控除。',k:'たとえば2008年5月生まれなら、2027年分から特定扶養。'},
+o24:{p:'私立の締切は、国公立の発表より前に来ることが多い。',k:'だから「押さえ」の入学金が必要になる。'},
+o25:{p:'標準額より高い国立大学もある。',k:'募集要項で必ず確認。'},
+o26:{p:'奨学金は入学後に振り込まれる。入学前には間に合わない。',k:'入学前のつなぎは国の教育ローン。'},
+o27:{p:'20歳になったら学生も国民年金に加入する。',k:'払えなければ学生納付特例を申請。'},
+o28:{p:'1年目は自分で確定申告。2年目からは会社の年末調整。',k:'1年目だけ確定申告。'},
+o29:{p:'残高が減るので、控除も減る。',k:'控除＝年末残高×控除率。'},
+o30:{p:'変動金利は、多くの銀行で半年ごとに見直す。',k:'返済額の見直しは5年ごとの銀行もある。'},
+o31:{p:'iDeCoは原則60歳まで引き出せない。',k:'急な出費は、NISAや預金で備える。'},
+o32:{p:'子どもが独立すると、もしものときに必要なお金は減っていく。',k:'節目ごとに保険を見直す。'}
+};
+/* ── 用語集の追加分 ── */
+Object.assign(TS.gl,{
+'約定':{f:'fund',d:'売買が成立すること。投資信託は注文から約定まで数日かかることがある。'},
+'簿価':{f:'nisa',d:'買ったときの金額。NISAの生涯枠は簿価で数える。'},
+'評価額':{f:'fund',d:'いま売ったらいくらになるか、という今の値段での金額。'},
+'元本':{f:'fund',d:'自分が投資に入れたお金そのもの。増えた分・減った分を含まない。'},
+'非課税':{f:'nisa',d:'税金がかからないこと。'},
+'源泉徴収':{f:'tax',d:'お金を払う側（会社や証券会社）が、税金をあらかじめ差し引いて納める仕組み。'},
+'所得控除':{f:'tax',d:'所得から差し引ける金額。基礎控除・扶養控除・社会保険料控除など。税率をかける前に引く。'},
+'税額控除':{f:'tax',d:'計算した税金そのものから差し引ける金額。住宅ローン控除など。所得控除より効果が大きい。'},
+'合計所得金額':{f:'tax',d:'給与なら年収から給与所得控除を引いた額など、1年間の所得の合計。扶養の判定に使う。'},
+'給与所得':{f:'tax',d:'給料の収入から給与所得控除を引いた金額。'},
+'住民税':{f:'tax',d:'住んでいる市区町村と都道府県に払う税金。前年の所得で計算され、6月から天引きが変わる。'},
+'所得税':{f:'tax',d:'1年間の所得にかかる国の税金。会社員は毎月天引きされ、年末調整で精算する。'},
+'被扶養者':{f:'tax',d:'健康保険で家族の保険に入っている人。年収130万円未満（19〜22歳は150万円未満）などの基準がある。'},
+'扶養控除等申告書':{f:'tax',d:'扶養する家族を会社に申告する書類。翌年分を年末に提出する。'},
+'控除証明書':{f:'tax',d:'保険料などを払ったことを証明する書類。10月ごろ届き、年末調整で使う。'},
+'特定口座':{f:'fund',d:'証券会社が年間の損益を計算してくれる口座。「源泉徴収あり」なら原則確定申告不要。'},
+'インデックス型':{f:'fund',d:'日経平均や全世界株式などの指数と同じ動きをめざす投資信託。低コスト。'},
+'アクティブ型':{f:'fund',d:'指数を上回ることをめざす投資信託。コストが高め。'},
+'ETF':{f:'fund',d:'証券取引所に上場している投資信託。株と同じように、リアルタイムで売買できる。'},
+'毎月分配型':{f:'fund',d:'毎月分配金を出す投資信託。複利が効きにくく、成長投資枠の対象外。'},
+'ノーロード':{f:'fund',d:'購入時手数料がかからない投資信託のこと。'},
+'信託財産留保額':{f:'fund',d:'投資信託を売るときに差し引かれることがある費用。かからない商品も多い。'},
+'ブラインド方式':{f:'fund',d:'注文した時点では約定価格がわからない仕組み。投資信託はこの方式。'},
+'72の法則':{f:'fund',d:'72÷年利（%）で、お金が2倍になる年数の目安がわかる。'},
+'生活防衛資金':{f:'life',d:'病気や失業など、もしものときのために預金で置いておくお金。生活費の半年〜1年分が目安。'},
+'持分':{f:'stock',d:'持株会の中で、自分のものになっている株の量。'},
+'拠出':{f:'stock',d:'お金を出すこと。持株会やiDeCoで毎月払う掛金のこと。'},
+'入学料':{f:'edu',d:'入学するときに払う費用。国立は標準282,000円。'},
+'授業料':{f:'edu',d:'大学の授業のための費用。国立の標準は年535,800円。前期・後期に分けて払うことが多い。'},
+'押さえ':{f:'edu',d:'第一志望の結果を待つ間に、合格した別の大学の入学金を払って席を確保すること。'},
+'学校推薦型選抜':{f:'edu',d:'高校の推薦を受けて出願する入試。合格したら入学するのが原則（専願）。'},
+'共通テスト':{f:'edu',d:'大学入学共通テスト。1月中旬に行われ、国公立大学や多くの私立大学が利用する。'},
+'前期日程':{f:'edu',d:'国公立大学の一般選抜のうち、2月下旬に試験がある日程。'},
+'繰上返済':{f:'house',d:'決まった返済とは別に、ローンの元金を前倒しで返すこと。期間短縮型と返済額軽減型がある。'},
+'期間短縮型':{f:'house',d:'繰上返済のうち、毎月の返済額はそのままで、返済期間を短くする方法。利息の減り方が大きい。'},
+'返済額軽減型':{f:'house',d:'繰上返済のうち、返済期間はそのままで、毎月の返済額を減らす方法。'},
+'借り換え':{f:'house',d:'いまのローンを、別の銀行の新しいローンで返して乗り換えること。'},
+'未払利息':{f:'house',d:'金利が上がって、毎月の返済額で利息を払いきれなくなった分。125%ルールがあるときに起きることがある。'},
+'団信':{f:'house',d:'団体信用生命保険。ローンを借りた人が亡くなったときなどに、残りのローンが保険で返される。'},
+'元金均等返済':{f:'house',d:'毎回返す元金の額が一定の返済方法。最初の返済額が大きく、だんだん減る。'}
+});
+
 </script>
 <script>
 /* ══════════ TSUMIKI app ══════════ */
@@ -1155,8 +1315,8 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');cle
 function openModal(title,html){$('modal-title').textContent=title;$('modal-body').innerHTML=html;$('modal').classList.add('show');}
 function closeModal(){$('modal').classList.remove('show');}
 function chip(f){if(f==='me')return '<span class="chip me">🏠 わたしの数字</span>';const F=TS.FIELDS[f];return F?`<span class="chip ${f}">${F.ic} ${F.n}</span>`:'';}
-function glink(html){return html.replace(/\[\[(.+?)\]\]/g,(m,t)=>`<span class="gl" onclick="showGl('${t.replace(/'/g,'')}')">${t}</span>`);}
-function showGl(t){const g=TS.gl[t];if(!g)return;openModal('📖 用語',`<div style="font-size:16px;font-weight:700;margin-bottom:6px">${esc(t)} ${chip(g.f)}</div><p class="dim" style="line-height:1.9">${esc(g.d)}</p>`);}
+function glink(html){return gl(String(html).replace(/\[\[(.+?)\]\]/g,'$1'));}
+function showGl(t){const g=TS.gl[t];if(!g)return;openModal('📖 用語',`<div style="font-size:16px;font-weight:700;margin-bottom:6px">${esc(t)} ${chip(g.f)}</div><p class="dim" style="line-height:1.9">${gl(esc(g.d),t)}</p>`);enhancePlain($('modal-body'));}
 function fld(id,label,val,type,ph,cls){type=type||'text';return `<label class="${cls||''}">${label}<input class="in" id="${id}" type="${type}" value="${esc(val==null?'':val)}" placeholder="${esc(ph||'')}" ${type==='number'?'inputmode="decimal" step="any"':''}></label>`;}
 function sel(id,label,opts,val,cls){return `<label class="${cls||''}">${label}<select class="in" id="${id}">${opts.map(o=>{const [v,t]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${String(v)===String(val)?'selected':''}>${esc(t)}</option>`;}).join('')}</select></label>`;}
 const V=id=>{const e=$(id);return e?e.value.trim():'';};
@@ -1226,11 +1386,11 @@ function startRun(mode,arg){let items=[],title='';const fresh=()=>shuffle(POOL.f
   R={mode,arg,title,items:items.map(it=>Object.assign({},it,{ord:it.k==='q'?(it.me?it.c.map((_,k)=>k):shuffle(it.c.map((_,k)=>k))):null})),i:0,ans:[],done:false};go('run');}
 function pgRun(){if(!R)return pgQuiz();const it=R.items[R.i],n=R.items.length,a=R.ans[R.i];const f=qField(it);
   let h=`<div class="qprog"><span class="qlbl">${esc(R.title)}</span><div class="qtrack"><div class="qfill" style="width:${(R.i+(a?1:0))/n*100}%"></div></div><span class="qlbl">${R.i+1} / ${n}</span></div><div class="qcard"><div class="qmeta">${chip(f)}${it.u&&UMAP[it.u]?`<span class="src">${esc(UMAP[it.u].title)}</span>`:''}${it.k==='ox'?'<span class="chip gray">○×</span>':''}</div>`;
-  if(it.k==='ox'){h+=`<div class="ox-t">${esc(it.t)}</div><div class="ox-btns"><button class="ox-b o ${a&&a.pick===true?'hit':''}" onclick="answer(true)" ${a?'disabled':''}>○</button><button class="ox-b x ${a&&a.pick===false?'hit':''}" onclick="answer(false)" ${a?'disabled':''}>×</button></div>`;}
-  else{h+=`<div class="qq">${esc(it.q)}</div><div class="choices">`;it.ord.forEach((ci,k)=>{let cls='';if(a){if(ci===it.a)cls='ok';else if(ci===a.pick)cls='ng';}
-      h+=`<button class="choice ${cls}" onclick="answer(${ci})" ${a?'disabled':''}><span class="ck">${'ABCD'[k]}</span><span>${esc(it.c[ci])}</span></button>`;if(a&&it.w&&it.w[ci])h+=`<div class="cwhy"><b class="${ci===it.a?'o':'x'}">${ci===it.a?'○':'×'}</b> ${esc(it.w[ci])}</div>`;});h+=`</div>`;}
+  if(it.k==='ox'){h+=`<div class="ox-t">${gl(esc(it.t))}</div><div class="ox-btns"><button class="ox-b o ${a&&a.pick===true?'hit':''}" onclick="answer(true)" ${a?'disabled':''}>○</button><button class="ox-b x ${a&&a.pick===false?'hit':''}" onclick="answer(false)" ${a?'disabled':''}>×</button></div>`;}
+  else{h+=`<div class="qq">${gl(esc(it.q))}</div><div class="choices">`;it.ord.forEach((ci,k)=>{let cls='';if(a){if(ci===it.a)cls='ok';else if(ci===a.pick)cls='ng';}
+      h+=`<button class="choice ${cls}" onclick="answer(${ci})" ${a?'disabled':''}><span class="ck">${'ABCD'[k]}</span><span>${esc(it.c[ci])}</span></button>`;if(a&&it.w&&it.w[ci])h+=`<div class="cwhy"><b class="${ci===it.a?'o':'x'}">${ci===it.a?'○':'×'}</b> ${gl(esc(it.w[ci]))}</div>`;});h+=`</div>`;}
   h+=`</div>`;
-  if(a){const s=S.srs[it.id];h+=`<div class="fb ${a.ok?'ok':'ng'}"><div class="fb-h">${a.ok?'⭕ 正解！':'❌ 不正解'}${it.k==='ox'?'　正解は「'+(it.a?'○':'×')+'」':''}</div><div class="fb-body">${esc(it.e||'')}</div>${s?`<div class="srs">次にこの問題が出るのは ${s.due===addDays(today(),1)?'明日':fmtYMD(s.due)}（${INT[s.b]}日後）</div>`:''}</div>
+  if(a){const s=S.srs[it.id];h+=`<div class="fb ${a.ok?'ok':'ng'}"><div class="fb-h">${a.ok?'⭕ 正解！':'❌ 不正解'}${it.k==='ox'?'　正解は「'+(it.a?'○':'×')+'」':''}</div><div class="fb-body">${gl(esc(it.e||''))}${plainHTML(it.id)}</div>${s?`<div class="srs">次にこの問題が出るのは ${s.due===addDays(today(),1)?'明日':fmtYMD(s.due)}（${INT[s.b]}日後）</div>`:''}</div>
     <div class="qnav">${it.me?'':`<button class="keepbtn ${S.keep[it.id]?'on':''}" onclick="toggleKeep('${it.id}')">📌 ${S.keep[it.id]?'キープ中':'キープ'}</button>`}${it.u&&UMAP[it.u]?`<button class="btn sm" onclick="openUnitModal('${it.u}')">📚 解説を読む</button>`:''}<span class="spacer"></span><button class="btn p" onclick="nextQ()">${R.i+1<n?'次の問題 ›':'結果を見る ›'}</button></div>`;}
   else h+=`<div class="qnav"><button class="btn sm" onclick="if(confirm('中断しますか？'))go('quiz')">中断</button></div>`;return h;}
 function answer(pick){const it=R.items[R.i];if(R.ans[R.i])return;const ok=it.k==='ox'?pick===it.a:pick===it.a;R.ans[R.i]={pick,ok};
@@ -1238,7 +1398,7 @@ function answer(pick){const it=R.items[R.i];if(R.ans[R.i])return;const ok=it.k==
   S.xp+=ok?10:2;S.days[today()]=(S.days[today()]||0)+1;save();render();}
 function nextQ(){if(R.i+1<R.items.length){R.i++;render();$('content').scrollTop=0;}else{const ok=R.ans.filter(a=>a&&a.ok).length;S.hist.unshift({d:today(),t:R.title,n:R.items.length,ok});S.hist=S.hist.slice(0,200);save();go('result');}}
 function toggleKeep(id){S.keep[id]=!S.keep[id];save();render();}
-function openUnitModal(u){const x=UMAP[u];openModal(x.icon+' '+x.title,`<div class="gram">${glink(x.gram)}</div>`);}
+function openUnitModal(u){const x=UMAP[u];openModal(x.icon+' '+x.title,`<div class="gram">${glink(x.gram)}</div>`);enhancePlain($('modal-body'));}
 function pgResult(){if(!R)return pgQuiz();const n=R.items.length,ok=R.ans.filter(a=>a&&a.ok).length,p=pct(ok,n),pass=R.mode==='test'?p>=80:p>=70;
   let h=`<div class="result-badge ${pass?'pass':'fail'}"><div class="rb-big">${ok} / ${n}</div><div class="rb-sub">${esc(R.title)} ・ 正答率 ${p}% ${R.mode==='test'?(pass?'・合格！':'・合格まであと少し'):''}</div></div>`;
   h+=R.items.map((it,k)=>{const a=R.ans[k]||{};return `<div class="rev-item ${a.ok?'ok':'no'}">${chip(qField(it))}<div class="rq">${esc(it.q||it.t)}</div><div class="rl">${a.ok?'<span style="color:var(--green);font-weight:600">正解</span>':'<span style="color:var(--red);font-weight:600">不正解</span>'} ・ 答え：${esc(it.k==='ox'?(it.a?'○':'×'):it.c[it.a])}</div></div>`;}).join('');
@@ -1442,7 +1602,7 @@ if(window.innerWidth<=640)document.body.classList.add('in-content');
 
 
 /* ══════════ TSUMIKI v2.0 追加：テーマ・ホーム・いまやること・一問一答 ══════════ */
-const APP_VER='2.5';
+const APP_VER='2.6';
 S.advDone=S.advDone||{}; S.oxh=S.oxh||{}; S.advPack=S.advPack||[];
 const LINKS={
   kakutei:['国税庁 確定申告書等作成コーナー','https://www.keisan.nta.go.jp/'],
@@ -1537,8 +1697,8 @@ function modeGrid(){const due=dueList().length,me=genMe().length,weak=weakItems(
 
 /* ── 一問一答（APEX方式：4択の各肢を○×に＋○×問題） ── */
 function allStmts(){const out=[];
-  TS.q.concat((S.customQ||[]).filter(x=>x.q)).forEach(q=>q.c.forEach((c,i)=>out.push({key:q.id+'#'+i,u:q.u,q:q.q,c,a:i===q.a,e:(q.w&&q.w[i]?q.w[i]+' ':'')+(i===q.a?'':`正解は「${q.c[q.a]}」。`)+(q.e?' '+q.e:'')})));
-  TS.ox.concat((S.customQ||[]).filter(x=>x.t!=null)).forEach(o=>out.push({key:o.id,u:o.u,t:o.t,a:o.a,e:o.e}));
+  TS.q.concat((S.customQ||[]).filter(x=>x.q)).forEach(q=>q.c.forEach((c,i)=>out.push({key:q.id+'#'+i,pid:q.id,u:q.u,q:q.q,c,a:i===q.a,e:(q.w&&q.w[i]?q.w[i]+' ':'')+(i===q.a?'':`正解は「${q.c[q.a]}」。`)+(q.e?' '+q.e:'')})));
+  TS.ox.concat((S.customQ||[]).filter(x=>x.t!=null)).forEach(o=>out.push({key:o.id,pid:o.id,u:o.u,t:o.t,a:o.a,e:o.e}));
   return out;}
 const stF=s=>UMAP[s.u]?UMAP[s.u].field:'life';
 let IR=null;
@@ -1557,8 +1717,8 @@ function startIchi(kind,arg){let all=allStmts(),items;const h=S.oxh;
   IR={kind,arg,items,i:0,ans:[],title:kind==='field'?TS.FIELDS[arg].n:kind==='wrong'?'間違えた問題':kind==='new'?'未挑戦の問題':'全分野'};go('ichirun');}
 function pgIchiRun(){if(!IR)return pgIchi();const it=IR.items[IR.i],a=IR.ans[IR.i],n=IR.items.length,ok=IR.ans.filter(x=>x&&x.ok).length;
   let h=`<div class="ichi-top"><span class="chip ${stF(it)}">${TS.FIELDS[stF(it)].ic} ${TS.FIELDS[stF(it)].n}</span><span class="qlbl">${IR.i+1} / ${n}</span><span class="ichi-score">✓ ${ok}</span></div><div class="qtrack" style="max-width:760px;margin-bottom:14px"><div class="qfill" style="width:${(IR.i+(a?1:0))/n*100}%"></div></div>
-  <div class="ichi-card">${it.t?`<div class="ichi-t">${esc(it.t)}</div>`:`<div class="ichi-q"><b>問</b>${esc(it.q)}</div><div class="ichi-a">${esc(it.c)}</div>`}</div>`;
-  if(a){h+=`<div class="fb ${a.ok?'ok':'ng'}"><div class="fb-h">${a.ok?'⭕ 正解！':'❌ 不正解'}　答えは「${it.a?'○':'×'}」<span class="ichi-mine">あなた：${a.pick?'○':'×'}</span></div><div class="fb-body">${esc(it.e||'')}</div>${it.u&&UMAP[it.u]?`<button class="btn xs" style="margin-top:10px" onclick="openUnitModal('${it.u}')">📚 解説を読む</button>`:''}</div>
+  <div class="ichi-card">${it.t?`<div class="ichi-t">${gl(esc(it.t))}</div>`:`<div class="ichi-q"><b>問</b>${gl(esc(it.q))}</div><div class="ichi-a">${esc(it.c)}</div>`}</div>`;
+  if(a){h+=`<div class="fb ${a.ok?'ok':'ng'}"><div class="fb-h">${a.ok?'⭕ 正解！':'❌ 不正解'}　答えは「${it.a?'○':'×'}」<span class="ichi-mine">あなた：${a.pick?'○':'×'}</span></div><div class="fb-body">${gl(esc(it.e||''))}${plainHTML(it.pid)}</div>${it.u&&UMAP[it.u]?`<button class="btn xs" style="margin-top:10px" onclick="openUnitModal('${it.u}')">📚 解説を読む</button>`:''}</div>
     <div class="ichi-next"><button class="btn p" onclick="ichiNext()">${IR.i+1<n?'次へ ›':'結果を見る ›'}</button></div>`;}
   else h+=`<div class="ichi-btns"><button class="o" onclick="ichiAns(true)">○</button><button class="x" onclick="ichiAns(false)">×</button></div><div class="qnav"><button class="btn sm" onclick="if(confirm('中断しますか？'))go('ichi')">中断</button></div>`;
   return h;}
@@ -1575,7 +1735,7 @@ function renderTab(){const tabs=[['home','🏠','ホーム'],['learn','📚','�
   $('tabbar').innerHTML=tabs.map(t=>`<button class="${cur===t[0]?'on':''}" onclick="tabGo('${t[0]}')"><span class="ti">${t[1]}</span>${t[2]}</button>`).join('');}
 function render(){POOL=allQ();renderSide();renderTab();renderHdr();const c=$('content');
   const Rr={home:pgHome,learn:pgLearnTop,unit:pgUnit,quiz:pgQuiz,run:pgRun,result:pgResult,money:pgMoney,cal:pgCal,stats:pgStats,glossary:pgGlossary,settings:pgSettings2,adv:pgAdv,ichi:pgIchi,ichirun:pgIchiRun,ichires:pgIchiRes}[RT.n]||pgHome;
-  c.innerHTML=Rr(RT.a);if(RT.n==='money'&&(RT.a||'assets')==='assets')bindCharts();
+  c.innerHTML=Rr(RT.a);enhancePlain(c);if(RT.n==='money'&&(RT.a||'assets')==='assets')bindCharts();
   const titles={home:'ホーム',learn:'学ぶ',quiz:'クイズ',run:'クイズ',result:'結果',money:'わたしのお金',cal:'お金カレンダー',stats:'成績',glossary:'用語集',settings:'設定',adv:'いまやること',ichi:'一問一答',ichirun:'一問一答',ichires:'一問一答の結果'};
   $('crumb-t').textContent=RT.n==='unit'?(UMAP[RT.a]||{}).title:titles[RT.n]||'';
   $('crumb').className=(RT.n==='home'?'nob hide':'');document.querySelector('#crumb .back').textContent=RT.n==='unit'?'‹ 単元一覧':(RT.n==='ichirun'||RT.n==='ichires')?'‹ 一問一答':'‹ ホーム';}
@@ -1593,7 +1753,7 @@ function mobileBack(){if(RT.n==='run'&&!confirm('クイズを中断しますか�
 /* ── 設定（上書き：テーマ・アドバイス集を追加） ── */
 function pgSettings2(){const base=pgSettings().replace(/exportData\(\)/g,'doExport()');const theme=(S.theme&&S.theme!=='tree')?S.theme:'night';
   const add=`<div class="sec-h">見た目</div><div class="card"><div class="seg"><button class="${theme==='night'?'on':''}" onclick="setTheme('night')">🌙 ナイト（ネイビー×ゴールド）</button><button class="${theme==='classic'?'on':''}" onclick="setTheme('classic')">☀️ クラシック（明るい）</button></div></div>
-  <div class="sec-h">アドバイス集を取り込む</div><div class="card"><div class="row" style="margin-bottom:10px"><button class="btn p" onclick="aiAdv()">🤖 AIに季節のアドバイスをもらう（書き出し→貼り戻し）</button></div><p class="muted" style="margin-bottom:8px">返ってきたJSONは、ここに貼っても取り込めます。形式：{"id":"a01","from":"12-01","to":"12-31","lv":"tip","ic":"🎁","t":"見出し","d":"本文","url":"https://…","ul":"リンク名"}（lv は urgent / soon / me / tip）</p><textarea class="in" id="advp" placeholder='[ {...} ]' style="min-height:100px;font-family:ui-monospace,monospace;font-size:12px"></textarea><div class="row" style="margin-top:8px"><button class="btn p" onclick="addAdvPack()">取り込む</button><span class="muted">取り込み済み ${(S.advPack||[]).length}件</span>${(S.advPack||[]).length?`<button class="btn sm danger" onclick="if(confirm('取り込んだアドバイスを全部消しますか？')){S.advPack=[];save();render();}">削除</button>`:''}</div></div>`;
+  <div class="sec-h">わかりやすく言うと</div><div class="card"><div class="seg"><button class="${S.plainOpen?'':'on'}" onclick="setPlainOpen(false)">タップで開く</button><button class="${S.plainOpen?'on':''}" onclick="setPlainOpen(true)">いつも開いておく</button></div></div><div class="sec-h">アドバイス集を取り込む</div><div class="card"><div class="row" style="margin-bottom:10px"><button class="btn p" onclick="aiAdv()">🤖 AIに季節のアドバイスをもらう（書き出し→貼り戻し）</button></div><p class="muted" style="margin-bottom:8px">返ってきたJSONは、ここに貼っても取り込めます。形式：{"id":"a01","from":"12-01","to":"12-31","lv":"tip","ic":"🎁","t":"見出し","d":"本文","url":"https://…","ul":"リンク名"}（lv は urgent / soon / me / tip）</p><textarea class="in" id="advp" placeholder='[ {...} ]' style="min-height:100px;font-family:ui-monospace,monospace;font-size:12px"></textarea><div class="row" style="margin-top:8px"><button class="btn p" onclick="addAdvPack()">取り込む</button><span class="muted">取り込み済み ${(S.advPack||[]).length}件</span>${(S.advPack||[]).length?`<button class="btn sm danger" onclick="if(confirm('取り込んだアドバイスを全部消しますか？')){S.advPack=[];save();render();}">削除</button>`:''}</div></div>`;
   return base.replace('<div class="sec-h">バックアップ</div>','<div class="sec-h">読み込み（ドラッグ＆ドロップ）</div>'+dropZoneHTML()+add+'<div class="sec-h">バックアップ</div>').replace('このアプリについて</div><div class="card"><p class="dim" style="font-size:13px;line-height:1.9"><b>TSUMIKI（積み木）</b>','このアプリについて</div><div class="card"><p class="dim" style="font-size:13px;line-height:1.9"><b>TSUMIKI（積み木） v'+APP_VER+'</b>');}
 function addAdvPack(){try{let a=JSON.parse(V('advp'));if(!Array.isArray(a))a=[a];let n=0;a.forEach(x=>{if(x&&x.id&&x.t&&x.from&&x.to){S.advPack=(S.advPack||[]).filter(y=>y.id!==x.id);S.advPack.push(x);n++;}});save();toast(n+'件を取り込みました');render();}catch(e){toast('JSONの形式が正しくありません');}}
 function doExport(){exportData();S.lastBackup=today();save();render();}
@@ -1641,6 +1801,20 @@ document.addEventListener('dragleave',e=>{_dragN=Math.max(0,_dragN-1);if(!_dragN
 document.addEventListener('drop',e=>{e.preventDefault();_dragN=0;document.body.classList.remove('dragging');const dt=e.dataTransfer;if(!dt)return;
   if(dt.files&&dt.files.length){readDropFile(dt.files[0]);return;}const txt=dt.getData('text/plain')||dt.getData('text');if(txt)handleDropText(txt);});
 function dropZoneHTML(){return `<label class="dropzone">📂 <b>JSONファイルをここにドラッグ</b><span>（どの画面にドロップしてもOK・タップでファイルを選ぶ）<br>バックアップ／アドバイス／問題を自動で見分けて読み込みます</span><input type="file" accept=".json,.txt,application/json,text/plain" style="display:none" onchange="if(this.files[0])readDropFile(this.files[0]);this.value=''"></label>`;}
+
+/* ── 用語の自動リンク・わかりやすく言うと（APEX方式） ── */
+let GL_RE=null;
+function glInit(){const t=Object.keys(TS.gl).filter(x=>x.length>=2).sort((a,b)=>b.length-a.length).map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));GL_RE=t.length?new RegExp(t.join('|'),'g'):null;}
+function gl(html,self){if(!GL_RE)glInit();if(!GL_RE||!html)return html;const seen=new Set(self?[self]:[]);let inSvg=0,inGl=0;
+  return String(html).split(/(<[^>]+>)/).map(p=>{if(p.charAt(0)==='<'){if(/^<svg[\s>]/i.test(p))inSvg++;else if(/^<\/svg>/i.test(p))inSvg=Math.max(0,inSvg-1);if(/^<(span|b|a)[^>]*class="gl"/i.test(p))inGl++;return p;}
+    if(inSvg)return p;return p.replace(GL_RE,m=>{if(seen.has(m))return m;seen.add(m);return '<span class="gl" data-g="'+m+'">'+m+'</span>';});}).join('');}
+document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.gl[data-g]');if(g){e.preventDefault();e.stopPropagation();showGl(g.dataset.g);}},true);
+let PLN=0;
+function plainBox(txt,label,cls,open){const id='pl'+(++PLN);const o=open||S.plainOpen;return `<div class="plw ${cls||''}"><button type="button" class="plainbtn ${o?'open':''}" onclick="tglPlain('${id}',this)">${label} <span class="pa">${o?'▴':'▾'}</span></button><div class="plain ${o?'open':''}" id="${id}">${txt}</div></div>`;}
+function tglPlain(id,b){const e=document.getElementById(id);if(!e)return;const o=e.classList.toggle('open');b.classList.toggle('open',o);const pa=b.querySelector('.pa');if(pa)pa.textContent=o?'▴':'▾';}
+function plainHTML(pid){const P=(TS.pl||{})[pid];if(!P)return '';return (P.p?plainBox(gl(esc(P.p)),'💡 わかりやすく言うと',''):'')+(P.k?`<div class="tipline">🧠 <b>覚え方</b>　${gl(esc(P.k))}</div>`:'');}
+function enhancePlain(root){if(!root)return;root.querySelectorAll('.gram .pbox, .gram .tbox').forEach(bx=>{const isP=bx.classList.contains('pbox');const w=document.createElement('div');w.innerHTML=plainBox(bx.innerHTML,isP?'💡 わかりやすく言うと':'🧩 例えるなら',isP?'':'tt');bx.replaceWith(w.firstChild);});}
+function setPlainOpen(v){S.plainOpen=v;save();render();}
 
 /* ── 起動（上書き） ── */
 applyTheme();
