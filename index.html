@@ -28,6 +28,7 @@
   --f-edu:#c2561b; --f-edu-bg:#fcf1ea;
   --f-house:#0b8fa8; --f-house-bg:#e8f6f9;
   --f-life:#8a6a2a; --f-life-bg:#f8f3e8;
+  --f-furu:#c0447a; --f-furu-bg:#fbeef4;
   --r:7px;
 }
 html{ background:var(--bg); }
@@ -100,6 +101,7 @@ h2.pg{ font-size:19px; font-weight:600; margin-bottom:6px; display:flex; align-i
 .chip.edu{ background:var(--f-edu-bg); color:var(--f-edu); }
 .chip.house{ background:var(--f-house-bg); color:var(--f-house); }
 .chip.life{ background:var(--f-life-bg); color:var(--f-life); }
+.chip.furu{ background:var(--f-furu-bg); color:var(--f-furu); }
 .chip.me{ background:var(--gold-bg); color:#8a6510; }
 .chip.gray{ background:var(--surface2); color:var(--text-muted); }
 .chip.ok{ background:var(--green-bg); color:var(--green); } .chip.ng{ background:var(--red-bg); color:var(--red); } .chip.warn{ background:var(--amber-bg); color:#8a6510; }
@@ -454,6 +456,7 @@ html[data-theme="night"]{
   --f-edu:#fb923c; --f-edu-bg:rgba(251,146,60,.12);
   --f-house:#22d3ee; --f-house-bg:rgba(34,211,238,.12);
   --f-life:#fbbf24; --f-life-bg:rgba(251,191,36,.12);
+  --f-furu:#f472b6; --f-furu-bg:rgba(244,114,182,.12);
   --hero-a:#0a0f1a; --hero-b:#1b2a4a; --hero-acc:#e8c46a;
   --font-ui:"BIZ UDPGothic","BIZ UDPゴシック","Hiragino Sans","Hiragino Kaku Gothic ProN","Meiryo","Yu Gothic UI",sans-serif;
   --font-digi:"Orbitron","DIN Alternate","Avenir Next Condensed","Arial Black",system-ui,sans-serif;
@@ -1168,6 +1171,119 @@ Object.assign(TS.gl,{
 '元金均等返済':{f:'house',d:'毎回返す元金の額が一定の返済方法。最初の返済額が大きく、だんだん減る。'}
 });
 
+/* ── ふるさと納税（2026年11月時点） ── */
+TS.FIELDS.furu={n:'ふるさと納税',ic:'🎁',col:'var(--f-furu)'};
+TS.units.push(
+{ id:'furu1', field:'furu', icon:'🎁', title:'ふるさと納税のしくみ', sub:'2,000円・控除の内訳・上限・返礼品', gram:`
+<h3>まず、これは何？</h3>
+<p>[[ふるさと納税]]は、好きな自治体に寄附をすると、<strong>寄附額から2,000円を引いた額</strong>が、所得税と住民税から差し引かれる仕組みです。多くの自治体が、お礼の品（[[返礼品]]）を送ってくれます。</p>
+<div class="pbox">「来年払う住民税の前払い先を、自分で選べる」制度。払う総額はほぼ同じ（2,000円だけ多い）で、お礼の品がもらえる。</div>
+<h3>税金が減る3つの内訳</h3>
+<p>寄附額から2,000円を引いた額が、次の3つに分かれて戻ってきます。</p>
+<div class="tblwrap"><table><thead><tr><th>内訳</th><th>計算</th><th>どこから</th></tr></thead><tbody>
+<tr><td>所得税</td><td>（寄附額−2,000円）×所得税率</td><td>所得税（[[寄附金控除]]）</td></tr>
+<tr><td>住民税の基本分</td><td>（寄附額−2,000円）×10%</td><td>住民税</td></tr>
+<tr><td>住民税の[[特例控除]]</td><td>残りの全部</td><td>住民税（ここに上限がある）</td></tr>
+</tbody></table></div>
+<p>3つ目の特例控除は、<strong>[[住民税所得割額]]の20%まで</strong>という上限があります。これを超えて寄附すると、超えた分は自己負担になります。これが「ふるさと納税の上限（控除上限額）」です。</p>
+<h3>上限の目安の計算</h3>
+<p>手元の[[住民税決定通知書]]を使うと、次の式で目安を出せます。</p>
+<div class="mbox">上限の目安 ＝ 住民税所得割額 × 20% ÷（90% − 所得税率 × 1.021）＋ 2,000円<br>「お金」→「🎁 ふるさと納税」に、所得割額と所得税率を入れると自動で計算します。</div>
+<p>ただし、控除されるのは<strong>寄附した年の所得</strong>で決まります。去年の通知書で出した上限は目安です。年収が下がる年、医療費控除やiDeCoが増える年、扶養が増える年は、上限が<strong>下がる</strong>ので、少し余裕を残します。</p>
+<div class="tbox">住民税という大きなケーキのうち、2割までなら好きなお店で買える（その代わり、お店からおまけが届く）。2割を超えた分は、自腹になる。</div>
+<h3>返礼品のルール</h3>
+<ul>
+<li>返礼品は<strong>寄附額の3割以下</strong>で、その地域の産品（[[地場産品基準]]）であることが条件。</li>
+<li>2025年10月から、ポータルサイトが寄附に<strong>独自ポイントをつけることは禁止</strong>。</li>
+<li>2026年10月から、加工品は地域内で価値の半分以上が生まれたことの証明が必要になるなど、地場産品の基準が厳しくなった。返礼品の内容量や必要な寄附額が変わることがある。</li>
+<li>返礼品は税金上「[[一時所得]]」。一時所得は年50万円の特別控除があるので、ふつうの範囲なら課税されない。</li>
+</ul>
+<div class="newbox">令和8年度の税制改正で、住民税の特例控除に<strong>193万円（給与収入1億円相当）の定額上限</strong>ができました。2027年の寄附分から適用されます。対象はとても高い所得の人だけで、一般の会社員の上限は変わりません。</div>
+` },
+{ id:'furu2', field:'furu', icon:'📮', title:'ふるさと納税の手続きと1年の流れ', sub:'ワンストップ特例・確定申告・注意点', gram:`
+<h3>2つの手続き</h3>
+<div class="tblwrap"><table><thead><tr><th></th><th>[[ワンストップ特例]]</th><th>確定申告</th></tr></thead><tbody>
+<tr><td>使える人</td><td>確定申告をしない会社員など</td><td>だれでも</td></tr>
+<tr><td>寄附先の数</td><td>1年で<strong>5自治体以内</strong></td><td>制限なし</td></tr>
+<tr><td>出すもの</td><td>寄附ごとに[[申告特例申請書]]（マイナンバー確認書類つき）</td><td>確定申告書＋[[受領証明書]]の内容</td></tr>
+<tr><td>期限</td><td>翌年<strong>1月10日</strong>必着</td><td>翌年3月15日</td></tr>
+<tr><td>控除のされ方</td><td>全部が<strong>住民税</strong>から</td><td>所得税（還付）＋住民税</td></tr>
+</tbody></table></div>
+<p>同じ自治体に何回寄附しても、数えるのは<strong>1自治体</strong>です。最近は、ポータルサイトのアプリなどでオンライン申請できる自治体も増えています。</p>
+<div class="wbox">⚠️ ワンストップ特例を申請しても、<strong>確定申告をすると特例は無効</strong>になります。医療費控除などで申告するときは、ふるさと納税も全部、申告書に書きます。</div>
+<h3>1年の流れ</h3>
+<div class="tblwrap"><table><thead><tr><th>時期</th><th>やること</th></tr></thead><tbody>
+<tr><td>1〜6月</td><td>前の年の分のワンストップ申請（1/10まで）、確定申告（2/16〜3/15）。6月に住民税決定通知書で、控除されているか確認</td></tr>
+<tr><td>年の途中</td><td>今年の上限の目安を計算。<strong>早めの寄附</strong>なら、年末の品切れや配送の集中を避けられる</td></tr>
+<tr><td>12月</td><td>今年の分は<strong>12月31日の決済分まで</strong>。クレジットカードは決済日、銀行振込は入金日で判定されるので、年末ぎりぎりは避ける</td></tr>
+</tbody></table></div>
+<h3>やりがちな失敗</h3>
+<ul>
+<li>上限を超えて寄附した（超えた分は自己負担）</li>
+<li>ワンストップの申請書を出し忘れた（確定申告をすれば取り戻せる。5年以内なら更正の請求も可能）</li>
+<li>引っ越したのに、自治体に住所変更を届けなかった（寄附した翌年1月10日までに変更届を出す）</li>
+<li>家族の名義のカードで払った（寄附者とカードの名義は同じにする）</li>
+</ul>
+<div class="pbox">ワンストップは「5つまで・1月10日まで・確定申告しない人だけ」。どれか1つでも外れたら、確定申告でまとめて申告する。</div>
+<div class="mbox">子どもが19歳になって特定扶養控除が増えると、所得税・住民税が少し下がり、ふるさと納税の上限も少し下がります。扶養が変わる年は、上限を計算し直します。</div>
+` });
+TS.q.push(
+{id:'r01',u:'furu1',q:'ふるさと納税で、上限内なら自己負担になるのはいくら？',c:['0円','1,000円','2,000円','寄附額の1割'],a:2,w:['2,000円はかかる。','違う。','寄附額から2,000円を引いた額が控除される。','割合ではない。'],e:'何自治体に寄附しても、1年の自己負担は合計2,000円（上限内の場合）。'},
+{id:'r02',u:'furu1',q:'ふるさと納税の上限を決めている「住民税の特例控除」の上限は？',c:['住民税所得割額の10%','住民税所得割額の20%','所得税額の20%','年収の2%'],a:1,w:['違う。','特例控除は所得割額の20%まで。','住民税が基準。','年収の割合ではない。'],e:'これを超えた分は控除されず、自己負担になる。'},
+{id:'r03',u:'furu1',q:'返礼品の価格は、寄附額の何割以下と決められている？',c:['1割','3割','5割','決まりはない'],a:1,w:['違う。','3割以下。','5割は募集経費全体の旧基準。','決まりがある。'],e:'返礼品は寄附額の3割以下、地場産品であることが条件。'},
+{id:'r04',u:'furu1',q:'2025年10月から禁止されたのは？',c:['返礼品そのもの','ポータルサイトによる独自ポイントの付与','クレジットカードでの寄附','年末の寄附'],a:1,w:['返礼品は続いている。','ポイント付与が禁止された。','カード払いは可能。','年末も可能。'],e:'寄附先を選ぶ理由を、ポイントではなく自治体や返礼品にするための見直し。'},
+{id:'r05',u:'furu1',q:'返礼品は、税金上どの所得になる？',c:['給与所得','雑所得','一時所得','非課税'],a:2,w:['違う。','違う。','一時所得（年50万円の特別控除あり）。','課税対象になりうる。'],e:'ふつうの範囲の返礼品だけなら、特別控除50万円の内におさまる。'},
+{id:'r06',u:'furu1',q:'令和8年度の税制改正で、住民税の特例控除にできた定額上限は？（2027年寄附分から）',c:['50万円','100万円','193万円','上限なし'],a:2,w:['違う。','違う。','給与収入1億円相当の193万円。','新しく上限ができた。'],e:'対象はとても高い所得の人だけ。一般の会社員の上限は変わらない。'},
+{id:'r07',u:'furu1',q:'ふるさと納税の上限が「下がる」のはどれ？',c:['年収が上がった','医療費控除やiDeCoが増えた','住んでいる市が変わった','寄附先を増やした'],a:1,w:['上がる方向。','所得控除が増えると、税金が減り、上限も下がる。','上限には関係しない。','上限には関係しない。'],e:'控除が増える年は、上限に余裕を残して寄附する。'},
+{id:'r08',u:'furu2',q:'ワンストップ特例で控除される税金は？',c:['所得税だけ','住民税だけ（所得税分も住民税から）','所得税と住民税','固定資産税'],a:1,w:['違う。','全部が翌年の住民税から引かれる。','確定申告の場合。','関係ない。'],e:'だから、確認は6月ごろの住民税決定通知書で行う。'},
+{id:'r09',u:'furu2',q:'同じ自治体に3回寄附した。ワンストップ特例の「5自治体」の数え方は？',c:['3自治体','1自治体','数えない','回数×2'],a:1,w:['回数では数えない。','同じ自治体は何回でも1つ。','数える。','違う。'],e:'ただし申請書は寄附ごとに出すのが原則。'},
+{id:'r10',u:'furu2',q:'今年の分として扱われる、ふるさと納税の締切は？',c:['12月25日','12月31日の決済分まで','翌年1月10日','翌年3月15日'],a:1,w:['違う。','1月〜12月の寄附（決済日・入金日で判定）。','ワンストップ申請書の期限。','確定申告の期限。'],e:'年末は決済の反映が遅れることがあるので、早めに。'},
+{id:'r11',u:'furu2',q:'寄附した翌年に引っ越した。ワンストップ特例で必要なのは？',c:['何もしなくてよい','寄附した自治体に、1月10日までに住所変更を届ける','税務署に届ける','新しい市に寄附し直す'],a:1,w:['届け出が必要。','変更届出書を出す。','税務署ではない。','その必要はない。'],e:'住民税は1月1日に住んでいる市区町村でかかるため。'},
+{id:'r12',u:'furu2',q:'ワンストップの申請書を出し忘れた。どうすればいい？',c:['あきらめるしかない','確定申告（または更正の請求）で控除を受けられる','翌年の寄附に回る','自治体に返金してもらう'],a:1,w:['取り戻せる。','確定申告や5年以内の更正の請求で受けられる。','回らない。','返金はない。'],e:'受領証明書は必ず保管しておく。'}
+);
+TS.ox.push(
+{id:'o33',u:'furu1',t:'ふるさと納税は、上限内なら何自治体に寄附しても、自己負担は合計2,000円だ。',a:true,e:'1年でまとめて2,000円。'},
+{id:'o34',u:'furu1',t:'上限を超えて寄附しても、超えた分も全額控除される。',a:false,e:'超えた分は自己負担になる。'},
+{id:'o35',u:'furu1',t:'2026年10月から、地場産品の基準が厳しくなった。',a:true,e:'加工品は地域内で価値の半分以上が生まれた証明が必要に。'},
+{id:'o36',u:'furu1',t:'ふるさと納税の上限は、寄附した年の所得で決まる。',a:true,e:'去年の通知書で出す上限は目安。'},
+{id:'o37',u:'furu2',t:'ワンストップ特例は、医療費控除で確定申告をしても有効なままだ。',a:false,e:'確定申告をすると無効。寄附も申告書に書く。'},
+{id:'o38',u:'furu2',t:'ワンストップ特例の寄附先は、1年で5自治体までだ。',a:true,e:'同じ自治体は何回でも1つと数える。'},
+{id:'o39',u:'furu2',t:'家族名義のクレジットカードで、自分の名前で寄附しても問題ない。',a:false,e:'寄附者とカードの名義は同じにする。'},
+{id:'o40',u:'furu2',t:'ワンストップ特例の控除は、6月ごろの住民税決定通知書で確認できる。',a:true,e:'寄附金税額控除の欄を見る。'}
+);
+Object.assign(TS.pl,{
+r01:{p:'上限の中なら、いくつ寄附しても自分の負担は2,000円だけ。',k:'「2,000円で、お礼の品」。'},
+r02:{p:'住民税のうち「所得にかかる分」の2割までが、特別に戻ってくる。',k:'上限のカギは「所得割の2割」。'},
+r03:{p:'1万円の寄附なら、お礼の品は3,000円分まで。',k:'返礼品は3割まで、地元のものだけ。'},
+r04:{p:'サイトのポイントで選ぶ時代は終わり。',k:'2025年10月〜ポイント禁止。'},
+r05:{p:'お礼の品は「たまたまもらったもうけ」の扱い。ふつうの量なら税金はかからない。',k:'一時所得は年50万円まで控除。'},
+r06:{p:'年収1億円くらいの人が上限になる線。ふつうの会社員には関係ない。',k:'193万円＝高所得の人へのブレーキ。'},
+r07:{p:'控除が増えると税金が減るので、ふるさと納税で戻せる枠も小さくなる。',k:'控除が増える年は、上限に余裕を残す。'},
+r08:{p:'ワンストップなら、所得税の分も含めて全部、来年の住民税から引かれる。',k:'確認は6月の住民税の通知で。'},
+r09:{p:'同じ市に何回寄附しても「1つ」と数える。',k:'数えるのは自治体の数。'},
+r10:{p:'12月31日にお金が払われた分までが今年の分。',k:'年末ぎりぎりは避ける。'},
+r11:{p:'寄附した自治体に、新しい住所を知らせる。',k:'住民税は1月1日の住所でかかる。'},
+r12:{p:'出し忘れても、確定申告すれば戻ってくる。',k:'受領証明書は捨てない。'},
+o33:{p:'自己負担は1年で2,000円。',k:'上限の中なら。'},
+o34:{p:'上限を超えた分は戻ってこない。',k:'上限はあくまで「ここまでなら2,000円」。'},
+o35:{p:'返礼品の「地元のもの」のルールが厳しくなった。',k:'2026年10月〜。'},
+o36:{p:'今年の上限は、今年の所得で決まる。',k:'去年の通知書は目安。'},
+o37:{p:'確定申告をすると、ワンストップは使えなくなる。',k:'申告するなら全部書く。'},
+o38:{p:'ワンストップで使えるのは5自治体まで。',k:'5つまで・1月10日まで。'},
+o39:{p:'寄附する人とお金を払う人は、同じ名前にする。',k:'カードの名義に注意。'},
+o40:{p:'住民税の通知に、引かれた額が書いてある。',k:'寄附金税額控除の欄。'}
+});
+Object.assign(TS.gl,{
+'寄附金控除':{f:'furu',d:'寄附をしたときの所得控除。ふるさと納税では所得税の分がこれにあたる。'},
+'特例控除':{f:'furu',d:'ふるさと納税で住民税から引かれる分のうち、残りを全部引く部分。住民税所得割額の20%が上限。2027年寄附分から193万円の定額上限も。'},
+'住民税所得割額':{f:'furu',d:'住民税のうち、所得に応じてかかる部分（均等割を除く）。住民税決定通知書に書いてある。'},
+'返礼品':{f:'furu',d:'ふるさと納税のお礼の品。寄附額の3割以下で、地場産品であることが条件。'},
+'地場産品基準':{f:'furu',d:'返礼品がその地域の産品であることを求める基準。2026年10月から加工品の証明などが厳しくなった。'},
+'受領証明書':{f:'furu',d:'自治体が発行する寄附の証明書。確定申告で使うので保管する。'},
+'申告特例申請書':{f:'furu',d:'ワンストップ特例を使うための申請書。寄附した自治体に翌年1月10日までに届くように出す。オンライン申請できる自治体もある。'},
+'一時所得':{f:'furu',d:'懸賞や返礼品など、たまたま得た所得。年50万円の特別控除がある。'}
+});
+
 </script>
 <script>
 /* ══════════ TSUMIKI app ══════════ */
@@ -1422,6 +1538,7 @@ function genMe(){const out=[];const T=totals();
   S.children.forEach(ch=>{if(!ch.birth)return;const age=ageAt(ch.birth,(YEAR()+1)+'-12-31');const opts=['扶養控除なし（児童手当）','一般の扶養 38万円','特定扶養 63万円','老人扶養'];const ans=fuyoKbn(age);const ai=opts.indexOf(ans);if(ai>=0)out.push({id:'me_fy_'+ch.id,me:true,k:'q',q:`${ch.name||'子ども'}の、来年（${YEAR()+1}年）の扶養控除の区分は？（所得税）`,c:opts,a:ai,e:`${YEAR()+1}年12月31日時点で${age}歳。扶養控除等申告書（翌年分）に反映する。`});
     (ch.schools||[]).forEach(sc=>{if(sc.payBy&&sc.status!=='不合格'&&sc.status!=='辞退'&&sc.status!=='入学手続済'){const c=[-3,0,3,7].map(k=>addDays(sc.payBy,k));out.push({id:'me_sp_'+sc.id,me:true,k:'q',q:`${sc.name}の入学金の振込期限は？`,c:c.map(fmtYMD),a:1,e:`${fmtYMD(sc.payBy)}（${yen(N(sc.entry))}）。土日・銀行の締め時間に注意。`});}});});
   if(S.policy.crash){const d=['すぐに全部売って現金にする','積立をいったん止めて様子を見る','SNSで話題の銘柄に乗り換える'];const c=shuffle([S.policy.crash.slice(0,80)].concat(d));out.push({id:'me_pc',me:true,k:'q',q:'暴落したとき、わたしが決めていた行動は？',c,a:c.indexOf(S.policy.crash.slice(0,80)),e:'平常時に決めた約束を、慌てたときに思い出せるように。'});}
+  furuMe(out);
   return out.filter(Boolean).filter(q=>q.a>=0);}
 
 /* ══════════ お金 ══════════ */
@@ -1601,8 +1718,61 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(RT.n
 if(window.innerWidth<=640)document.body.classList.add('in-content');
 
 
+/* ══════════ TSUMIKI v2.7：ふるさと納税の管理 ══════════ */
+TS.gl['ふるさと納税'].f='furu'; TS.gl['ワンストップ特例'].f='furu';
+const RATES=[5,10,20,23,33,40,45];
+const OS_ST=['未申請','申請済','確定申告で'];
+function furuData(){S.furu=S.furu||{base:{},list:[]};S.furu.base=S.furu.base||{};S.furu.list=S.furu.list||[];return S.furu;}
+function furuBase(y){const F=furuData();return F.base[y]||F.base[y-1]||null;}
+function furuLimit(y){const b=furuBase(y);if(!b||!N(b.shotoku)||!N(b.rate))return 0;return Math.floor(N(b.shotoku)*0.2/(0.9-N(b.rate)/100*1.021))+2000;}
+function furuStat(y){const L=furuData().list.filter(x=>String(x.date||'').startsWith(String(y)));const total=L.reduce((s,x)=>s+N(x.amt),0);const cities=[...new Set(L.map(x=>(x.city||'').trim()).filter(Boolean))];
+  return {L,total,cities,pending:L.filter(x=>(x.os||'未申請')==='未申請'),noCert:L.filter(x=>!x.cert),lim:furuLimit(y)};}
+function mFuru(){const Y=RT.fy||YEAR();const st=furuStat(Y),b=furuBase(Y)||{},lim=st.lim,rest=lim?lim-st.total:0;const mustFile=st.cities.length>5;
+  let h=`<div class="row" style="margin-bottom:12px"><div class="seg">${[YEAR()-1,YEAR(),YEAR()+1].map(y=>`<button class="${y===Y?'on':''}" onclick="RT.fy=${y};render()">${y}年分</button>`).join('')}</div></div>`;
+  h+=`<div class="stat3"><div class="stat hl"><div class="l">上限の目安</div><div class="v">${lim?yen(lim):'—'}</div><div class="s">${lim?'住民税決定通知書から計算':'下で計算'}</div></div><div class="stat"><div class="l">${Y}年の寄附</div><div class="v">${yen(st.total)}</div><div class="s">${st.cities.length}自治体・${st.L.length}件</div></div><div class="stat"><div class="l">残り</div><div class="v ${lim&&rest<0?'pl-m':''}">${lim?yen(rest):'—'}</div><div class="s">${lim?(rest<0?'⚠️ 上限超え':'自己負担2,000円のまま使える目安'):''}</div></div></div>`;
+  if(lim)h+=meterHTML(Math.min(st.total,lim),lim,st.total>lim?'var(--red)':'var(--f-furu)','上限の目安に対する寄附');
+  if(mustFile)h+=`<div class="wbox">⚠️ ${Y}年は <b>${st.cities.length}自治体</b>。ワンストップ特例（5自治体まで）は使えません。翌年2/16〜3/15に<b>確定申告</b>で、全部の寄附を申告します。</div>`;
+  else if(st.pending.length)h+=`<div class="nbox">📮 ワンストップの申請がまだ <b>${st.pending.length}件</b>。${Y+1}年1月10日必着です。</div>`;
+  h+=`<div class="sec-h">寄附の記録<span class="r"><button class="btn xs p" onclick="editFuru()">＋ 寄附を記録</button></span></div>`;
+  h+=st.L.length?st.L.slice().sort((a,b)=>a.date<b.date?-1:1).map(x=>`<div class="school"><div class="sh"><span class="sn" onclick="editFuru('${x.id}')" style="cursor:pointer">${esc(x.city)}</span><b class="num">${yen(N(x.amt))}</b></div><div class="muted" style="margin:2px 0 8px">${fmtYMD(x.date)}${x.gift?' ・ '+esc(x.gift):''}${x.recv?' ・ 届いた✓':''}</div><div class="row" style="gap:8px"><select class="st-sel" onchange="setFuru('${x.id}','os',this.value)">${OS_ST.map(s=>`<option ${s===(x.os||'未申請')?'selected':''}>${s}</option>`).join('')}</select><button class="btn xs ${x.cert?'p':''}" onclick="setFuru('${x.id}','cert',${!x.cert})">${x.cert?'✓ 受領証明書あり':'受領証明書 未'}</button><button class="btn xs" onclick="editFuru('${x.id}')">編集</button></div></div>`).join(''):'<div class="empty">寄附したら、ここに記録。合計・自治体の数・ワンストップの申請状況を自動で管理します。</div>';
+  h+=`<div class="sec-h">上限の目安を計算</div><div class="card"><p class="muted" style="margin-bottom:10px">6月ごろ会社から届く<b>住民税決定通知書</b>の「所得割額」（市民税＋県民税の合計）と、自分の<b>所得税率</b>を入れます。上限 ＝ 所得割額×20% ÷（90% − 所得税率×1.021）＋2,000円。</p>
+  <div class="fm">${fld('fb_s','住民税所得割額（円）',b.shotoku||'','number','例：300000')}${sel('fb_r','所得税率',[['','わからない']].concat(RATES.map(r=>[r,r+'%'])),b.rate||'')}</div>
+  <p class="muted" style="margin-top:8px">所得税率の目安（課税所得）：195万円以下5%／330万円以下10%／695万円以下20%／900万円以下23%。源泉徴収票の「給与所得控除後の金額」から「所得控除の額の合計額」を引いたのが課税所得です。</p>
+  <div class="fm-act"><button class="btn p" onclick="saveFuruBase(${Y})">${Y}年分として保存</button></div>
+  <div class="muted">扶養が増える・医療費控除やiDeCoが増える年は、上限が下がります。上限いっぱいではなく、1〜2割の余裕を残すのが安全です。</div></div>
+  <div class="row" style="margin-top:16px"><button class="btn sm" onclick="go('unit','furu1')">📚 しくみ</button><button class="btn sm" onclick="go('unit','furu2')">📚 手続きと1年の流れ</button><button class="btn sm" onclick="startRun('field','furu')">🎯 問題</button><a class="btn sm" href="${LINKS.furu[1]}" target="_blank" rel="noopener">🔗 総務省</a></div>`;
+  return h;}
+function saveFuruBase(y){const F=furuData();F.base[y]={shotoku:N(V('fb_s')),rate:N(V('fb_r'))};save();toast(furuLimit(y)?'上限の目安：'+yen(furuLimit(y)):'保存しました');render();}
+function editFuru(id){const x=furuData().list.find(v=>v.id===id)||{date:today(),city:'',amt:'',gift:'',os:'未申請',cert:false,recv:false,memo:''};
+  openModal(id?'寄附を編集':'🎁 寄附を記録',`<div class="fm">${fld('fu_d','寄附日（決済日）',x.date,'date')}${fld('fu_c','自治体',x.city,'text','例：北海道 紋別市')}${fld('fu_a','金額（円）',x.amt,'number','10000')}${fld('fu_g','返礼品',x.gift,'text','例：ほたて 1kg')}${sel('fu_o','ワンストップ',OS_ST,x.os||'未申請')}${sel('fu_r','返礼品',[['0','まだ'],['1','届いた']],x.recv?'1':'0')}${fld('fu_m','メモ',x.memo,'text','ポータル名・申請方法など','full')}</div>
+  <div class="fm-act">${id?`<button class="btn danger" onclick="delFuru('${id}')">削除</button>`:''}<button class="btn p" onclick="saveFuru('${id||''}')">保存</button></div>`);}
+function saveFuru(id){const F=furuData();const o={date:V('fu_d')||today(),city:V('fu_c')||'自治体',amt:N(V('fu_a')),gift:V('fu_g'),os:V('fu_o'),recv:V('fu_r')==='1',memo:V('fu_m')};
+  if(id)Object.assign(F.list.find(v=>v.id===id),o);else F.list.push(Object.assign({id:uid(),cert:false},o));save();closeModal();RT.fy=+o.date.slice(0,4);render();}
+function delFuru(id){if(!confirm('削除しますか？'))return;const F=furuData();F.list=F.list.filter(v=>v.id!==id);save();closeModal();render();}
+function setFuru(id,k,v){const x=furuData().list.find(z=>z.id===id);if(x){x[k]=v;save();render();}}
+
+/* いまやること用 */
+function furuAdvice(add,Y,M,D){const F=furuData();if(!F.list.length&&!Object.keys(F.base).length){if(M>=9)add('furuset'+Y,'tip','🎁','ふるさと納税の上限を計算しておこう','住民税決定通知書の「所得割額」と所得税率を入れるだけ。',[{l:'🎁 ふるさと納税',fn:"go('money','furu')"}]);return;}
+  const prev=furuStat(Y-1),cur=furuStat(Y);
+  if(M===1&&D<=10&&prev.pending.length&&prev.cities.length<=5)add('furuos'+(Y-1),'urgent','📮',`ワンストップ申請がまだ ${prev.pending.length}件（1月10日必着）`,prev.pending.map(x=>x.city).join('・')+'。間に合わなければ確定申告で。',[{l:'🎁 一覧',fn:"RT.fy="+(Y-1)+";go('money','furu')"}]);
+  if(M>=1&&M<=3&&prev.cities.length>5)add('furukk'+(Y-1),'soon','📮',`${Y-1}年のふるさと納税は${prev.cities.length}自治体 → 確定申告`,'6自治体以上はワンストップ不可。2/16〜3/15に、全部の寄附を申告する。',[lk2('kakutei')]);
+  if(M===12&&cur.pending.length&&cur.cities.length<=5)add('furuos'+Y,'soon','📮',`ワンストップ申請 ${cur.pending.length}件を準備`,'翌年1月10日必着。オンライン申請できる自治体も多い。',[{l:'🎁 一覧',fn:"go('money','furu')"}]);
+  if(cur.lim&&cur.total>cur.lim)add('furuov'+Y+cur.total,'urgent','⚠️',`ふるさと納税が上限の目安を ${yen(cur.total-cur.lim)} 超えています`,'超えた分は自己負担になる。今年の所得や控除で上限を見直して。',[{l:'🎁 ふるさと納税',fn:"go('money','furu')"}]);
+  else if(cur.lim&&M>=10&&cur.lim-cur.total>=5000)add('furure'+Y+cur.total,'me','🎁',`今年のふるさと納税、残りの目安は ${yen(cur.lim-cur.total)}`,'12月31日の決済分まで。年末は品切れや決済の遅れがあるので早めに。上限ぎりぎりは避ける。',[{l:'🎁 記録する',fn:"go('money','furu')"}]);
+  if(M>=5&&M<=7)add('furu6'+Y,'tip','📄','住民税決定通知書で、ふるさと納税と上限を確認','「寄附金税額控除」の欄で去年の分の反映を確認。同じ通知書の「所得割額」で今年の上限を計算し直す。',[{l:'🎁 上限を計算',fn:"go('money','furu')"}]);}
+function lk2(k){return {l:'🔗 '+LINKS[k][0],url:LINKS[k][1]};}
+/* わたしの数字クイズ用 */
+function furuMe(out){const Y=YEAR(),st=furuStat(Y);if(st.lim)out.push(numQ('me_fl','今年のふるさと納税の上限の目安は？',niceRound(st.lim),yen,'住民税所得割額×20%÷（90%−所得税率×1.021）＋2,000円。'));
+  if(st.cities.length){const n=st.cities.length;const c=[...new Set([n,n+1,n+2,Math.max(1,n-1),n+3])].slice(0,4).sort((a,b)=>a-b);out.push({id:'me_fc',me:true,k:'q',q:'今年ふるさと納税をした自治体の数は？',c:c.map(x=>x+'自治体'),a:c.indexOf(n),e:(n>5?'6以上なのでワンストップ不可、確定申告。':'5以内ならワンストップ特例が使える。')});}}
+function furuPrompt(withAmt){const Y=YEAR(),st=furuStat(Y);if(!st.L.length&&!st.lim)return '';return '【ふるさと納税（'+Y+'年）】'+st.cities.length+'自治体・'+st.L.length+'件'+(withAmt?'・合計'+yen(st.total)+(st.lim?'・上限目安'+yen(st.lim):''):(st.lim?'・上限目安の'+pct(st.total,st.lim)+'%使用':''))+'・ワンストップ未申請'+st.pending.length+'件';}
+
+/* お金ページ（上書き：ふるさと納税タブを追加） */
+function pgMoney(tab){tab=tab||'assets';const tabs=[['assets','💰 資産・積立'],['nisa','🌱 NISA'],['furu','🎁 ふるさと納税'],['loan','🏠 住宅ローン'],['edu','🎓 教育資金'],['nencho','🧾 年末調整'],['policy','🧭 方針']];
+  const body={assets:mAssets,nisa:mNisa,furu:mFuru,loan:mLoan,edu:mEdu,nencho:mNencho,policy:mPolicy}[tab]();
+  return `<div class="wrap"><h2 class="pg">💴 わたしのお金</h2><div class="pg-sub">データはこの端末のブラウザの中だけに保存されます（サーバーには送られません）。定期的に「設定」からバックアップを。</div><div class="tabs">${tabs.map(t=>`<button class="tab ${tab===t[0]?'on':''}" onclick="go('money','${t[0]}')">${t[1]}</button>`).join('')}</div>${body}</div>`;}
+
 /* ══════════ TSUMIKI v2.0 追加：テーマ・ホーム・いまやること・一問一答 ══════════ */
-const APP_VER='2.6';
+const APP_VER='2.7';
 S.advDone=S.advDone||{}; S.oxh=S.oxh||{}; S.advPack=S.advPack||[];
 const LINKS={
   kakutei:['国税庁 確定申告書等作成コーナー','https://www.keisan.nta.go.jp/'],
@@ -1629,7 +1799,7 @@ function advice(){const out=[],t=today(),now=new Date(),Y=now.getFullYear(),M=no
     out.push({key:'ev:'+o.key,lv:dd<=3?'urgent':'soon',ic:o.cat==='edu'?'🎓':o.cat==='house'?'🏠':o.cat==='nisa'?'🌱':o.cat==='tax'?'🧾':'📌',t:o.title,
       d:fmtMD(o.date)+'（'+(dd===0?'今日':'あと'+dd+'日')+'）'+(o.amount?' ・ '+yen(N(o.amount)):'')+(o.note?' ・ '+o.note:''),acts:[{l:'✓ 完了',fn:`toggleEv('${o.key}')`}],ev:true});});
   /* 2. 季節のアドバイス */
-  if(M===12||(M===11&&D>=15))add('furu'+Y,'tip','🎁','ふるさと納税は12月31日の決済分まで','上限は年収・家族構成・ほかの控除で変わる。ワンストップ特例は5自治体以内で、申請書は翌年1月10日必着。',[lk('furu')]);
+  if((M===12||(M===11&&D>=15))&&!furuStat(Y).lim)add('furu'+Y,'tip','🎁','ふるさと納税は12月31日の決済分まで','上限は年収・家族構成・ほかの控除で変わる。ワンストップ特例は5自治体以内で、申請書は翌年1月10日必着。',[lk('furu')]);
   if(M===12){const n=nisaStat();add('nisaend'+Y,D>=10?'soon':'tip','🌱','NISAの今年の枠は、年内の約定分まで',`年末の注文は約定が翌年にずれることがある。つみたて投資枠は今年の計画 ${man(n.planT)} ／ 上限120万円。`,[lk('nisa')]);
     add('snapend'+Y,'tip','📝','12月31日に1年分の資産を記録しよう','「まとめて記録」で、1年の積み上げが推移グラフに残る。',[{l:'📝 まとめて記録',fn:'recordAll()'}]);}
   if(M===1&&D<=10)add('onestop'+Y,'urgent','📮','ワンストップ特例の申請書は1月10日必着','去年ふるさと納税をして、確定申告をしない人だけ。5自治体以内。',[lk('furu')]);
@@ -1660,6 +1830,7 @@ function advice(){const out=[],t=today(),now=new Date(),Y=now.getFullYear(),M=no
   if(!S.policy.crash)add('policy','tip','🧭','「暴落したら」の約束を決めておこう','平常心のうちに1行だけ。ホーム画面に毎日表示される。',[{l:'🧭 方針',fn:"go('money','policy')"}]);
   /* 4. 取り込んだアドバイス集 */
   const md=pad(M)+'-'+pad(D);(S.advPack||[]).forEach(a=>{if(!a.from||!a.to)return;const inR=a.from<=a.to?(md>=a.from&&md<=a.to):(md>=a.from||md<=a.to);if(inR)add('pk'+a.id+Y,a.lv||'tip',a.ic||'💡',a.t,a.d||'',a.url?[{l:'🔗 '+(a.ul||'詳しく'),url:a.url}]:[]);});
+  furuAdvice(add,Y,M,D);
   const ord={urgent:0,soon:1,me:2,tip:3};return out.sort((a,b)=>ord[a.lv]-ord[b.lv]);}
 const LVN={urgent:'急ぎ',soon:'もうすぐ',me:'わが家',tip:'いまの季節'};
 function advHTML(list){return list.map(a=>`<div class="adv-i ${a.lv}"><div class="adv-ic">${a.ic}</div><div class="adv-t"><span class="lv">${LVN[a.lv]}</span>${esc(a.t)}</div><div class="adv-d">${esc(a.d)}</div><div class="adv-a">${a.acts.map(x=>x.url?`<a class="btn xs" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.l)}</a>`:`<button class="btn xs ${x.l.startsWith('✓')?'p':''}" onclick="${x.fn}">${esc(x.l)}</button>`).join('')}${a.ev?'':`<button class="btn xs" onclick="advOk('${a.key}')">✓ わかった</button>`}</div></div>`).join('');}
@@ -1741,7 +1912,7 @@ function render(){POOL=allQ();renderSide();renderTab();renderHdr();const c=$('co
   $('crumb').className=(RT.n==='home'?'nob hide':'');document.querySelector('#crumb .back').textContent=RT.n==='unit'?'‹ 単元一覧':(RT.n==='ichirun'||RT.n==='ichires')?'‹ 一問一答':'‹ ホーム';}
 function renderSide(){const nav=[['home','🏠','ホーム'],['ichi','⭕','一問一答'],['quiz','🎯','クイズ'],['money','💴','お金'],['cal','📅','カレンダー'],['adv','🔔','いまやること'],['stats','📊','成績'],['glossary','📖','用語集']];
   $('sb-nav').innerHTML=nav.map(x=>`<button class="navbtn ${RT.n===x[0]?'on':''}" onclick="go('${x[0]}')">${x[1]} ${x[2]}</button>`).join('');
-  const mon=[['assets','💰','資産・積立','口座・持株会・推移'],['nisa','🌱','NISAの枠','今年の枠・生涯枠'],['loan','🏠','住宅ローン','残高・金利'],['edu','🎓','教育資金','受験校・入学金・ToDo'],['nencho','🧾','年末調整',YEAR()+'年のチェックリスト'],['policy','🧭','わたしの方針','自分との約束']];
+  const mon=[['assets','💰','資産・積立','口座・持株会・推移'],['nisa','🌱','NISAの枠','今年の枠・生涯枠'],['furu','🎁','ふるさと納税','上限・寄附・ワンストップ'],['loan','🏠','住宅ローン','残高・金利'],['edu','🎓','教育資金','受験校・入学金・ToDo'],['nencho','🧾','年末調整',YEAR()+'年のチェックリスト'],['policy','🧭','わたしの方針','自分との約束']];
   let h=`<div class="grp-lbl">💴 わたしのお金</div>`+mon.map(m=>`<button class="ubtn ${RT.n==='money'&&(RT.a||'assets')===m[0]?'active':''}" onclick="go('money','${m[0]}')"><span class="uicon">${m[1]}</span><span class="utxt"><span class="ut-main">${m[2]}</span><span class="ut-sub">${m[3]}</span></span></button>`).join('');
   h+=`<div class="grp-lbl">🔔 その他</div>`+[['cal','📅','お金カレンダー','税金・受験・ローンの予定'],['stats','📊','成績','ランク・記憶の段階'],['glossary','📖','用語集',Object.keys(TS.gl).length+'語']].map(m=>`<button class="ubtn ${RT.n===m[0]?'active':''}" onclick="go('${m[0]}')"><span class="uicon">${m[1]}</span><span class="utxt"><span class="ut-main">${m[2]}</span><span class="ut-sub">${m[3]}</span></span></button>`).join('');
   Object.entries(TS.FIELDS).forEach(([f,F])=>{const us=UNITS.filter(u=>u.field===f);if(!us.length)return;
@@ -1772,6 +1943,7 @@ function advPrompt(withAmt){const t=today(),Y=YEAR(),T=totals(),I=loanInfo(),n=n
   if(S.accounts.some(a=>a.type.startsWith('nisa')))L.push('【NISA】今年のつみたて投資枠の計画 '+pct(n.planT,1.2e6)+'%使用・生涯枠 '+pct(n.book,1.8e7)+'%使用');
   if(I.mv)L.push('【住宅ローン】'+(S.loan.kind||'')+'・金利'+I.rate+'%'+(I.rates.filter(r=>r.d>t).map(r=>'（'+fmtMD(r.d)+'から'+r.r+'%予定）').join(''))+'・住宅ローン控除は'+(I.ended?I.last+'年分で終了':I.active?'適用中（'+I.last+'年分まで）':'未適用')+(withAmt&&I.bal?' ・残高 約'+man(I.bal):''));
   L.push('【年末調整（'+Y+'年分）】'+((S.nencho[Y]||{}).submit?'提出済み':'未提出'));
+  {const fp=furuPrompt(withAmt);if(fp)L.push(fp);}
   if(S.policy.crash)L.push('【わたしの方針】'+S.policy.crash.replace(/\n/g,' '));
   const now=advice().map(a=>a.t);if(now.length)L.push('【すでに表示中のアドバイス】'+now.join(' ／ '));
   return L.join('\n');}
